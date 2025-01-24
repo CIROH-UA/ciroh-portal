@@ -115,18 +115,18 @@
 .overlayButton {
   text-decoration: none;
   font-size: 1.2rem;
-  color: #fff;
-  background: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-content-inverse);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   margin-bottom: 0.75rem;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
 }
 
 .overlayButton:hover {
   background: var(--ifm-color-primary-dark);
+  color: var(--ifm-color-content-inverse);
 }
-
 .overlayIcons {
   display: flex;
   gap: 1rem;

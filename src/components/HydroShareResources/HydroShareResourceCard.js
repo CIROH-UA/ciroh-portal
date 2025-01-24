@@ -1,15 +1,13 @@
-import React from 'react';
-import { FaGithub, FaExternalLinkSquareAlt  } from 'react-icons/fa';
-import { MdInfo, MdDriveFileMove } from 'react-icons/md';
-import styles from './styles.module.css';
+import React from "react";
+import { FaGithub, FaExternalLinkSquareAlt } from "react-icons/fa";
+import { MdInfo, MdDriveFileMove } from "react-icons/md";
+import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
+import styles from "./styles.module.css";
+import { LiaExternalLinkSquareAltSolid } from "react-icons/lia";
 
-/**
- * Single card:
- *  - Uniform squares
- *  - Hover overlay with "Visit" button & icons
- *  - Some padding around the image
- */
 export default function HydroShareResourceCard({ resource }) {
+  const { colorMode } = useColorMode(); // Get the current theme
+
   const {
     title,
     app_icon,
@@ -24,21 +22,17 @@ export default function HydroShareResourceCard({ resource }) {
       <div className={styles.imageWrapper}>
         <img src={app_icon} alt={title} className={styles.image} />
 
-        {/* Hover overlay (title, button, icons) */}
+        {/* Hover overlay */}
         <div className={styles.hoverOverlay}>
-          <h5 className={styles.overlayTitle}>{title}</h5>
+          {/* Title */}
+          <h5
+            className={styles.overlayTitle}
+            // style={{ color: colorMode === "dark" ? "#fff" : "#fff" }} // Adjust title color
+          >
+            {title}
+          </h5>
 
-          {home_page_url && (
-            <a
-              href={home_page_url}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.overlayButton}
-            >
-              Visit
-            </a>
-          )}
-
+          {/* Icons */}
           <div className={styles.overlayIcons}>
             {source_code_url && (
               <a
@@ -70,7 +64,7 @@ export default function HydroShareResourceCard({ resource }) {
                 className={styles.iconLink}
                 title="Website"
               >
-                <FaExternalLinkSquareAlt  size={30} />
+                <LiaExternalLinkSquareAltSolid  size={30} />
               </a>
             )}
             {resource_url && (

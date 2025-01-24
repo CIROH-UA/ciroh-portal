@@ -4,24 +4,45 @@ import HydroShareResources from '@site/src/components/HydroShareResources';
 import Header from '@site/src/components/Header';
 import useGlobalData from '@docusaurus/useGlobalData';
 import PoweredBy from '@site/src/components/PoweredBy';
-import TethysLogo from '@site/static/img/tethys_logo2_black.png';
+import TethysLogoDark from '@site/static/img/tethys_logo2_black.png';
+import TethysLogWhite from '@site/static/img/tethys_white_final.png';
 import HydroShareLogo from '@site/static/img/hydroshare_white.png';
 
 
+// const poweredByItems = [
+//   {
+//     icon: <img src={TethysLogo}/>,
+//     title: "Tethys Platform",
+//     description: "Tethys Platform has been designed to lower the barrier to geospatial web app development. Convey your models and data as interactive web apps.",
+//     link: "https://www.tethysplatform.org/",
+//   },
+//   {
+//     icon: <img src={HydroShareLogo}/>,
+//     title: "HydroShare",
+//     description: "HydroShare is CUAHSI's online collaboration environment for sharing data, models, and code.",
+//     link: "https://hydroshare.org/",
+//   }
+// ];
+
 const poweredByItems = [
   {
-    icon: <img src={TethysLogo}/>,
+    lightIcon: TethysLogoDark,
+    darkIcon: TethysLogWhite,
     title: "Tethys Platform",
-    description: "Tethys Platform has been designed to lower the barrier to geospatial web app development. Convey your models and data as interactive web apps.",
+    description:
+      "Tethys Platform has been designed to lower the barrier to geospatial web app development. Convey your models and data as interactive web apps.",
     link: "https://www.tethysplatform.org/",
   },
   {
-    icon: <img src={HydroShareLogo}/>,
+    lightIcon: HydroShareLogo,
+    darkIcon: HydroShareLogo,
     title: "HydroShare",
-    description: "HydroShare is CUAHSI's online collaboration environment for sharing data, models, and code.",
+    description:
+      "HydroShare is CUAHSI's online collaboration environment for sharing data, models, and code.",
     link: "https://hydroshare.org/",
-  }
+  },
 ];
+
 
 
 
