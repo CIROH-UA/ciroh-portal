@@ -1,11 +1,29 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import HydroShareResources from '@site/src/components/HydroShareResources';
-import SplitImageLayout from '@site/src/components/SplitImageLayout';
 import Header from '@site/src/components/Header';
 import useGlobalData from '@docusaurus/useGlobalData';
+import PoweredBy from '@site/src/components/PoweredBy';
 import TethysLogo from '@site/static/img/tethys_logo2_black.png';
 import HydroShareLogo from '@site/static/img/hydroshare_white.png';
+
+
+const poweredByItems = [
+  {
+    icon: <img src={TethysLogo}/>,
+    title: "Tethys Platform",
+    description: "Tethys Platform has been designed to lower the barrier to geospatial web app development. Convey your models and data as interactive web apps.",
+    link: "https://www.tethysplatform.org/",
+  },
+  {
+    icon: <img src={HydroShareLogo}/>,
+    title: "HydroShare",
+    description: "HydroShare is CUAHSI's online collaboration environment for sharing data, models, and code.",
+    link: "https://hydroshare.org/",
+  }
+];
+
+
 
 export default function AppsPage() {
 
@@ -19,33 +37,9 @@ export default function AppsPage() {
                 title="Web Applications" 
                 tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives." 
             />
-             <main>
-
-            <HydroShareResources 
-                resources={resources} 
-                isLoading={false} 
-            />
-    <div>
-      <SplitImageLayout
-        image={TethysLogo}
-        alt="A cool picture"
-        title="Hello from the Split Layout"
-        text="This is a short paragraph about this image. 
-              You can style it however you like, 
-              or even pass in React elements."
-      />
-
-      {/* Reversed layout: image on the right, text on the left */}
-      <SplitImageLayout
-        image={HydroShareLogo}
-        alt="Another image"
-        title="Another Section"
-        text="Some interesting details about the image or topic."
-        reverse
-      />
-    </div>
-
-
+            <main>
+              <HydroShareResources resources={resources} />
+              <PoweredBy poweredByItems={poweredByItems} />
             </main>
 
 

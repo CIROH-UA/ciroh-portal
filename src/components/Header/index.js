@@ -15,12 +15,12 @@ export default function Header({title, tagline}) {
           <Link
             className="button button--secondary button--lg"
             to="/t/apps/">
-             Explore 🌊
+             Get Started
           </Link>
           <Link
             className="button button--secondary button--lg"
             to="https://docs.ciroh.org/docs/products/Portal/research-portal/#contribute">
-             Contribute 🔧
+             Contribute
           </Link>
         </div>
       </div>
