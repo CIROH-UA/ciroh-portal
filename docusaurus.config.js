@@ -82,12 +82,12 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      image: 'img/CIROHLogo_200x200.png',
       navbar: {
-        title: 'My Site',
+        title: 'CIROH',
         logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          alt: 'CIROH Portal',
+          src: 'img/CIROHLogo_200x200.png',
         },
         items: [
           {
@@ -97,8 +97,9 @@ const config = {
             label: 'Tutorial',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
+          {to: '/apps', label: 'Applications', position: 'left'},
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
             label: 'GitHub',
             position: 'right',
           },
