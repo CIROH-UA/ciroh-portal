@@ -1,0 +1,116 @@
+/*************************************************************
+ * Responsive Grid: max 3 columns within a container
+ *************************************************************/
+ .gridContainer {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  /* Start with 3 columns for wide screens */
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* If screen < 1200px, drop to 2 columns */
+@media (max-width: 1200px) {
+  .gridContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* If screen < 600px, drop to 1 column */
+@media (max-width: 600px) {
+  .gridContainer {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+/*************************************************************
+ * Each item in the grid
+ *************************************************************/
+.gridItem {
+  aspect-ratio: 1/1;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/*************************************************************
+ * The image + overlay
+ *************************************************************/
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--ifm-global-radius);
+  display: block;
+}
+
+/* Hover overlay (title, button, icons) */
+.hoverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 4px;
+}
+
+.imageWrapper:hover .hoverOverlay {
+  opacity: 1;
+}
+
+/*************************************************************
+ * Overlay content
+ *************************************************************/
+.overlayTitle {
+  color: #fff;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.overlayButton {
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-content-inverse);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.overlayButton:hover {
+  background: var(--ifm-color-primary-dark);
+  color: var(--ifm-color-content-inverse);
+}
+
+.overlayIcons {
+  display: flex;
+  gap: 1rem;
+}
+
+.iconLink {
+  color: #fff;
+  text-decoration: none;
+}
+
+.iconLink:hover {
+  color: var(--ifm-color-primary);
+}
