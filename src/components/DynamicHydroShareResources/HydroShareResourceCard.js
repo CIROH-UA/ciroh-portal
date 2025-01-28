@@ -1,5 +1,4 @@
 import React from "react";
-import { useColorMode } from "@docusaurus/theme-common";
 import { FaGithub } from "react-icons/fa";
 import { MdInfo, MdDriveFileMove } from "react-icons/md";
 import { LiaExternalLinkSquareAltSolid } from "react-icons/lia";

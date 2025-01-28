@@ -6,6 +6,7 @@ import { fetchResourcesByKeyword, fetchResourceMetadata } from "./utils";
 
 
 export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
+  const PLACEHOLDER_ITEMS = 12;
   const [resources, setResources] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,13 +41,10 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
           setLoading(false);
 
           // 3. For each resource, fetch metadata (lazy loading)
-          //    We'll update the resource card data with additional fields
+          //    Update the resource card data with additional fields
           for (let res of mappedList) {
             try {
               const metadata = await fetchResourceMetadata(res.resource_id);
-
-              // The structure of `metadata` depends on the API’s response. 
-              // Below is an example that matches your Python script logic:
               const updatedResource = {
                 ...res,
                 app_icon: metadata?.app_icon?.data_url || "",
@@ -77,7 +75,19 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
   }, [keyword]);
 
   if (loading) {
-    return <p>Loading resources...</p>;
+    return (
+      <div className={clsx("container")}>
+      <div className={styles.gridContainer}>
+        {Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => (
+          <div key={index} className={styles.gridItem}>
+            <div className={styles.imageWrapper}>
+              <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+      </div>
+    );
   }
 
   if (error) {
