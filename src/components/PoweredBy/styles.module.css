@@ -1,5 +1,5 @@
 .poweredBySection {
-    padding: 3rem 1rem;
+    padding:4rem;
     text-align: center;
     background-color: var(--ifm-background-color);
   }
@@ -9,7 +9,6 @@
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 2rem;
-    /* color: var(--ifm-heading-color); */
   }
   
   .cardContainer {

@@ -96,6 +96,7 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
 
   return (
     <div className={clsx("container")}>
+      
       <div className={styles.gridContainer}>
         {resources.map((res) => (
           <HydroShareResourceCard key={res.resource_id} resource={res} />
