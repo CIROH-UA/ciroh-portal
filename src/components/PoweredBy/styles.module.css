@@ -1,6 +1,8 @@
 .poweredBySection {
-    padding:4rem;
-    text-align: center;
+    /* padding:1rem; */
+    margin-bottom: 4rem;
+    margin-top: 4rem;
+    text-align: start;
     background-color: var(--ifm-background-color);
   }
   

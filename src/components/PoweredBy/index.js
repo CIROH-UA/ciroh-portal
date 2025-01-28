@@ -7,7 +7,7 @@ export default function PoweredBy({ poweredByItems }) {
   const { colorMode } = useColorMode(); // Get the current theme (light or dark)
 
   return (
-    <section className={clsx(styles.poweredBySection)}>
+    <section className={clsx(styles.poweredBySection, "container","margin-bottom--lg")}>
       <h1 className={styles.heading}>Powered By</h1>
       <div className={styles.cardContainer}>
         {poweredByItems.map((item, index) => (

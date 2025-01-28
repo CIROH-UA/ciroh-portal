@@ -1,3 +1,11 @@
+.heading{
+  color: var(--ifm-font-color-secondary);
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 4rem;
+  margin-top: 4rem;
+}
+
 /*************************************************************
  * Responsive Grid: max 3 columns within a container
  *************************************************************/
@@ -5,7 +13,6 @@
   display: grid;
   gap: 1rem;
   margin-top: 1rem;
-
   /* Start with 3 columns for wide screens */
   grid-template-columns: repeat(3, 1fr);
 }
