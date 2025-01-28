@@ -1,6 +1,6 @@
 import React from "react";
 import clsx from "clsx";
-import { useColorMode } from "@docusaurus/theme-common"; // Use this instead of useThemeContext
+import { useColorMode } from "@docusaurus/theme-common"; 
 import styles from "./styles.module.css";
 
 export default function PoweredBy({ poweredByItems }) {

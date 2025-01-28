@@ -35,9 +35,10 @@ export default function HydroSharePage() {
           title="Web Applications" 
           tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives." 
       />
+      <PoweredBy poweredByItems={poweredByItems} />
       <main>
         <HydroShareResources keyword="nwm_portal_app" />
-        <PoweredBy poweredByItems={poweredByItems} />
+        
       </main>
 
 
