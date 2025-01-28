@@ -101,8 +101,9 @@ const config = {
           {to: '/hydrosharepage', label: 'hs', position: 'left'},
           {
             href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
-            label: 'GitHub',
             position: 'right',
+            className: "header-github-link",
+            "aria-label": "GitHub repository",
           },
         ],
       },
