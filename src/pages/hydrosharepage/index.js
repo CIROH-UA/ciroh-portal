@@ -15,6 +15,8 @@ const poweredByItems = [
     description:
       "Tethys Platform has been designed to lower the barrier to geospatial web app development. Convey your models and data as interactive web apps.",
     link: "https://www.tethysplatform.org/",
+    repoUrl: "https://github.com/tethysplatform/tethys"
+
   },
   {
     lightIcon: HydroShareLogo,
@@ -23,6 +25,7 @@ const poweredByItems = [
     description:
       "HydroShare is CUAHSI's online collaboration environment for sharing data, models, and code.",
     link: "https://hydroshare.org/",
+    repoUrl: "https://github.com/hydroshare/hydroshare"
   },
 ];
 

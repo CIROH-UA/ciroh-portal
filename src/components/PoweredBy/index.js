@@ -1,6 +1,8 @@
 import React from "react";
 import clsx from "clsx";
-import { useColorMode } from "@docusaurus/theme-common"; 
+import { useColorMode } from "@docusaurus/theme-common";
+import GitHubStars from "./GithubStars";
+
 import styles from "./styles.module.css";
 
 export default function PoweredBy({ poweredByItems }) {
@@ -26,6 +28,8 @@ export default function PoweredBy({ poweredByItems }) {
               />
             </div>
             <p className={styles.cardDescription}>{item.description}</p>
+            {item.repoUrl && <GitHubStars repoUrl={item.repoUrl} />}
+
           </a>
         ))}
       </div>
