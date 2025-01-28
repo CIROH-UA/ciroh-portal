@@ -11,18 +11,6 @@ export default function Header({title, tagline}) {
           {title}
         </Heading>
         <p className="hero__subtitle">{tagline}</p>
-        {/* <div className={styles.buttons}>
-          <Link
-            className="button button--secondary button--lg"
-            to="/t/apps/">
-             Get Started
-          </Link>
-          <Link
-            className="button button--secondary button--lg"
-            to="https://docs.ciroh.org/docs/products/Portal/research-portal/#contribute">
-             Contribute
-          </Link>
-        </div> */}
       </div>
     </header>
   );

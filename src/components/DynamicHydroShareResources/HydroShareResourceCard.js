@@ -4,10 +4,9 @@ import { FaGithub } from "react-icons/fa";
 import { MdInfo, MdDriveFileMove } from "react-icons/md";
 import { LiaExternalLinkSquareAltSolid } from "react-icons/lia";
 import styles from "./styles.module.css";
+import clsx from 'clsx';
 
 export default function HydroShareResourceCard({ resource }) {
-  const { colorMode } = useColorMode();
-
   // Destructure fields that might be empty initially
   const {
     title = "Untitled",
@@ -25,10 +24,7 @@ export default function HydroShareResourceCard({ resource }) {
         {app_icon ? (
           <img src={app_icon} alt={title} className={styles.image} />
         ) : (
-          <div className={styles.imagePlaceholder}>
-            {/* Placeholder content */}
-            <p>No Icon</p>
-          </div>
+          <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
         )}
 
         <div className={styles.hoverOverlay}>

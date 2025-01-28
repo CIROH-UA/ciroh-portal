@@ -114,3 +114,121 @@
 .iconLink:hover {
   color: var(--ifm-color-primary);
 }
+
+/*************************************************************
+ * PlaceHolders
+ *************************************************************/
+/* .imagePlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.loadWraper{
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(158, 157, 157);
+  z-index: 44;
+  overflow: hidden;
+  border-radius: 5px;
+}
+.activity{
+  position: absolute;
+  left: -45%;
+  height: 100%;
+  width: 45%;
+  background-image: linear-gradient(to left, rgba(251,251,251, .05), rgba(251,251,251, .3), rgba(251,251,251, .6), rgba(251,251,251, .3), rgba(251,251,251, .05));
+  background-image: -moz-linear-gradient(to left, rgba(251,251,251, .05), rgba(251,251,251, .3), rgba(251,251,251, .6), rgba(251,251,251, .3), rgba(251,251,251, .05));
+  background-image: -webkit-linear-gradient(to left, rgba(251,251,251, .05), rgba(251,251,251, .3), rgba(251,251,251, .6), rgba(251,251,251, .3), rgba(251,251,251, .05));
+  animation: loading 1.5s infinite;
+  z-index: 45;
+}
+
+@keyframes loading {
+  0%{
+      left: -45%;
+  }
+  100%{
+      left: 100%;
+  }
+} */
+
+/* Base styles for the placeholder container */
+.imagePlaceholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The skeleton container */
+.placeholder {
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* The shimmer overlay */
+.placeholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150px; /* Start off-screen */
+  width: 150px; /* Width of the shimmer band */
+  height: 100%;
+  animation: shimmer 1.5s infinite ease-in-out;
+}
+
+/* Keyframes for horizontal sweep */
+@keyframes shimmer {
+  0% {
+    left: -150px;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 
+  DARK MODE 
+  In dark mode, we want a lighter placeholder background 
+  and slightly darker shimmer band. 
+*/
+:root[data-theme="dark"] .placeholder {
+  background-color: #333; /* Darker container background */
+}
+
+:root[data-theme="dark"] .placeholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),     /* transparent edges */
+    rgba(255, 255, 255, 0.15),  /* a subtle lighter middle band */
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* 
+  LIGHT MODE 
+  In light mode, we want a lighter placeholder background 
+  and a subtle brighter shimmer band. 
+*/
+:root[data-theme="light"] .placeholder {
+  background-color: #eee; /* Lighter container background */
+}
+
+:root[data-theme="light"] .placeholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),       /* transparent edges */
+    rgba(0, 0, 0, 0.05),    /* a subtle darker middle band */
+    rgba(0, 0, 0, 0)
+  );
+}
+
