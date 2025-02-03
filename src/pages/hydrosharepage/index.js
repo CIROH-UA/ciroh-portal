@@ -1,5 +1,6 @@
 import React from "react";
 import HydroShareResources from "@site/src/components/DynamicHydroShareResources";
+import HydroShareResourcesRows from "@site/src/components/HydroShareResourceRow";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import PoweredBy from '@site/src/components/PoweredBy';
@@ -42,14 +43,14 @@ export default function HydroSharePage() {
       </div>
 
       <main>
+        {/* <HydroShareResources keyword="nwm_portal_app" /> */}
+        <HydroShareResourcesRows keyword="nwm_portal_app" />
+
         <PoweredBy poweredByItems={poweredByItems} />
-        <HydroShareResources keyword="nwm_portal_app" />
+
       </main>
 
 
     </Layout>
   );
 }
-
-
-

@@ -6,7 +6,6 @@ import styles from "./styles.module.css";
 import clsx from 'clsx';
 
 export default function HydroShareResourceCard({ resource }) {
-  // Destructure fields that might be empty initially
   const {
     title = "Untitled",
     app_icon,

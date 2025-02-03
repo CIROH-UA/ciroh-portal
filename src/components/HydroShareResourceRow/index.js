@@ -1,36 +1,31 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-import styles from "./styles.module.css";
-import HydroShareResourceCard from "./HydroShareResourceCard";
+import styles from "./styles.module.css"; // NEW STYLES FILE FOR ROWS
+import HydroShareResourceRow from "./HydroShareResourceRow"; // Import row component
 import { fetchResourcesByKeyword, fetchResourceMetadata } from "./utils";
 
-
-export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
-  const PLACEHOLDER_ITEMS = 12;
+export default function HydroShareResourcesRows({ keyword = "nwm_portal_app" }) {
+  const PLACEHOLDER_ITEMS = 10;
   const [resources, setResources] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only run this fetch client-side to avoid SSR issues
     if (typeof window !== "undefined") {
       (async () => {
         try {
           setLoading(true);
 
-          // 1. Fetch initial resource list with minimal fields
+          // Fetch initial resource list
           const resourceList = await fetchResourcesByKeyword(keyword);
-
-          // 2. Map the resource list to an initial shape
-          //    Provide immediate access to "title" or "resource_title"
-          //    and track placeholders for other fields:
+          
+          // Map resources with placeholders
           const mappedList = resourceList.map((res) => ({
             resource_id: res.resource_id,
-            // Adjust the key for the resource title, depending on the actual JSON structure
-            title: res.resource_title, 
+            title: res.resource_title,
             resource_type: res.resource_type,
             resource_url: res.resource_url,
-            // Lazy-loaded fields initialize as empty (or placeholders)
+            description: res.abstract,
             app_icon: "",
             home_page_url: "",
             source_code_url: "",
@@ -40,8 +35,7 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
           setResources(mappedList);
           setLoading(false);
 
-          // 3. For each resource, fetch metadata (lazy loading)
-          //    Update the resource card data with additional fields
+          // Fetch metadata for each resource
           for (let res of mappedList) {
             try {
               const metadata = await fetchResourceMetadata(res.resource_id);
@@ -51,14 +45,13 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
                 home_page_url: metadata?.app_home_page_url?.value || "",
                 source_code_url: metadata?.source_code_url?.value || "",
                 help_page_url: metadata?.help_page_url?.value || "",
+                // description: metadata?.description?.value || "No description available.",
               };
 
-              // Update state for this one resource
+              // Update state
               setResources((current) =>
                 current.map((item) =>
-                  item.resource_id === updatedResource.resource_id
-                    ? updatedResource
-                    : item
+                  item.resource_id === updatedResource.resource_id ? updatedResource : item
                 )
               );
             } catch (metadataErr) {
@@ -77,15 +70,15 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
   if (loading) {
     return (
       <div className={clsx("container")}>
-      <div className={styles.gridContainer}>
-        {Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => (
-          <div key={index} className={styles.gridItem}>
-            <div className={styles.imageWrapper}>
-              <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
+        <div className={styles.rowContainer}>
+          {Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => (
+            <div key={index} className={styles.rowItem}>
+              <div className={styles.imageWrapper}>
+                <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -97,9 +90,9 @@ export default function HydroShareResources({ keyword = "nwm_portal_app" }) {
   return (
     <div className={clsx("container", "margin-bottom--lg")}>
       <h1 className={styles.heading}>Applications</h1>
-      <div className={styles.gridContainer}>
+      <div className={styles.rowContainer}>
         {resources.map((res) => (
-          <HydroShareResourceCard key={res.resource_id} resource={res} />
+          <HydroShareResourceRow key={res.resource_id} resource={res} />
         ))}
       </div>
     </div>

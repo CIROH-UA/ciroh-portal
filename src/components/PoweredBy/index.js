@@ -27,6 +27,7 @@ export default function PoweredBy({ poweredByItems }) {
                 className={styles.icon}
               />
             </div>
+
             <p className={styles.cardDescription}>{item.description}</p>
             {item.repoUrl && <GitHubStars repoUrl={item.repoUrl} />}
 

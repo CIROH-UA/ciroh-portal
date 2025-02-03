@@ -27,7 +27,6 @@ export default function HydroShareResourceCard({ resource }) {
           {/* Title */}
           <h5
             className={styles.overlayTitle}
-            // style={{ color: colorMode === "dark" ? "#fff" : "#fff" }} // Adjust title color
           >
             {title}
           </h5>

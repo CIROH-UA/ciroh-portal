@@ -11,13 +11,12 @@ html[data-theme='dark'] .heroBanner {
   color: #4bc1d3;
 }
 
-
 .heroContainer{
   position: relative;
   z-index: 10;
 }
 .heroTitle {
-  font-size: 4rem;
+  /* font-size: 4rem; */
   font-weight: 700;
   margin-bottom: 2rem;
   z-index: 10;
