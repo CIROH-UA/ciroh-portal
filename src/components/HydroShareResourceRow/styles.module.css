@@ -1,21 +1,29 @@
-/* Individual Row Item */
-.rowItem {
+/* --------------------------------------
+ * INDIVIDUAL ROW ITEM
+ * --------------------------------------
+ */
+ .rowItem {
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: var(--ifm-background-color);
-  border-radius: 10px;
   padding: 1.5rem;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
   width: 100%;
+  position: relative;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
 }
 
 .rowItem:hover {
   transform: translateY(-3px);
 }
 
-/* Left Section: Image Wrapper */
+/* --------------------------------------
+ * LEFT SECTION: IMAGE WRAPPER
+ * --------------------------------------
+ */
 .imageWrapper {
   width: 25%;
   height: 25%;
@@ -34,50 +42,88 @@
 }
 
 .imagePlaceholder {
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   background: rgba(200, 200, 200, 0.2);
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-.description_placeholder {
-  width: 100%;
-  height: 200px;
-  background: rgba(200, 200, 200, 0.2);
-}
-.title_placeholder{
-  width: 100%;
-  height: 50px;
-  background: rgba(200, 200, 200, 0.2);
+/* --------------------------------------
+ * RIGHT SECTION: TEXT WRAPPER
+ * --------------------------------------
+ */
+.textWrapper {
+  flex: 1;
+  margin-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.title_placeholder::after {
+/* Title & Description Styling */
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: var(--ifm-color-content-secondary);
+  line-height: 1.5;
+}
+
+/* --------------------------------------
+ * PLACEHOLDER SHIMMER EFFECT
+ * --------------------------------------
+ */
+.shimmer {
+  position: relative;
+  background: rgba(200, 200, 200, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.shimmer::after {
   content: "";
   position: absolute;
   top: 0;
-  width: 150px; /* Width of the shimmer band */
+  left: -150px;
+  width: 150px;
   height: 100%;
-  left: -150px; /* Start off-screen */
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
   animation: shimmer 1.5s infinite ease-in-out;
 }
-.description_placeholder::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 150px; /* Width of the shimmer band */
-  height: 100%;
-  left: -150px; /* Start off-screen */
-  animation: shimmer 1.5s infinite ease-in-out;
+
+/* Title Placeholder */
+.titlePlaceholder {
+  width: 60%;
+  height: 20px;
 }
-.imagePlaceholder::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 150px; /* Width of the shimmer band */
-  height: 100%;
-  left: -150px; /* Start off-screen */
-  animation: shimmer 1.5s infinite ease-in-out;
+
+/* Description Placeholder */
+.descriptionPlaceholder {
+  width: 90%;
+  height: 60px;
 }
-/* Hover Overlay */
+
+/* Image Placeholder */
+.imagePlaceholder {
+  width: 250px;
+  height: 250px;
+}
+
+/* --------------------------------------
+ * HOVER OVERLAY ON IMAGE
+ * --------------------------------------
+ */
 .hoverOverlay {
   position: absolute;
   top: 0;
@@ -97,7 +143,7 @@
   opacity: 1;
 }
 
-/* Overlay content */
+/* Overlay Title */
 .overlayTitle {
   color: #fff;
   margin-bottom: 0.75rem;
@@ -105,11 +151,13 @@
   font-size: 1.2rem;
 }
 
+/* Overlay Icons */
 .overlayIcons {
   display: flex;
   gap: 0.5rem;
 }
 
+/* Action Buttons */
 .iconLink {
   color: #fff;
   text-decoration: none;
@@ -120,29 +168,10 @@
   color: var(--ifm-color-primary);
 }
 
-
-.textWrapper {
-  flex: 1;
-  margin-left: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-
-}
-
-.title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.3rem;
-}
-
-.description {
-  font-size: 1rem;
-  color: var(--ifm-color-content-secondary);
-  line-height: 1.5;
-}
-
-/* Responsive Adjustments */
+/* --------------------------------------
+ * RESPONSIVE ADJUSTMENTS
+ * --------------------------------------
+ */
 @media (max-width: 768px) {
   .rowItem {
     flex-direction: column;
@@ -151,7 +180,7 @@
 
   .imageWrapper {
     width: 100%;
-    height: 25%;
+    height: 100%;
   }
 
   .textWrapper {
@@ -160,18 +189,123 @@
   }
 }
 
-
-
-
-/* Keyframes for horizontal sweep */
+/* --------------------------------------
+ * SHIMMER ANIMATION
+ * --------------------------------------
+ */
 @keyframes shimmer {
   0% {
     left: -150px;
   }
-  50% {
-    left: 100%;
-  }
   100% {
     left: 100%;
   }
+}
+
+
+/* 
+  DARK MODE 
+  In dark mode, we want a lighter placeholder background 
+  and slightly darker shimmer band. 
+*/
+:root[data-theme="dark"] .titlePlaceholder {
+  background-color: #333; /* Darker container background */
+}
+
+:root[data-theme="dark"] .titlePlaceholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),     /* transparent edges */
+    rgba(255, 255, 255, 0.15),  /* a subtle lighter middle band */
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* 
+  LIGHT MODE 
+  In light mode, we want a lighter placeholder background 
+  and a subtle brighter shimmer band. 
+*/
+:root[data-theme="light"] .titlePlaceholder {
+  background-color: #eee; /* Lighter container background */
+}
+
+:root[data-theme="light"] .titlePlaceholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),       /* transparent edges */
+    rgba(0, 0, 0, 0.05),    /* a subtle darker middle band */
+    rgba(0, 0, 0, 0)
+  );
+}
+
+/* 
+  DARK MODE 
+  In dark mode, we want a lighter placeholder background 
+  and slightly darker shimmer band. 
+*/
+:root[data-theme="dark"] .descriptionPlaceholder {
+  background-color: #333; /* Darker container background */
+}
+
+:root[data-theme="dark"] .descriptionPlaceholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),     /* transparent edges */
+    rgba(255, 255, 255, 0.15),  /* a subtle lighter middle band */
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* 
+  LIGHT MODE 
+  In light mode, we want a lighter placeholder background 
+  and a subtle brighter shimmer band. 
+*/
+:root[data-theme="light"] .descriptionPlaceholder {
+  background-color: #eee; /* Lighter container background */
+}
+
+:root[data-theme="light"] .descriptionPlaceholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),       /* transparent edges */
+    rgba(0, 0, 0, 0.05),    /* a subtle darker middle band */
+    rgba(0, 0, 0, 0)
+  );
+}
+/* 
+  DARK MODE 
+  In dark mode, we want a lighter placeholder background 
+  and slightly darker shimmer band. 
+*/
+:root[data-theme="dark"] .imagePlaceholder {
+  background-color: #333; /* Darker container background */
+}
+
+:root[data-theme="dark"] .imagePlaceholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),     /* transparent edges */
+    rgba(255, 255, 255, 0.15),  /* a subtle lighter middle band */
+    rgba(255, 255, 255, 0)
+  );
+}
+
+/* 
+  LIGHT MODE 
+  In light mode, we want a lighter placeholder background 
+  and a subtle brighter shimmer band. 
+*/
+:root[data-theme="light"] .imagePlaceholder {
+  background-color: #eee; /* Lighter container background */
+}
+
+:root[data-theme="light"] .imagePlaceholder::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0),       /* transparent edges */
+    rgba(0, 0, 0, 0.05),    /* a subtle darker middle band */
+    rgba(0, 0, 0, 0)
+  );
 }
