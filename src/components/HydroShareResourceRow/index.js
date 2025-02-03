@@ -76,6 +76,10 @@ export default function HydroShareResourcesRows({ keyword = "nwm_portal_app" }) 
               <div className={styles.imageWrapper}>
                 <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
               </div>
+              <div className={styles.textWrapper}>
+                <h1 className={styles.title_placeholder}></h1>
+                <p className={styles.description_placeholder}></p>
+              </div>
             </div>
           ))}
         </div>

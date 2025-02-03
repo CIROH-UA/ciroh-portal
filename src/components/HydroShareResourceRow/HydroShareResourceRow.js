@@ -56,7 +56,7 @@ export default function HydroShareResourceRow({ resource }) {
 
       {/* Right Section: Title & Description */}
       <div className={styles.textWrapper}>
-        <h3 className={styles.title}>{title}</h3>
+        <h1 className={styles.title}>{title}</h1>
         <p className={styles.description}>{description}</p>
       </div>
     </div>

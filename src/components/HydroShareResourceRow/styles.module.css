@@ -1,7 +1,3 @@
-/*************************************************************
- * ROW LAYOUT: Displays resources in a horizontal row format
- *************************************************************/
-
 /* Individual Row Item */
 .rowItem {
   display: flex;
@@ -38,8 +34,19 @@
 }
 
 .imagePlaceholder {
+  width: 200px;
+  height: 200px;
+  background: rgba(200, 200, 200, 0.2);
+}
+
+.description_placeholder {
   width: 100%;
-  height: 100%;
+  height: 200px;
+  background: rgba(200, 200, 200, 0.2);
+}
+.title_placeholder{
+  width: 100%;
+  height: 50px;
   background: rgba(200, 200, 200, 0.2);
 }
 
@@ -86,22 +93,26 @@
   color: var(--ifm-color-primary);
 }
 
-/* Right Section: Title & Description */
+
 .textWrapper {
   flex: 1;
   margin-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
 }
 
 .title {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.3rem;
 }
 
 .description {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--ifm-color-content-secondary);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 /* Responsive Adjustments */
