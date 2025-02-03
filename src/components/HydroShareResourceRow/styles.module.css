@@ -50,6 +50,33 @@
   background: rgba(200, 200, 200, 0.2);
 }
 
+.title_placeholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 150px; /* Width of the shimmer band */
+  height: 100%;
+  left: -150px; /* Start off-screen */
+  animation: shimmer 1.5s infinite ease-in-out;
+}
+.description_placeholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 150px; /* Width of the shimmer band */
+  height: 100%;
+  left: -150px; /* Start off-screen */
+  animation: shimmer 1.5s infinite ease-in-out;
+}
+.imagePlaceholder::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 150px; /* Width of the shimmer band */
+  height: 100%;
+  left: -150px; /* Start off-screen */
+  animation: shimmer 1.5s infinite ease-in-out;
+}
 /* Hover Overlay */
 .hoverOverlay {
   position: absolute;
@@ -130,5 +157,21 @@
   .textWrapper {
     margin-left: 0;
     margin-top: 1rem;
+  }
+}
+
+
+
+
+/* Keyframes for horizontal sweep */
+@keyframes shimmer {
+  0% {
+    left: -150px;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
   }
 }
