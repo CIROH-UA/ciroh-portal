@@ -2,23 +2,22 @@ import React from "react";
 import clsx from "clsx";
 import { useColorMode } from "@docusaurus/theme-common";
 import GitHubStars from "./GithubStars";
-
 import styles from "./styles.module.css";
 
 export default function PoweredBy({ poweredByItems }) {
-  const { colorMode } = useColorMode(); // Get the current theme (light or dark)
+  const { colorMode } = useColorMode();
 
   return (
-    <section className={clsx(styles.poweredBySection, "container","margin-bottom--lg")}>
+    <section className={clsx(styles.poweredBySection, "container", "margin-bottom--lg")}>
       <h1 className={styles.heading}>Powered By</h1>
       <div className={styles.cardContainer}>
         {poweredByItems.map((item, index) => (
           <a
-            href={item.link} // Add link to make the card clickable
+            key={index}
+            href={item.link}
             target="_blank"
             rel="noreferrer"
-            className={styles.card} // Use card styles for the link
-            key={index}
+            className={styles.card}
           >
             <div className={styles.iconWrapper}>
               <img
@@ -27,10 +26,8 @@ export default function PoweredBy({ poweredByItems }) {
                 className={styles.icon}
               />
             </div>
-
-            <p className={styles.cardDescription}>{item.description}</p>
             {item.repoUrl && <GitHubStars repoUrl={item.repoUrl} />}
-
+            <p className={styles.cardDescription}>{item.description}</p>
           </a>
         ))}
       </div>
