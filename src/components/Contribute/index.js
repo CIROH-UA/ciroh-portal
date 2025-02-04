@@ -34,7 +34,7 @@ export default function Contribute({ title, description }) {
             />
             <div className={styles.cardContent}>
               <h4 className={styles.cardTitle}>{card2.cardTitle}</h4>
-              <p className={styles.cardDescription}>{card2.cardDescription}</p>
+              <p className={styles.cardDescription}>Add <code>nwm_portal_app</code> keyword to your App Connector Resource to make it discoverable.</p>
             </div>
           </div>
           <div className={styles.card}>

@@ -11,7 +11,7 @@ export const contributeAppCards = [
     imgSrcDark: CreateAppImageDark,
     imgAlt: 'Create an App Connector Resource',
     cardTitle: 'Create an App Connector Resource',
-    cardDescription: 'Create a new App Connector Resource to connect your web app to CIROH.',
+    cardDescription: 'Provide the necessary metadata and URLs to make your app discoverable. Provide an image to make your app visually appealing.',
   },
   {
     imgSrcLight: KeywordsAppImageLight,
@@ -25,6 +25,6 @@ export const contributeAppCards = [
     imgSrcDark: AppListImageDark,
     imgAlt: 'View your App in the App List',
     cardTitle: 'Make your App Public',
-    cardDescription: 'Get your app listed in the CIROH App List.',
+    cardDescription: 'Make your App Connector Resource public to share it with the CIROH community.',
   }
 ];
