@@ -23,8 +23,8 @@ export default function HydroSharePage() {
           title="Add your application to the CIROH App Suite"
           description={
             <div>
-              Powered by <a >HydroShare</a> create a new App Conector Resource, Add the required metadata, while
-              adding the nwm_portal_app keyword to make it discoverable
+              Powered by <a href="https://www.hydroshare.org/">HydroShare</a> create a new App Conector Resource, Add the required metadata, while
+              adding the <code>nwm_portal_app</code> keyword to make it discoverable
             </div>
           }
         />
