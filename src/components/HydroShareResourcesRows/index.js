@@ -7,7 +7,6 @@ import HydroShareResourceRow from "./HydroShareResourceRow";
 export default function HydroShareResourcesRows({ resources }) {
   return (
     <div className={clsx("container", "margin-bottom--lg")}>
-      <h1 className={styles.heading}>Applications</h1>
       <div className={styles.rowContainer}>
         {resources.map((res) => (
           <HydroShareResourceRow key={res.resource_id} resource={res} />
