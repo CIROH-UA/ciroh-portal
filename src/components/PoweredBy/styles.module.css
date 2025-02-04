@@ -1,9 +1,22 @@
+/* Full-width background wrapper */
+.fullWidthBg {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding-bottom: 8rem;
+  padding-top: 8rem;
+  background-color: #f7f7f7;
+}
+
 .poweredBySection {
+  /* Remove container restrictions from the section itself;
+     the inner content is wrapped in a container. */
   margin-top: 4rem;
   margin-bottom: 4rem;
   text-align: start;
-  background-color: var(--ifm-background-color);
-  width: 100%;
 }
 
 .heading {
@@ -37,7 +50,7 @@
   background-color: var(--ifm-card-background-color);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  text-decoration: none; /* Remove underline on the card itself */
+  text-decoration: none;
 }
 
 .card:hover {
@@ -52,10 +65,9 @@
 }
 
 .icon {
-  width: 70%;
+  width: 50%;
 }
 
-/* Ensure card titles are not underlined on hover */
 .cardTitle,
 .cardTitle a {
   margin: 0;
@@ -156,3 +168,11 @@
   color: #255f9c;
   text-decoration: none;
 }
+
+:root[data-theme='dark'] .fullWidthBg {
+  background-color: #222227;
+
+}
+
+
+
