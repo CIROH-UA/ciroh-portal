@@ -5,6 +5,7 @@
   text-align: start;
   overflow: hidden;
   color: #255f9c;
+  padding: 8rem 0 8rem;
   /* Let wave show beneath, or define a background for your banner if you want */
 }
 html[data-theme='dark'] .heroBanner {
