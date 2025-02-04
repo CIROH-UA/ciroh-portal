@@ -8,17 +8,18 @@ import clsx from "clsx";
 export default function HydroShareResourceRow({ resource }) {
   const {
     title = "Untitled",
-    app_icon,
     description,
+    app_icon,
     home_page_url,
     source_code_url,
     help_page_url,
     resource_url,
+
   } = resource;
-  
+
+
   return (
     <div className={clsx(styles.rowItem, "card")}>
-      {/* Left Section: Image + Hover Overlay */}
       <div className={styles.imageWrapper}>
         {app_icon ? (
           <img src={app_icon} alt={title} className={styles.image} />
@@ -26,7 +27,6 @@ export default function HydroShareResourceRow({ resource }) {
           <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
         )}
 
-        {/* Hover Overlay with Icons */}
         <div className={styles.hoverOverlay}>
           <h5 className={styles.overlayTitle}>{title}</h5>
           <div className={styles.overlayIcons}>
@@ -54,7 +54,6 @@ export default function HydroShareResourceRow({ resource }) {
         </div>
       </div>
 
-      {/* Right Section: Title & Description */}
       <div className={styles.textWrapper}>
         <h1 className={styles.title}>{title}</h1>
         <p className={styles.description}>{description}</p>

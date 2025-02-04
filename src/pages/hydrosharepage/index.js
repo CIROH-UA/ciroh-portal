@@ -1,6 +1,7 @@
 import React from "react";
-import HydroShareResources from "@site/src/components/DynamicHydroShareResources";
-import HydroShareResourcesRows from "@site/src/components/HydroShareResourceRow";
+import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
+// import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
+// import HydroShareResourcesRows from "@site/src/components/HydroShareResourceRow";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import PoweredBy from '@site/src/components/PoweredBy';
@@ -43,14 +44,13 @@ export default function HydroSharePage() {
       </div>
 
       <main>
-        {/* <HydroShareResources keyword="nwm_portal_app" /> */}
-        <HydroShareResourcesRows keyword="nwm_portal_app" />
-
+        <HydroShareResourcesSelector keyword="nwm_portal_app" />
         <PoweredBy poweredByItems={poweredByItems} />
 
       </main>
-
-
     </Layout>
   );
 }
+
+
+{/* <HydroShareResourcesRows keyword="nwm_portal_app" /> */}
