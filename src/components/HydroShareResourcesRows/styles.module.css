@@ -70,9 +70,11 @@
 
 /* Title & Description Styling */
 .title {
+  color: var(--ifm-color-content-primary);
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.3rem;
+
 }
 
 .description {
