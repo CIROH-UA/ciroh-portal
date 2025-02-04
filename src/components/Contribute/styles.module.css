@@ -3,7 +3,8 @@
     display: flex;
     justify-content: center;
     background: #fff;
-    padding: 2rem 0;
+    padding: 8rem 0 8rem;
+    
   }
   
   :root[data-theme='dark'] .wrapper {
