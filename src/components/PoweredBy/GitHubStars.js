@@ -30,14 +30,11 @@ export default function GitHubStars({ repoUrl }) {
         <span className={styles.githubIcon}></span>
         <span className={styles.githubText}>Star</span>
       </a>
-      <a
-        href={`${repoUrl}/stargazers`}
-        target="_blank"
-        rel="noopener noreferrer"
+      <span
         className={styles.githubCount}
       >
         {stars !== null ? stars.toLocaleString() : "..."}
-      </a>
+      </span>
     </div>
   );
 }

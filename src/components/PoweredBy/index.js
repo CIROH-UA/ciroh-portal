@@ -13,23 +13,28 @@ export default function PoweredBy({ poweredByItems }) {
         <h1 className={styles.heading}>Powered By</h1>
         <div className={styles.cardContainer}>
           {poweredByItems.map((item, index) => (
-            <a
+            <div
               key={index}
-              href={item.link}
-              target="_blank"
-              rel="noreferrer"
+
               className={styles.card}
             >
               <div className={styles.iconWrapper}>
-                <img
-                  src={colorMode === "dark" ? item.darkIcon : item.lightIcon}
-                  alt={item.title}
-                  className={styles.icon}
-                />
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img
+                    src={colorMode === "dark" ? item.darkIcon : item.lightIcon}
+                    alt={item.title}
+                    className={styles.icon}
+                  />
+                </a>
+
               </div>
               {item.repoUrl && <GitHubStars repoUrl={item.repoUrl} />}
               <p className={styles.cardDescription}>{item.description}</p>
-            </a>
+            </div>
           ))}
         </div>
       </div>
