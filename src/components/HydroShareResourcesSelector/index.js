@@ -81,6 +81,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   }
 
   return (
+    <section className={clsx(styles.wrapper)}>
+    
+    
     <div className={clsx("container", "margin-bottom--lg")}>
       <div className={styles.header}>
         <div className={styles.viewToggle}>
@@ -107,5 +110,6 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         <HydroShareResourcesRows resources={resources}/>
       )}
     </div>
+    </section>
   );
 }
