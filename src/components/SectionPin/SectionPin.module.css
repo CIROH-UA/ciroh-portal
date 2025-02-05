@@ -1,0 +1,58 @@
+@keyframes move {
+    to {
+      /* Translate so that the right edge is flush with the viewport */
+      transform: translateX(calc(-100% + 100vw));
+    }
+  }
+  
+  /* The section creates enough vertical space to trigger the animation */
+  .sectionPin {
+    height: 500vh;
+    overflow: visible; /* Needed for sticky positioning */
+    view-timeline-name: --section-pin-tl;
+    view-timeline-axis: block;
+  }
+  
+  /* This container is sticky and fills the viewport */
+  .pinWrapSticky {
+    height: 100vh;
+    width: 100vw;
+    position: sticky;
+    top: 0;
+    overflow-x: hidden;
+  }
+  
+  /* Set the inner container to exactly fit all images.
+     For 5 images at 40vw each plus a little gap/padding, we use 200vw. */
+  .pinWrap {
+    height: 100vh;
+    width: 450vw; /* 5 images * 40vw each */
+    will-change: transform;
+    animation: move linear forwards;
+    animation-timeline: --section-pin-tl;
+    animation-range: contain 0% contain 100%;
+    display: flex;
+    align-items: center;
+    gap: 2rem; /* Adjust the gap as needed */
+    padding: 0 2rem;
+  }
+
+
+  /* Each image is 40vw wide and will not exceed 80vh in height */
+  .pinImage {
+    flex-shrink: 0;
+    width: 50vw;
+    max-height: 80vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: var(--ifm-background-color);
+    padding: 8rem 0 8rem;
+  }
+  

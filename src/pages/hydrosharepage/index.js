@@ -3,12 +3,15 @@ import HydroShareResourcesSelector from "@site/src/components/HydroShareResource
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import PoweredBy from '@site/src/components/PoweredBy';
-import { poweredByItems,contributeAppCards } from "./constants";
+import { poweredByItems } from "./constants";
 import Contribute from "@site/src/components/Contribute";
+import SectionPin from "@site/src/components/SectionPin";
+import styles from './styles.module.css';
 
 export default function HydroSharePage() {
   return (
     <Layout title="Applications" description="CIROH Applications">
+    
       <div className="margin-top--lg">
         <Header 
             title="Web Applications" 
@@ -28,8 +31,9 @@ export default function HydroSharePage() {
             </div>
           }
         />
-
+        <SectionPin />
       </main>
+    
     </Layout>
   );
 }

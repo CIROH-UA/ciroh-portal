@@ -3,10 +3,14 @@
     display: flex;
     justify-content: center;
     background: var(--ifm-background-color);
-    padding: 8rem 0 8rem; 
+    padding: 8rem 0 0rem; 
   }
 
-  
+  .appExampleWrapper{
+    display: flex;
+    height: 50%;
+    width: 50%;
+  }
   .container {
     max-width: 1000px;
     width: 100%;
