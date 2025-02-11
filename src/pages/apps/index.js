@@ -1,57 +1,49 @@
-import React from 'react';
+import React from "react";
+import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
+import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
-import HydroShareResources from '@site/src/components/HydroShareResources';
-import Header from '@site/src/components/Header';
-import useGlobalData from '@docusaurus/useGlobalData';
 import PoweredBy from '@site/src/components/PoweredBy';
-import TethysLogoDark from '@site/static/img/tethys_logo2_black.png';
-import TethysLogWhite from '@site/static/img/tethys_white_final.png';
-import HydroShareLogo from '@site/static/img/hydroshare_white.png';
-
-
-
-const poweredByItems = [
-  {
-    lightIcon: TethysLogoDark,
-    darkIcon: TethysLogWhite,
-    title: "Tethys Platform",
-    description:
-      "Tethys Platform has been designed to lower the barrier to geospatial web app development. Convey your models and data as interactive web apps.",
-    link: "https://www.tethysplatform.org/",
-  },
-  {
-    lightIcon: HydroShareLogo,
-    darkIcon: HydroShareLogo,
-    title: "HydroShare",
-    description:
-      "HydroShare is CUAHSI's online collaboration environment for sharing data, models, and code.",
-    link: "https://hydroshare.org/",
-  },
-];
-
-
-
+import { poweredByItems } from "./constants";
+import Contribute from "@site/src/components/Contribute";
+import SectionPin from "@site/src/components/SectionPin";
+import TethysSection from "@site/src/components/TethysSection";
 
 export default function AppsPage() {
-
-    const globalData = useGlobalData();
-    const pluginData = globalData['docusaurus-plugin-hydroshare']['default']['hydroShareAppsData'];
+  return (
+    <Layout title="Applications" description="CIROH Applications">
     
-    const { resources = [] } = pluginData;
-    return (
-        <Layout title="Applications" description="CIROH Applications">
-            <Header 
-                title="Web Applications" 
-                tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives." 
-            />
-            <main>
-              <PoweredBy poweredByItems={poweredByItems} />
-              <HydroShareResources resources={resources} />
-            </main>
+      <div className="margin-top--lg">
+        <Header 
+            title="Web Applications" 
+            tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives." 
+        />
+      </div>
 
-
-        </Layout>
-
-    );
-
+      <main>
+        <HydroShareResourcesSelector keyword="nwm_portal_app" />
+        <PoweredBy poweredByItems={poweredByItems} />
+        <Contribute 
+          title="Add your application to the CIROH App Suite"
+          description={
+            <div>
+              Powered by <a href="https://www.hydroshare.org/">HydroShare</a> create a new App Conector Resource, Add the required metadata, while
+              adding the <code>nwm_portal_app</code> keyword to make it discoverable
+            </div>
+          }
+        />
+        
+       <TethysSection 
+          title="Convey your CIROH Models and Data as Interactive Web Applications."
+          description={
+            <div>
+              Tethys is an open-source Python-based framework designed specifically for developing geospatial web applications. 
+              It simplifies the creation of apps that process, visualize, and analyze spatial data.
+            </div>
+          }
+       />
+      </main>
+    
+    </Layout>
+  );
 }
+

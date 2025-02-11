@@ -96,9 +96,9 @@ const config = {
             position: 'left',
             label: 'Tutorial',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          
           {to: '/apps', label: 'Applications', position: 'left'},
-          {to: '/hydrosharepage', label: 'hs', position: 'left'},
+          {to: '/tethys', label: 'Tethys', position: 'left'},
           {
             href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
             position: 'right',
