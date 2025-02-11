@@ -27,9 +27,9 @@ export default function TethysSection({ title, description }) {
           <h3 className={styles.description}>{description}</h3>
         </div>
         <div>
-          <Step number="1" title="Install Tethys">
+          <Step number="1" title="Create an Environment">
             <CodeBlock language="language-bash" >
-                {"$ conda create -n tethys -c conda-forge tethys-platform django=4.2"}
+                {"$ conda create -n tethys -c conda-forge tethys-platform"}
             </CodeBlock>
             
           </Step>
@@ -44,51 +44,15 @@ export default function TethysSection({ title, description }) {
 
           <div className={`${styles.spacer} ${styles.spacer30}`} />
 
-          <Step number="3" title="Create Configuration File">
-            
+          <Step number="3" title="Start Developing">
             <CodeBlock language="language-bash" >
-                {"$ tethys gen portal_config"}
+                {"$ tethys quickstart"}
             </CodeBlock>
           </Step>
 
           <div className={`${styles.spacer} ${styles.spacer30}`} />
 
-          <Step number="4" title="Configure Database">
-            
-            <CodeBlock language="language-bash" >
-                {"$ tethys db configure"}
-            </CodeBlock>
-          </Step>
-
-          <div className={`${styles.spacer} ${styles.spacer30}`} />
-
-          <Step number="5" title="Scaffold an Application">
-            
-            <CodeBlock language="language-bash" >
-                {"$ tethys  scaffold myApp"}
-            </CodeBlock>
-          </Step>
-
-          <div className={`${styles.spacer} ${styles.spacer30}`} />
-
-          <Step number="6" title="Install Application">
-            <CodeBlock language="language-bash" >
-                {"$ tethys install -d"}
-            </CodeBlock>
-          </Step>
-
-          <div className={`${styles.spacer} ${styles.spacer30}`} />
-
-          <Step number="7" title="Start the Application">
-            
-            <CodeBlock language="language-bash" >
-                {"$ tethys manage start"}
-            </CodeBlock>
-          </Step>
-
-          <div className={`${styles.spacer} ${styles.spacer30}`} />
-
-          <Step number="8" title="Write your code">
+          <Step number="4" title="Write your code">
           <CodeBlock language="python" showLineNumbers>
                 {`from tethys_sdk.layouts import MapLayout
 from tethys_sdk.routing import controller
