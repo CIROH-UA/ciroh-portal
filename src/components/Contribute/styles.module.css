@@ -6,11 +6,6 @@
     padding: 8rem 0 0rem; 
   }
 
-  .appExampleWrapper{
-    display: flex;
-    height: 50%;
-    width: 50%;
-  }
   .container {
     max-width: 1000px;
     width: 100%;
@@ -19,15 +14,10 @@
     flex-direction: column;
     align-items: center;
   }
-  
-  .headerContainer {
-    text-align: center;
-    margin-bottom: 4rem;
-  }
-  
   .title {
     font-size: 48px;
     margin-bottom: 4rem;
+    color: var(--ifm-font-color-secondary);
   }
   
   .description {
@@ -36,6 +26,20 @@
     color: var(--ifm-color-primary);
   }
   
+
+  .appExampleWrapper{
+    display: flex;
+    height: 50%;
+    width: 50%;
+  }
+
+  
+  .headerContainer {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  
+
   .cardContainer {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

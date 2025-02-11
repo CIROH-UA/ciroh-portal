@@ -6,7 +6,7 @@ import PoweredBy from '@site/src/components/PoweredBy';
 import { poweredByItems } from "./constants";
 import Contribute from "@site/src/components/Contribute";
 import SectionPin from "@site/src/components/SectionPin";
-import styles from './styles.module.css';
+import TethysSection from "@site/src/components/TethysSection";
 
 export default function HydroSharePage() {
   return (
@@ -31,7 +31,16 @@ export default function HydroSharePage() {
             </div>
           }
         />
-        <SectionPin />
+        
+       <TethysSection 
+          title="Convey your CIROH Models and Data as Interactive Web Applications."
+          description={
+            <div>
+              Tethys is an open-source Python-based framework designed specifically for developing geospatial web applications. 
+              It simplifies the creation of apps that process, visualize, and analyze spatial data.
+            </div>
+          }
+       />
       </main>
     
     </Layout>
