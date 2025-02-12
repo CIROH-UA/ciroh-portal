@@ -48,14 +48,13 @@ export default function Header({ title, tagline }) {
         <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>    
         <div className={styles.buttons}>
           <a
-            href="/link1"
+            href="/contribute"
             className={clsx('button', styles.button, styles.buttonPrimary)}
           >
-
              Add App
           </a>
           <a
-            href="/link2"
+            href="/tethys"
             className={clsx('button', styles.button, styles.buttonSecondary)}
           >
             Create App
