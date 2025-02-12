@@ -27,11 +27,33 @@ export default function TethysSection({ title, description }) {
           <h3 className={styles.description}>{description}</h3>
         </div>
         <div>
+
+          <Step number="0" title="Install Miniconda">
+            <CodeBlock language="language-bash" >
+                {`$ mkdir -p ~/miniconda3
+$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+$ bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+$ rm ~/miniconda3/miniconda.sh`}
+            </CodeBlock>
+          </Step>
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
+          <Step number=".5" title="Refresh and Init your Terminal">
+            <CodeBlock language="language-bash" >
+                {`$ source ~/miniconda3/bin/activate
+$ conda init --all`}
+            </CodeBlock>
+          </Step>
+
+          
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
           <Step number="1" title="Create an Environment">
             <CodeBlock language="language-bash" >
                 {"$ conda create -n tethys -c conda-forge tethys-platform"}
             </CodeBlock>
-            
           </Step>
 
           <div className={`${styles.spacer} ${styles.spacer30}`} />
