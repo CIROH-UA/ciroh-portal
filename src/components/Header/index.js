@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
+// import boat from '@site/static/img/boat.svg';
 
 export default function Header({ title, tagline, buttons }) {
   const { colorMode } = useColorMode();
@@ -27,17 +28,38 @@ export default function Header({ title, tagline, buttons }) {
               <stop offset="5%" stopColor="#255f9c" />
               <stop offset="35%" stopColor="#255f9c" />
             </linearGradient>
+
+            {/* The path definition for waves */}
             <path
               id="wavePath"
               d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
             />
           </defs>
+
+          {/* Wave shapes */}
           <g className={clsx(styles.wavePaths)}>
             <use xlinkHref="#wavePath" x="0" />
             <use xlinkHref="#wavePath" x="50" y="3" />
             <use xlinkHref="#wavePath" x="100" y="5" />
-            <use xlinkHref="#wavePath" x="150" y="7" />
+            {/* <use xlinkHref="#wavePath" x="150" y="7" /> */}
           </g>
+
+          
+          {/* <g className={styles.boat}>
+            
+            <image
+              xlinkHref={boat}
+              width="32"
+              height="32"
+            >
+              <animateMotion
+                dur="10s"         
+                repeatCount="indefinite"
+                rotate="auto"     
+                path="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18"
+              />
+            </image>
+          </g> */}
         </svg>
       </div>
 

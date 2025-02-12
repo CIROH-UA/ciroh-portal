@@ -7,6 +7,9 @@
   color: var(--ifm-color-primary);
   padding: 8rem 0 8rem;
 }
+.boat {
+  /* No special positioning needed if it's already after wavePaths in the SVG */
+}
 
 .heroContainer {
   position: relative;
