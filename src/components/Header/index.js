@@ -3,7 +3,7 @@ import Heading from '@theme/Heading';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 
-export default function Header({ title, tagline }) {
+export default function Header({ title, tagline, buttons }) {
   const { colorMode } = useColorMode();
 
   return (
@@ -45,21 +45,24 @@ export default function Header({ title, tagline }) {
         <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
           {title}
         </Heading>
-        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>    
-        <div className={styles.buttons}>
-          <a
-            href="/contribute"
-            className={clsx('button', styles.button, styles.buttonPrimary)}
-          >
-             Add App
-          </a>
-          <a
-            href="/tethys"
-            className={clsx('button', styles.button, styles.buttonSecondary)}
-          >
-            Create App
-          </a>
-        </div>
+        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>
+        {buttons && buttons.length > 0 && (
+          <div className={styles.buttons}>
+            {buttons.map((button, index) => (
+              <a
+                key={index}
+                href={button.href}
+                className={clsx(
+                  'button',
+                  styles.button,
+                  button.primary ? styles.buttonPrimary : styles.buttonSecondary
+                )}
+              >
+                {button.label}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </header>
   );
