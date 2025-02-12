@@ -90,7 +90,8 @@ const config = {
           src: 'img/CIROHLogo_200x200.png',
         },
         items: [          
-          {to: '/apps', label: 'Applications', position: 'left'},
+          {to: '/apps', label: 'Apps', position: 'left'},
+          {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/contribute', label: 'Contribute', position: 'right'},
           {to: '/develop', label: 'Develop', position: 'right'},
           {

@@ -26,6 +26,19 @@
   transform: translateY(-3px);
 }
 
+.iconPlaceholder{
+  display: flex;
+  color: var(--ifm-color-primary);
+
+}
+
+
+.iconPlaceholder svg{
+  width: 250px;
+  height: 250px;
+  padding: 30px;
+}
+
 /* --------------------------------------
  * LEFT SECTION: IMAGE WRAPPER
  * --------------------------------------

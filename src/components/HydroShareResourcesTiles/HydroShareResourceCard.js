@@ -2,6 +2,8 @@ import React from "react";
 import { FaGithub } from "react-icons/fa";
 import { MdInfo, MdDriveFileMove } from "react-icons/md";
 import { LiaExternalLinkSquareAltSolid } from "react-icons/lia";
+import { LuLayers3 } from "react-icons/lu";
+
 import styles from "./styles.module.css";
 import clsx from 'clsx';
 
@@ -22,7 +24,12 @@ export default function HydroShareResourceCard({ resource }) {
         {app_icon ? (
           <img src={app_icon} alt={title} className={styles.image} />
         ) : (
-          <div className={clsx(styles.imagePlaceholder, styles.placeholder)}></div>
+          <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
+            <div className={styles.iconPlaceholder}>
+              <LuLayers3 size={50}/>
+            </div>
+
+          </div>
         )}
 
         <div className={styles.hoverOverlay}>

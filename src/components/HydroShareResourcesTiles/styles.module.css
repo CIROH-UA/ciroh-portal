@@ -46,6 +46,21 @@
   overflow: hidden;
 }
 
+.iconPlaceholder{
+  display: flex;
+  color: var(--ifm-color-primary);
+
+}
+
+
+.iconPlaceholder svg{
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+}
+
+
+
 /*************************************************************
  * The image + overlay
  *************************************************************/
