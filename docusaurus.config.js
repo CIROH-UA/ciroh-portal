@@ -89,14 +89,7 @@ const config = {
           alt: 'CIROH Portal',
           src: 'img/CIROHLogo_200x200.png',
         },
-        items: [
-          {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
-            position: 'left',
-            label: 'Tutorial',
-          },
-          
+        items: [          
           {to: '/apps', label: 'Applications', position: 'left'},
           {to: '/contribute', label: 'Contribute', position: 'right'},
           {to: '/develop', label: 'Develop', position: 'right'},
