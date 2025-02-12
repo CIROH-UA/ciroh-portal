@@ -81,35 +81,35 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   }
 
   return (
-    <section className={clsx(styles.wrapper)}>
+    <div className={clsx(styles.wrapper)}>
     
     
-    <div className={clsx("container", "margin-bottom--lg")}>
-      <div className={styles.header}>
-        <div className={styles.viewToggle}>
-          <button
-            className={clsx(styles.toggleButton, { [styles.active]: view === "grid" })}
-            onClick={() => setView("grid")}
-            title="Grid View"
-          >
-            <FaThLarge size={18} />
-          </button>
-          <button
-            className={clsx(styles.toggleButton, { [styles.active]: view === "row" })}
-            onClick={() => setView("row")}
-            title="List View"
-          >
-            <FaBars size={18} />
-          </button>
+      <div className={clsx("container", "margin-bottom--lg")}>
+        <div className={styles.header}>
+          <div className={styles.viewToggle}>
+            <button
+              className={clsx(styles.toggleButton, { [styles.active]: view === "grid" })}
+              onClick={() => setView("grid")}
+              title="Grid View"
+            >
+              <FaThLarge size={18} />
+            </button>
+            <button
+              className={clsx(styles.toggleButton, { [styles.active]: view === "row" })}
+              onClick={() => setView("row")}
+              title="List View"
+            >
+              <FaBars size={18} />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {view === "grid" ? (
-        <HydroShareResourcesTiles resources={resources}/>
-      ) : (
-        <HydroShareResourcesRows resources={resources}/>
-      )}
+        {view === "grid" ? (
+          <HydroShareResourcesTiles resources={resources}/>
+        ) : (
+          <HydroShareResourcesRows resources={resources}/>
+        )}
+      </div>
     </div>
-    </section>
   );
 }
