@@ -53,11 +53,18 @@
   }
 }
 
+.codeTabs{
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 /* Updated step header: a flex container with number on the left and title to its right */
 .stepHeader {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  width: 300px;
+
 }
 
 .stepNumber {

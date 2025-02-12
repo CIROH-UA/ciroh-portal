@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './styles.module.css';
 import CodeBlock from '@theme/CodeBlock';
-
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 
 function Step({ number, title, children }) {
@@ -27,8 +28,16 @@ export default function TethysSection({ title, description }) {
           <h3 className={styles.description}>{description}</h3>
         </div>
         <div>
+        <Tabs className={styles.codeTabs}>
+          <TabItem value="win" label="Windows" default>
+          <Step number="*" title="Install WSL">
+            <CodeBlock language="powershell" >
+                {`$ wsl --install`}
+            </CodeBlock>
+          </Step>
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
 
-          <Step number="0" title="Install Miniconda">
+          <Step number="*" title="Install Miniconda">
             <CodeBlock language="language-bash" >
                 {`$ mkdir -p ~/miniconda3
 $ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
@@ -39,14 +48,12 @@ $ rm ~/miniconda3/miniconda.sh`}
 
           <div className={`${styles.spacer} ${styles.spacer30}`} />
 
-          <Step number=".5" title="Refresh and Init your Terminal">
+          <Step number="*" title="Refresh and Init your Terminal">
             <CodeBlock language="language-bash" >
                 {`$ source ~/miniconda3/bin/activate
 $ conda init --all`}
             </CodeBlock>
           </Step>
-
-          
 
           <div className={`${styles.spacer} ${styles.spacer30}`} />
 
@@ -90,6 +97,72 @@ class HomeMap(MapLayout):
     basemaps = ['OpenStreetMap', 'ESRI']`}
             </CodeBlock>
           </Step>
+
+
+          </TabItem>
+          <TabItem value="os" label="Linux/macOS">
+          <Step number="*" title="Install Miniconda">
+            <CodeBlock language="language-bash" >
+                {`$ mkdir -p ~/miniconda3
+$ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+$ bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+$ rm ~/miniconda3/miniconda.sh`}
+            </CodeBlock>
+          </Step>
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
+          <Step number="*" title="Refresh and Init your Terminal">
+            <CodeBlock language="language-bash" >
+                {`$ source ~/miniconda3/bin/activate
+$ conda init --all`}
+            </CodeBlock>
+          </Step>
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
+          <Step number="1" title="Create an Environment">
+            <CodeBlock language="language-bash" >
+                {"$ conda create -n tethys -c conda-forge tethys-platform"}
+            </CodeBlock>
+          </Step>
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
+          <Step number="2" title="Activate Environment">
+            <CodeBlock language="language-bash" >
+                {"$ conda activate tethys"}
+            </CodeBlock>
+          </Step>
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
+          <Step number="3" title="Start Developing">
+            <CodeBlock language="language-bash" >
+                {"$ tethys quickstart"}
+            </CodeBlock>
+          </Step>
+
+          <div className={`${styles.spacer} ${styles.spacer30}`} />
+
+          <Step number="4" title="Write your code">
+          <CodeBlock language="python" showLineNumbers>
+                {`from tethys_sdk.layouts import MapLayout
+from tethys_sdk.routing import controller
+from .app import App
+
+
+@controller(name="home")
+class HomeMap(MapLayout):
+    app = App
+    base_template = f'{App.package}/base.html'
+    map_title = 'Dam Inventory'
+    map_subtitle = 'Tutorial'
+    basemaps = ['OpenStreetMap', 'ESRI']`}
+            </CodeBlock>
+          </Step>
+          </TabItem>
+        </Tabs>
 
           <div className={styles.spacer30} />
           <div className={styles.actionButtons}>
