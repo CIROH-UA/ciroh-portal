@@ -2,8 +2,6 @@ import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 import { contributeAppCards } from './utils';
-import HSAppLight from '@site/static/img/hs_app_light.png';
-import HSAppDark from '@site/static/img/hs_app_dark.png';
 
 export default function Contribute({ title, description }) {
   const { colorMode } = useColorMode();
@@ -55,17 +53,6 @@ export default function Contribute({ title, description }) {
         </div>
 
       </div>
-      {/* <div className={styles.wrapper}>
-        <div className={styles.appExampleWrapper}>
-           <img
-              src={colorMode === 'dark' ? HSAppDark : HSAppLight }
-              alt={card1.imgAlt}
-              className={styles.appExample}
-            />
-        </div>
-
-      </div> */}
-
     </div>
 
   );

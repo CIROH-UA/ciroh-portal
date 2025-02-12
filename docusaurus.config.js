@@ -98,7 +98,8 @@ const config = {
           },
           
           {to: '/apps', label: 'Applications', position: 'left'},
-          {to: '/tethys', label: 'Tethys', position: 'left'},
+          {to: '/contribute', label: 'Contribute', position: 'right'},
+          {to: '/tethys', label: 'Develop', position: 'right'},
           {
             href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
             position: 'right',
