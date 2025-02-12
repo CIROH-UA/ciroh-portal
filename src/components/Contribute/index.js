@@ -5,7 +5,7 @@ import { contributeAppCards } from './utils';
 
 export default function Contribute({ title, description }) {
   const { colorMode } = useColorMode();
-  const [card1, card2, card3] = contributeAppCards;
+  const [card1, card2, card3, card4,card5] = contributeAppCards;
 
   return (
     <div>
@@ -47,6 +47,28 @@ export default function Contribute({ title, description }) {
               <div className={styles.cardContent}>
                 <h4 className={styles.cardTitle}>{card3.cardTitle}</h4>
                 <p className={styles.cardDescription}>{card3.cardDescription}</p>
+              </div>
+            </div>
+            <div className={styles.card}>
+              <img
+                src={colorMode === 'dark' ? card4.imgSrcDark : card4.imgSrcLight}
+                alt={card4.imgAlt}
+                className={styles.cardImage}
+              />
+              <div className={styles.cardContent}>
+                <h4 className={styles.cardTitle}>{card4.cardTitle}</h4>
+                <p className={styles.cardDescription}>Add <code>nwm_portal_app</code> keyword to your App Connector Resource to make it discoverable.</p>
+              </div>
+            </div>
+            <div className={styles.card}>
+              <img
+                src={colorMode === 'dark' ? card5.imgSrcDark : card5.imgSrcLight}
+                alt={card5.imgAlt}
+                className={styles.cardImage}
+              />
+              <div className={styles.cardContent}>
+                <h4 className={styles.cardTitle}>{card5.cardTitle}</h4>
+                <p className={styles.cardDescription}>Add <code>nwm_portal_app</code> keyword to your App Connector Resource to make it discoverable.</p>
               </div>
             </div>
           </div>

@@ -21,10 +21,24 @@ export const contributeAppCards = [
     cardDescription: 'Add nwm_portal_app keyword to your App Connector Resource to make it discoverable.',
   },
   {
+    imgSrcLight: "https://placehold.co/200/transparent/255f9c",
+    imgSrcDark: "https://placehold.co/200/transparent/4bc1d3",
+    imgAlt: 'Add an App Icon to your Resource',
+    cardTitle: '3. Add an App Icon',
+    cardDescription: 'Provide a png icon with transparent background with dimentsions 200x200.',
+  },
+  {
+    imgSrcLight: KeywordsAppImageLight,
+    imgSrcDark: KeywordsAppImageDark,
+    imgAlt: 'Add Source Code to your Resource',
+    cardTitle: '4. Link Source Code',
+    cardDescription: 'Provide a link to the source code repository for your app.',
+  },
+  {
     imgSrcLight: AppListImageLight,
     imgSrcDark: AppListImageDark,
     imgAlt: 'View your App in the App List',
-    cardTitle: '3. Make your App Public',
+    cardTitle: '5. Make your App Public',
     cardDescription: 'Make your App Connector Resource public to share it with the CIROH community.',
-  }
+  },
 ];
