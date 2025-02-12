@@ -1,8 +1,11 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
+import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 
 export default function Header({ title, tagline }) {
+  const { colorMode } = useColorMode();
+
   return (
     <header className={clsx(styles.heroBanner)}>
       <div className={styles.waveBackground}>
@@ -24,13 +27,11 @@ export default function Header({ title, tagline }) {
               <stop offset="5%" stopColor="#255f9c" />
               <stop offset="35%" stopColor="#255f9c" />
             </linearGradient>
-
             <path
               id="wavePath"
               d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
             />
           </defs>
-
           <g className={clsx(styles.wavePaths)}>
             <use xlinkHref="#wavePath" x="0" />
             <use xlinkHref="#wavePath" x="50" y="3" />
@@ -44,7 +45,22 @@ export default function Header({ title, tagline }) {
         <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
           {title}
         </Heading>
-        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>
+        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>    
+        <div className={styles.buttons}>
+          <a
+            href="/link1"
+            className={clsx('button', styles.button, styles.buttonPrimary)}
+          >
+
+             Add App
+          </a>
+          <a
+            href="/link2"
+            className={clsx('button', styles.button, styles.buttonSecondary)}
+          >
+            Create App
+          </a>
+        </div>
       </div>
     </header>
   );

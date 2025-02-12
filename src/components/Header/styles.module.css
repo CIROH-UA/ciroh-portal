@@ -1,43 +1,40 @@
+/* Existing hero banner styles */
 .heroBanner {
   position: relative;
   z-index: 2;
-  text-align: start;
+  text-align: center;
   overflow: hidden;
-  color: #255f9c;
+  color: var(--ifm-color-primary);
   padding: 8rem 0 8rem;
-  /* Let wave show beneath, or define a background for your banner if you want */
-}
-html[data-theme='dark'] .heroBanner {
-  color: #4bc1d3;
 }
 
-.heroContainer{
+.heroContainer {
   position: relative;
   z-index: 10;
 }
 .heroTitle {
-  /* font-size: 4rem; */
   font-weight: 700;
   margin-bottom: 2rem;
   z-index: 10;
+  color: var(--ifm-color-primary-dark);
 }
 .heroSubtitle {
   font-weight: 700;
   margin-bottom: 5rem;
+  color: var(--ifm-color-primary);
 }
 
-/* Wave container at bottom of heroBanner */
+/* Wave background and SVG styling */
 .waveBackground {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 30vh;    /* Increased height for the bigger wave shape */
-  z-index: 1;      /* Under text, above any deeper background */
+  height: 30vh;
+  z-index: 1;
   overflow: hidden;
 }
 
-/* The SVG itself */
 .waves {
   position: absolute;
   bottom: 0;
@@ -45,19 +42,13 @@ html[data-theme='dark'] .heroBanner {
   width: 100%;
   height: 70%;
 }
-
-/* By default, use the light wave gradient */
 .wavePaths use {
   fill: url(#wave-gradient-light);
   animation: move-waves 10s ease-in-out infinite;
 }
-
-/* If the user toggles dark mode, switch gradient to wave-gradient-dark */
 :root[data-theme='dark'] .wavePaths use {
   fill: url(#wave-gradient-dark);
 }
-
-/* Animate each wave path with slight offsets */
 .wavePaths use:nth-child(odd) {
   animation-direction: reverse;
   animation-duration: 13s;
@@ -77,8 +68,6 @@ html[data-theme='dark'] .heroBanner {
 .wavePaths use:nth-child(4) {
   animation-delay: -5s;
 }
-
-/* The keyframes for left-right wave animation */
 @keyframes move-waves {
   0% {
     transform: translate3d(-30px, 0, 0);
@@ -91,16 +80,57 @@ html[data-theme='dark'] .heroBanner {
   }
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for heroBanner */
 @media screen and (max-width: 996px) {
   .heroBanner {
     padding: 2rem;
   }
 }
 
+/* --- New Button Styles --- */
 .buttons {
-  gap: 1rem;
   display: flex;
+  gap: 1rem;
   align-items: center;
   justify-content: center;
+  margin-top: 2rem;
+}
+
+.button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.buttonPrimary {
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+}
+
+:root[data-theme='dark'] .buttonPrimary {
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+}
+
+.buttonSecondary {
+  background-color: var(--ifm-color-primary-light);
+  color: #fff;
+  border: 2px solid var(--ifm-color-primary-light);
+}
+
+:root[data-theme='dark'] .buttonSecondary {
+  background-color: var(--ifm-color-primary-light);
+  color: #fff;
+  border: 2px solid var(--ifm-color-primary-light);
 }

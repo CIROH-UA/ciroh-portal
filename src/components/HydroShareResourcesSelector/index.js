@@ -82,8 +82,6 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
 
   return (
     <div className={clsx(styles.wrapper)}>
-    
-    
       <div className={clsx("container", "margin-bottom--lg")}>
         <div className={styles.header}>
           <div className={styles.viewToggle}>
