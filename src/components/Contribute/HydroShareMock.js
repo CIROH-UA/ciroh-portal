@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import {
   FaUserPlus,
@@ -9,17 +9,54 @@ import {
   FaPencilAlt,
   FaTrashAlt,
 } from 'react-icons/fa';
-
+import { useColorMode } from '@docusaurus/theme-common';
 import styles from './HydroShareMock.module.css';
 
+/**
+ * Custom hook: observes all elements matching the given selector (".highlightable")
+ * and toggles the highlight class when they are at least 50% visible.
+ */
+function useScrollHighlight(selector, options = { threshold: 0.5 }) {
+  useEffect(() => {
+    const elements = document.querySelectorAll(selector);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add(styles.highlight);
+        } else {
+          entry.target.classList.remove(styles.highlight);
+        }
+      });
+    }, options);
+    elements.forEach((el) => observer.observe(el));
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, [selector, options]);
+}
 
-export default function HydroShareAppMock({home_url, keywords,iconUrl}) {
+export default function HydroShareAppMock({ home_url, keywords, iconUrl }) {
+  const { colorMode } = useColorMode();
+  // Apply scroll highlighting to elements with the class "highlightable"
+  useScrollHighlight('.highlightable');
+
   return (
     <div className={clsx(styles.resourceCard, 'padding--md', 'margin-bottom--lg')}>
-      {/* Top row: Title + Open Web App button */}
+      {/* Top row: Title and Open Web App button */}
       <div className={styles.topRow}>
-        <h2 className={styles.resourceTitle}>TethysDash</h2>
-        <button className={clsx('button', 'button--primary', styles.webAppButton)}>
+        <h2 className={clsx(styles.resourceTitle)}>
+          TethysDash
+        </h2>
+        <button
+          className={clsx(
+            'button',
+            'button--primary',
+            styles.webAppButton,
+            styles.highlightContent,
+            'highlightable'
+          )}
+        >
+          <span className={styles.stepLabel}>Create an App Connector</span>
           Open Web App
         </button>
       </div>
@@ -27,7 +64,10 @@ export default function HydroShareAppMock({home_url, keywords,iconUrl}) {
 
       {/* Row of 7 icons */}
       <div className={styles.iconRow}>
-        <FaUserPlus className={clsx(styles.iconRed, styles.icon)} title="Add user" />
+        <span className={clsx(styles.highlightContent, 'highlightable')}>
+          <span className={styles.stepLabel}>Add Keyword</span>
+          <FaUserPlus className={clsx(styles.iconRed, styles.icon)} title="Add user" />
+        </span>
         <FaInbox className={clsx(styles.iconRed, styles.icon)} title="Box" />
         <FaTh className={clsx(styles.iconRed, styles.icon)} title="Grid" />
         <FaRegCopy className={clsx(styles.iconBlue, styles.icon)} title="File" />
@@ -52,9 +92,7 @@ export default function HydroShareAppMock({home_url, keywords,iconUrl}) {
         </div>
         <div className={styles.resourceRow}>
           <div className={styles.resourceLabel}>Storage:</div>
-          <div className={styles.resourceValue}>
-            The size of this app connector is 0 bytes
-          </div>
+          <div className={styles.resourceValue}>The size of this app connector is 0 bytes</div>
         </div>
         <div className={styles.resourceRow}>
           <div className={styles.resourceLabel}>Created:</div>
@@ -97,44 +135,40 @@ export default function HydroShareAppMock({home_url, keywords,iconUrl}) {
         </div>
       </div>
 
-      {/* Additional sections: Abstract, Subject Keywords, Configuration, Credits, etc. */}
       <hr className={styles.sectionDivider} />
 
-      {/* Abstract */}
-      <div className={styles.abstractSection}>
-        <h3 className={styles.sectionHeading}>Abstract</h3>
-        <p className={styles.abstractText}>
-          A powerful dashboard designed to visualize and analyze hydrologic data using the National
-          Water Model (NWM) services. It can integrate interactive maps, time series plots, and
-          statistical summaries of predictive watershed models for real-time or archived data.
-        </p>
-      </div>
-
+      {/* Additional sections */}
       {/* Subject Keywords */}
       <div className={styles.resourceRow}>
         <div className={styles.resourceLabel}>Subject Keywords:</div>
         <div className={styles.resourceValue}>
-          <code>{keywords}</code>
+          <span className={clsx(styles.highlightContent, 'highlightable')}>
+            <span className={styles.stepLabel}>Add Keyword</span>
+            <code>{keywords}</code>
+          </span>
         </div>
       </div>
 
       {/* Configuration */}
       <div className={styles.configSection}>
         <h3 className={styles.sectionHeading}>Configuration</h3>
-        <div className={styles.resourceRow}>
+        <div className={clsx(styles.resourceRow)}>
           <div className={styles.resourceLabel}>Home Page URL:</div>
           <div className={styles.resourceValue}>
-            <a href="https://example.com/TethysDash" target="_blank" rel="noreferrer">
-              {home_url}
-            </a>
+            <span className={clsx(styles.highlightContent, 'highlightable')}>
+              <span className={styles.stepLabel}>Set Home Page URL</span>
+              <a href={home_url} target="_blank" rel="noreferrer">
+                {home_url}
+              </a>
+            </span>
           </div>
         </div>
-        {
-          iconUrl && (
-            <div className={styles.resourceRow}>
-              <div className={styles.resourceLabel}>App Icon URL:</div>
-              <div className={styles.resourceValue}>
-                
+        {iconUrl && (
+          <div className={styles.resourceRow}>
+            <div className={styles.resourceLabel}>App Icon URL:</div>
+            <div className={styles.resourceValue}>
+              <span className={clsx(styles.highlightContent, 'highlightable')}>
+                <span className={styles.stepLabel}>Add Your Icon</span>
                 <div className={styles.iconPreview}>
                   <img
                     src={iconUrl}
@@ -144,20 +178,19 @@ export default function HydroShareAppMock({home_url, keywords,iconUrl}) {
                     className={styles.smallIcon}
                   />
                 </div>
-              </div>
+              </span>
+            </div>
           </div>
-          )
-
-        }
-
+        )}
         <div className={styles.resourceRow}>
           <div className={styles.resourceLabel}>Sharing Status:</div>
           <div className={styles.resourceValue}>Published, PeerReview, Private</div>
         </div>
       </div>
 
-      {/* Credits */}
       <hr className={styles.sectionDivider} />
+
+      {/* Credits */}
       <div className={styles.creditsSection}>
         <h3 className={styles.sectionHeading}>Credits</h3>
         <p>Funding Agencies:</p>

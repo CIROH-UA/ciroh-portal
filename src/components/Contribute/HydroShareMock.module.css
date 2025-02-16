@@ -1,111 +1,102 @@
 .resourceCard {
-    border-radius: 6px;
-    background-color: var(--ifm-background-color);
-  }
-  
-  /* Top row with Title and button on the same line */
-  .topRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-bottom: 3rem;
-  }
-  
-  /* The divider lines */
-  .divider {
-    margin: 0.5rem 0 1rem 0;
-    border: none;
-    border-top: 1px solid var(--ifm-color-emphasis-200);
-  }
-  
-  /* Title text styling */
-  .resourceTitle {
-    margin: 0;
-    font-size: 1.75rem;
-    font-weight: bold;
-    color: var(--ifm-color-primary);
-  }
-  
-  /* The "Open Web App" button (uses Infima button--primary) */
-  .webAppButton {
-    white-space: nowrap;
-    padding: 6px 12px;
-  }
-  
-  /* Row of icons below the top row */
-  .iconRow {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    justify-content: end;
-  }
-  
-  /* A base icon style, then color classes */
-  .icon {
-    font-size: 1.4rem;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .icon:hover {
-    transform: scale(1.1);
-  }
-  
-  .iconRed {
-    color: #d9534f;
-  }
-  
-  .iconBlue {
-    color: #0275d8;
-  }
-  
-  /* Resource metadata table-like layout */
-  .resourceBody {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .resourceRow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 1.5rem;
-    margin-bottom: 0.3rem;
-  }
-  
-  .resourceLabel {
-    font-weight: bolder;
-    margin-right: 0.5rem;
-    color: var(--ifm-heading-color);
-    min-width: 120px; /* Adjust if needed */
-  }
-  
-  .resourceValue {
-    color: var(--ifm-font-color-base);
-  }
-  
-  /* The withdraw +1 button */
-  .withdrawButton {
-    margin-left: 0.5rem;
-    border: 1px solid var(--ifm-color-emphasis-200);
-    background-color: var(--ifm-background-color);
-    color: var(--ifm-font-color-base);
-    font-size: 0.85rem;
-    border-radius: 4px;
-  }
-  .withdrawButton:hover {
-    background-color: var(--ifm-color-emphasis-100);
-  }
+  border-radius: 6px;
+  background-color: var(--ifm-background-color);
+}
 
-  /* Divider line between major sections */
+/* Top row */
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.divider {
+  margin: 0.5rem 0 1rem 0;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Title styling */
+.resourceTitle {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--ifm-color-primary);
+}
+
+/* Button styling */
+.webAppButton {
+  white-space: nowrap;
+  padding: 6px 12px;
+}
+
+/* Icon row */
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.icon {
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.icon:hover {
+  transform: scale(1.1);
+}
+.iconRed {
+  color: #d9534f;
+}
+.iconBlue {
+  color: #0275d8;
+}
+
+/* Metadata layout */
+.resourceBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.resourceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+.resourceLabel {
+  font-weight: bolder;
+  margin-right: 0.5rem;
+  color: var(--ifm-heading-color);
+  min-width: 120px;
+}
+.resourceValue {
+  color: var(--ifm-font-color-base);
+}
+.withdrawButton {
+  margin-left: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+.withdrawButton:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+/* Section divider */
 .sectionDivider {
   margin: 2rem 0;
   border: none;
   border-top: 1px solid var(--ifm-color-emphasis-200);
 }
-/* Subsection headings (Abstract, Configuration, Credits, etc.) */
+
+/* Section headings */
 .sectionHeading {
   font-size: 1.25rem;
   margin-bottom: 1rem;
@@ -113,7 +104,7 @@
   color: var(--ifm-color-primary);
 }
 
-/* Abstract section styling */
+/* Abstract & other text */
 .abstractSection {
   margin-bottom: 1rem;
 }
@@ -122,27 +113,25 @@
   color: var(--ifm-font-color-base);
 }
 
-/* Additional sections for configuration, credits, citation, etc. */
+/* Config & citation sections */
 .configSection {
   margin-top: 1.5rem;
 }
-
 .citationSection {
   margin-top: 1.5rem;
 }
 
+/* Credits section */
 .creditsSection {
-  width: 100%; /* Ensure the credits section uses full available width */
+  width: 100%;
   margin-top: 1.5rem;
 }
-
 .fundingTable {
-  width: 100%;           /* Occupy the whole width of its container */
+  width: 100%;
   border-collapse: collapse;
   margin-top: 0.5rem;
   border: 1px solid var(--ifm-color-emphasis-200);
 }
-
 .fundingTable th,
 .fundingTable td {
   border: 1px solid var(--ifm-color-emphasis-200);
@@ -150,6 +139,45 @@
   text-align: left;
 }
 
+/* App Icon URL preview */
 .iconPreview img {
   display: block;
+}
+.highlightContent {
+  display: inline-block;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Scroll highlight effect */
+.highlightable {
+  position: relative;
+}
+.highlight {
+  animation: pulseHighlight 1.5s ease-out infinite alternate;
+}
+@keyframes pulseHighlight {
+  from {
+    box-shadow: 0 0 0 0 var(--ifm-color-primary);
+  }
+  to {
+    box-shadow: 0 0 10px 5px var(--ifm-color-secondary);
+  }
+}
+
+/* Step label overlay */
+.stepLabel {
+  position: absolute;
+  top: -1.5rem;
+  left: 0;
+  background-color: var(--ifm-color-primary);
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.highlightable .highlightContent .stepLabel {
+  opacity: 1;
 }
