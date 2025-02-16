@@ -3,6 +3,7 @@ import styles from './styles.module.css';
 import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import { FaWindows,FaLinux } from "react-icons/fa";
 
 
 function Step({ number, title, children }) {
@@ -29,7 +30,16 @@ export default function TethysSection({ title, description }) {
         </div>
         <div>
         <Tabs className={styles.codeTabs}>
-          <TabItem value="win" label="Windows" default>
+          <TabItem 
+            value="win" 
+             
+            label={
+              <span className={styles.tabLabel}>
+                <FaWindows  className={styles.tabIcon} /> Windows
+              </span>
+            }
+            default
+          >
           <Step number="*" title="Install WSL">
             <CodeBlock language="powershell" >
                 {`$ wsl --install`}
@@ -100,7 +110,15 @@ class HomeMap(MapLayout):
 
 
           </TabItem>
-          <TabItem value="os" label="Linux/macOS">
+          <TabItem 
+            value="os" 
+            
+            label={
+              <span className={styles.tabLabel}>
+                <FaLinux   className={styles.tabIcon} /> Linux/macOS
+              </span>
+            }
+          >
           <Step number="*" title="Install Miniconda">
             <CodeBlock language="language-bash" >
                 {`$ mkdir -p ~/miniconda3
