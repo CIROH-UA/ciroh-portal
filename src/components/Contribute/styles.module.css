@@ -10,7 +10,17 @@
     align-items: center;
     gap: 0.5rem; /* space between icon and text */
   }
-  
+  .imageContainer {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .tabImage{
+    width: 100%;
+    height: 100%;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+  }
   .tabIcon {
     font-size: 1.5rem;
   }
@@ -34,7 +44,7 @@
   
   .description {
     font-size: 1.5rem;
-    margin-top: 1rem;
+    /* margin-top: 1rem; */
     color: var(--ifm-color-primary);
   }
   
@@ -109,4 +119,34 @@
     margin: 0;
     color: var(--ifm-font-color-secondary);
   }
-  
+  /*******************
+ * New/Updated classes
+ *******************/
+
+/* Section that holds the example (current) app */
+.currentAppSection {
+  margin-bottom: 3rem;
+}
+
+/* A heading style for the sub-sections (e.g. "Example App") */
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--ifm-heading-color);
+}
+
+/* A simple horizontal divider between sections */
+.sectionDivider {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Container for final CTA button */
+.ctaContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+}
