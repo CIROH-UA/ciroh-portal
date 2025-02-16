@@ -1,78 +1,45 @@
 import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
-import { contributeAppCards } from './utils';
+import AppsTabContributeContent from './AppsContribute';
+import DatasetsTabContributeContent from './DatasetsContribute';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-export default function Contribute({ title, description }) {
-  const { colorMode } = useColorMode();
-  const [card1, card2, card3, card4,card5] = contributeAppCards;
-
+export default function Contribute({title, description}) {
   return (
     <div>
       <div className={styles.wrapper}>
-        <div className={styles.container}>
+      <div className={styles.container}>
           <div className={styles.headerContainer}>
             <h1 className={styles.title}>{title}</h1>
             <h3 className={styles.description}>{description}</h3>
           </div>
-          <div className={styles.cardContainer}>
-            <div className={styles.card}>
-              <img
-                src={colorMode === 'dark' ? card1.imgSrcDark : card1.imgSrcLight}
-                alt={card1.imgAlt}
-                className={styles.cardImage}
-              />
-              <div className={styles.cardContent}>
-                <h4 className={styles.cardTitle}>{card1.cardTitle}</h4>
-                <p className={styles.cardDescription}>{card1.cardDescription}</p>
-              </div>
-            </div>
-            <div className={styles.card}>
-              <img
-                src={colorMode === 'dark' ? card2.imgSrcDark : card2.imgSrcLight}
-                alt={card2.imgAlt}
-                className={styles.cardImage}
-              />
-              <div className={styles.cardContent}>
-                <h4 className={styles.cardTitle}>{card2.cardTitle}</h4>
-                <p className={styles.cardDescription}>Add <code>nwm_portal_app</code> keyword to your App Connector Resource to make it discoverable.</p>
-              </div>
-            </div>
-            <div className={styles.card}>
-              <img
-                src={colorMode === 'dark' ? card3.imgSrcDark : card3.imgSrcLight}
-                alt={card3.imgAlt}
-                className={styles.cardImage}
-              />
-              <div className={styles.cardContent}>
-                <h4 className={styles.cardTitle}>{card3.cardTitle}</h4>
-                <p className={styles.cardDescription}>{card3.cardDescription}</p>
-              </div>
-            </div>
-            <div className={styles.card}>
-              <img
-                src={colorMode === 'dark' ? card4.imgSrcDark : card4.imgSrcLight}
-                alt={card4.imgAlt}
-                className={styles.cardImage}
-              />
-              <div className={styles.cardContent}>
-                <h4 className={styles.cardTitle}>{card4.cardTitle}</h4>
-                <p className={styles.cardDescription}>Add <code>nwm_portal_app</code> keyword to your App Connector Resource to make it discoverable.</p>
-              </div>
-            </div>
-            <div className={styles.card}>
-              <img
-                src={colorMode === 'dark' ? card5.imgSrcDark : card5.imgSrcLight}
-                alt={card5.imgAlt}
-                className={styles.cardImage}
-              />
-              <div className={styles.cardContent}>
-                <h4 className={styles.cardTitle}>{card5.cardTitle}</h4>
-                <p className={styles.cardDescription}>Add <code>nwm_portal_app</code> keyword to your App Connector Resource to make it discoverable.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <Tabs className={styles.contributeTabs}>
+        <TabItem value="apps" label="Applications" default>
+          <AppsTabContributeContent 
+              title="Add your Application to the CIROH App Suite"
+              description={
+                <div>
+                  Powered by <a href="https://www.hydroshare.org/">HydroShare</a> create a new App Conector Resource, Add the required metadata, while
+                  adding the <code>nwm_portal_app</code> keyword to make it discoverable
+                </div>
+              }
+          />
+        </TabItem>
+        <TabItem value="datasets" label="Datasets" default>
+          <DatasetsTabContributeContent
+              title="Add your Datasets to the CIROH App Suite"
+              description={
+                <div>
+                  Powered by <a href="https://www.hydroshare.org/">HydroShare</a> create a new App Conector Resource, Add the required metadata, while
+                  adding the <code>nwm_portal_app</code> keyword to make it discoverable
+                </div>
+              }
+          />
+        </TabItem>
+      </Tabs>
+      </div>
 
       </div>
     </div>

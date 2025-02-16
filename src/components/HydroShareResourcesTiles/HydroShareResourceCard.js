@@ -24,11 +24,11 @@ export default function HydroShareResourceCard({ resource }) {
         {app_icon ? (
           <img src={app_icon} alt={title} className={styles.image} />
         ) : (
-          <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
+          // <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
+          <div className={clsx(styles.imagePlaceholder)}>
             <div className={styles.iconPlaceholder}>
               <LuLayers3 size={50}/>
             </div>
-
           </div>
         )}
 

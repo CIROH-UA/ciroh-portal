@@ -7,21 +7,18 @@ import Contribute from "@site/src/components/Contribute";
 export default function ContributePage() {
   return (
     <Layout title="Applications" description="CIROH Applications">
-    
       <div className="margin-top--lg">
         <Header 
             title="Building the Whole Community Together" 
-            tagline="Join the community Your Applications, Datasets, Publications and make CIROH better" 
+            tagline="Join the community by sharing your work" 
         />
       </div>
-
       <main>
         <Contribute 
-          title="Add your Application to the CIROH App Suite"
+          title="Share your work with the CIROH Community"
           description={
             <div>
-              Powered by <a href="https://www.hydroshare.org/">HydroShare</a> create a new App Conector Resource, Add the required metadata, while
-              adding the <code>nwm_portal_app</code> keyword to make it discoverable
+              Your Applications, Datasets, and Publications make CIROH better
             </div>
           }
         />
