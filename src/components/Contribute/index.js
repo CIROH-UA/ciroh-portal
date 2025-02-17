@@ -17,9 +17,9 @@ export default function Contribute({ title, description }) {
             <h2 className={styles.title}>
               {title}
             </h2>
-            <h3 className={styles.description}>
+            {/* <h3 className={styles.description}>
               {description}
-            </h3>
+            </h3> */}
           </div>
           
           <Tabs className={styles.contributeTabs}>
@@ -34,10 +34,11 @@ export default function Contribute({ title, description }) {
             >
 
               <AppsTabContributeContent 
-                title="Add your Application to the CIROH App Suite"
                 description={
                   <div>
-                    Powered by <a href="https://www.hydroshare.org/">HydroShare</a>
+                    🚀 <strong>Have an existing App? </strong> Create a public <a href="https://www.hydroshare.org/" target="_blank" rel="noopener">HydroShare</a> App Resource
+                    <br />
+                    💧 <strong>Thinking about an App? </strong> Develop applications using our <a href="https://www.tethysplatform.org/" target="_blank" rel="noopener">Tethys Platform</a> toolkit
                   </div>
                 }
               />
@@ -51,11 +52,9 @@ export default function Contribute({ title, description }) {
               }
             >
               <DatasetsTabContributeContent
-                title="Add your Datasets to the CIROH App Suite"
                 description={
                   <div>
-                    Powered by <a href="https://www.hydroshare.org/">HydroShare</a> create a new App Connector Resource,
-                    add the required metadata, while adding the <code>nwm_portal_app</code> keyword to make it discoverable
+                    Create a new <a href="https://www.hydroshare.org/" target="_blank" rel="noopener">HydroShare</a> resource, add the required metadata, while adding the <code>ciroh_portal_data</code> keyword to make it discoverable
                   </div>
                 }
               />

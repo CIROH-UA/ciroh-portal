@@ -5,7 +5,7 @@ import { contributeDatasetsCards } from './utils';
 
 import HydroShareMock from './HydroShareMock';
 
-export default function DatasetsTabContributeContent() {
+export default function DatasetsTabContributeContent({ description }) {
   const { colorMode } = useColorMode();
   const [card1, card2, card3] = contributeDatasetsCards;
 
@@ -15,10 +15,16 @@ export default function DatasetsTabContributeContent() {
           <div className={styles.currentAppSection}>
             <div className={styles.headerContainer}>
                 {/* <h1 className={styles.title}>Add Your Own App in 5 Easy Steps</h1> */}
-            <h3 className={styles.description2}>
-              Create a new Resource, add the required metadata, while adding the <code>ciroh_portal_data</code> keyword to make it discoverable
-            </h3>
-              </div>
+                <h3 className={styles.description2}>
+                  {description}
+                </h3>
+            </div>
+            <div className={styles.actionButtons}>
+              <a href="https://docs.ciroh.org/docs/products/Portal/research-portal/#data">
+                <button className={styles.install}>Add your Data</button>
+              </a>
+            </div>
+
             <HydroShareMock
                 isAppResource={false}
                 title="NWM Next Generation Forecast Data"
@@ -30,7 +36,7 @@ export default function DatasetsTabContributeContent() {
 
           {/* Section: Steps to Create Your Own App */}
           <div className={styles.headerContainer}>
-            <h2 className={styles.title}>Add Your Own Dataset on 3 Easy Steps</h2>
+            <h2 className={styles.title}>Create a Resource on 3 Easy Steps</h2>
             {/* <h3 className={styles.description}>
             Create a new App Connector Resource,
             add the required metadata, while adding the <code>nwm_portal_app</code> keyword to make it discoverable
@@ -73,9 +79,6 @@ export default function DatasetsTabContributeContent() {
             </div>
           </div>
       <div className={styles.actionButtons}>
-          <a href="https://docs.ciroh.org/docs/products/Portal/research-portal/#data">
-            <button className={styles.install}>Add your Data</button>
-          </a>
           <a href="https://help.hydroshare.org/introduction-to-hydroshare/getting-started/">
                 <button className={styles.quick}>
                   Getting Started

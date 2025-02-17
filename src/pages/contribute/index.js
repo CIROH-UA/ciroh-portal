@@ -10,7 +10,10 @@ export default function ContributePage() {
       <div className="margin-top--lg">
         <Header 
             title="Building the Whole Community Together" 
-            tagline="Join the community by sharing your work" 
+            tagline="Amplify your hydrologic work through community collaboration. Whether 
+                you're sharing existing resources or building new solutions, your 
+                contribution accelerates water prediction innovation for flood 
+                resilience and drought management." 
         />
       </div>
       <main>
@@ -18,7 +21,7 @@ export default function ContributePage() {
           title="Your contributions drive the future of water science."
           description={
             <div>
-              Join the community by sharing your work
+              Amplify Your Hydrologic Impact Through Shared Innovation
             </div>
           }
         />
