@@ -21,7 +21,7 @@ export default function DatasetsPage() {
 
       <main>
         <HydroShareResourcesSelector keyword="ciroh_portal_data" />
-        <TechBox items={items}/>
+        <TechBox items={items} />
       </main>
     
     </Layout>

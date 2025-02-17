@@ -15,10 +15,10 @@ export default function ContributePage() {
       </div>
       <main>
         <Contribute 
-          title="Share your work with the CIROH Community"
+          title="Your contributions drive the future of water science."
           description={
             <div>
-              Your Applications, Datasets, and Publications make CIROH better
+              Join the community by sharing your work
             </div>
           }
         />

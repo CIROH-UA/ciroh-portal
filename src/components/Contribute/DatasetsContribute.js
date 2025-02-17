@@ -11,13 +11,12 @@ export default function DatasetsTabContributeContent() {
 
   return (
         <>
-              {/* Section: Existing Example App */}
+          
           <div className={styles.currentAppSection}>
             <div className={styles.headerContainer}>
                 {/* <h1 className={styles.title}>Add Your Own App in 5 Easy Steps</h1> */}
-                <h3 className={styles.description}>
-            Create a new App Connector Resource,
-            add the required metadata, while adding the <code>ciroh_portal_data</code> keyword to make it discoverable
+            <h3 className={styles.description2}>
+              Create a new Resource, add the required metadata, while adding the <code>ciroh_portal_data</code> keyword to make it discoverable
             </h3>
               </div>
             <HydroShareMock
@@ -74,26 +73,26 @@ export default function DatasetsTabContributeContent() {
             </div>
           </div>
       <div className={styles.actionButtons}>
-          <a href="https://docs.tethysplatform.org/en/stable/installation/production.html">
+          <a href="https://docs.ciroh.org/docs/products/Portal/research-portal/#data">
             <button className={styles.install}>Add your Data</button>
           </a>
-          <a href="https://docs.tethysplatform.org/en/stable/index.html">
-            <button className={styles.quick}>
-              Quick start
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className={styles.quickIcon}
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          </a>
+          <a href="https://help.hydroshare.org/introduction-to-hydroshare/getting-started/">
+                <button className={styles.quick}>
+                  Getting Started
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className={styles.quickIcon}
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </a>
         </div>
 
         </>

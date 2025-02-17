@@ -18,7 +18,7 @@ export default function AppsTabContributeContent({ title, description }) {
       <div className={styles.currentAppSection}>
         <div className={styles.headerContainer}>
             {/* <h1 className={styles.title}>Add Your Own App in 5 Easy Steps</h1> */}
-            <h3 className={styles.description}>
+            <h3 className={styles.description2}>
         Create a new App Connector Resource,
         add the required metadata, while adding the <code>nwm_portal_app</code> keyword to make it discoverable
         </h3>
@@ -37,10 +37,6 @@ export default function AppsTabContributeContent({ title, description }) {
       {/* Section: Steps to Create Your Own App */}
       <div className={styles.headerContainer}>
         <h2 className={styles.title}>Add Your Own App in 5 Easy Steps</h2>
-        {/* <h3 className={styles.description}>
-        Create a new App Connector Resource,
-        add the required metadata, while adding the <code>nwm_portal_app</code> keyword to make it discoverable
-        </h3> */}
       </div>
 
       <div className={styles.cardContainer}>
@@ -114,17 +110,15 @@ export default function AppsTabContributeContent({ title, description }) {
             </p>
           </div>
         </div>
+        
       </div>
-
-      {/* Optional final CTA */}
-
-    <div className={styles.actionButtons}>
-              <a href="https://docs.tethysplatform.org/en/stable/installation/production.html">
+      <div className={styles.actionButtons}>
+              <a href="https://docs.ciroh.org/docs/products/Portal/research-portal/#applications">
                 <button className={styles.install}>Add your Application</button>
               </a>
-              <a href="https://docs.tethysplatform.org/en/stable/index.html">
+              <a href="https://help.hydroshare.org/introduction-to-hydroshare/getting-started/">
                 <button className={styles.quick}>
-                  Quick start
+                  Getting Started
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -140,12 +134,6 @@ export default function AppsTabContributeContent({ title, description }) {
                 </button>
               </a>
         </div>
-
-      {/* <div className={styles.ctaContainer}>
-        <a href="/docs/create-app" className="button button--primary button--lg">
-          Add your App
-        </a>
-      </div> */}
     </>
   );
 }

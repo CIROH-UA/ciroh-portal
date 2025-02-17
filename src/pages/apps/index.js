@@ -24,7 +24,7 @@ export default function AppsPage() {
       <main>
         {/* <PoweredBy poweredByItems={poweredByItems} /> */}
         <HydroShareResourcesSelector keyword="nwm_portal_app" />
-        <TechBox items={items}/>
+        <TechBox items={items} tethys/>
       </main>
     
     </Layout>
