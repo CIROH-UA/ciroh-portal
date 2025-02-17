@@ -2,14 +2,14 @@ import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from "./styles.module.css";
 
-export default function TechBox({ items, tethys }) {
+export default function TechBox({ items,type,tethys }) {
   const { colorMode } = useColorMode();
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.devBox}>
         <h4 className={styles.heading}>
-          CIROH Applications are powered by{' '}
+          CIROH {type} are powered by{' '}
           {tethys ? (
             <>
               the&nbsp;

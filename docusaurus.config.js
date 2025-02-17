@@ -95,6 +95,11 @@ const config = {
           {to: '/contribute', label: 'Contribute', position: 'right'},
           {to: '/develop', label: 'Develop', position: 'right'},
           {
+            href: "https://docs.ciroh.org/",
+            label: "Docs",
+            position: "right",
+          },
+          {
             href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
             position: 'right',
             className: "header-github-link",

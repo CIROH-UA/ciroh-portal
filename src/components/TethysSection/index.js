@@ -4,7 +4,10 @@ import CodeBlock from '@theme/CodeBlock';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { FaWindows,FaLinux } from "react-icons/fa";
+import { useColorMode } from '@docusaurus/theme-common';
 
+import AppExampleLight from '@site/static/img/apps_light_theme.png';
+import AppExampleDark from '@site/static/img/apps_dark_theme.png';
 
 function Step({ number, title, children }) {
   return (
@@ -21,18 +24,25 @@ function Step({ number, title, children }) {
 
 /** Main Tethys installation section component */
 export default function TethysSection({ title, description }) {
+    const { colorMode } = useColorMode();
+  
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className={styles.headerContainer}>
           <h1 className={styles.title}>{title}</h1>
+          <img
+            src={colorMode === 'dark' ? AppExampleDark : AppExampleLight}
+            className={styles.appImage}
+            alt="CIROH application example interface"
+          />
           <h3 className={styles.description}>{description}</h3>
+
         </div>
         <div>
         <Tabs className={styles.codeTabs}>
           <TabItem 
-            value="win" 
-             
+            value="win"
             label={
               <span className={styles.tabLabel}>
                 <FaWindows  className={styles.tabIcon} /> Windows

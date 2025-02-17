@@ -1,7 +1,10 @@
 .resourceCard {
   border-radius: 6px;
   background-color: var(--ifm-background-color);
-
+  max-width: min(100%, 700px); /* Added width constraint */
+  margin: 1.5rem auto; /* Center the component */
+  width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(15, 15, 15, 0.1); /* Optional subtle shadow */
 }
 
 /* Top row */
@@ -156,8 +159,9 @@
   position: relative;
 }
 .highlight {
-  animation: pulseHighlight 1.5s ease-out infinite alternate;
+  animation: pulseHighlight 1.5s ease-out infinite;
 }
+
 @keyframes pulseHighlight {
   from {
     box-shadow: 0 0 0 0 var(--ifm-color-primary);

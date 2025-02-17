@@ -12,33 +12,9 @@ import {
 import { useColorMode } from '@docusaurus/theme-common';
 import styles from './HydroShareMock.module.css';
 
-/**
- * Custom hook: observes all elements matching the given selector (".highlightable")
- * and toggles the highlight class when they are at least 50% visible.
- */
-function useScrollHighlight(selector, options = { threshold: 0.5 }) {
-  useEffect(() => {
-    const elements = document.querySelectorAll(selector);
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add(styles.highlight);
-        } else {
-          entry.target.classList.remove(styles.highlight);
-        }
-      });
-    }, options);
-    elements.forEach((el) => observer.observe(el));
-    return () => {
-      elements.forEach((el) => observer.unobserve(el));
-    };
-  }, [selector, options]);
-}
 
 export default function HydroShareAppMock({ isAppResource,title,home_url, keywords, iconUrl }) {
-  const { colorMode } = useColorMode();
-  // Apply scroll highlighting to elements with the class "highlightable"
-  useScrollHighlight('.highlightable');
+
 
   return (
     <div className={clsx(styles.resourceCard, 'padding--md', 'margin-bottom--lg')}>
@@ -55,7 +31,7 @@ export default function HydroShareAppMock({ isAppResource,title,home_url, keywor
               'button--primary',
               styles.webAppButton,
               styles.highlightContent,
-              'highlightable'
+              styles.highlight
             )}
             >
               <span className={styles.stepLabel}>Create an App Connector</span>
@@ -69,7 +45,7 @@ export default function HydroShareAppMock({ isAppResource,title,home_url, keywor
 
       {/* Row of 7 icons */}
       <div className={styles.iconRow}>
-        <span className={clsx(styles.highlightContent, 'highlightable')}>
+        <span className={clsx(styles.highlightContent, styles.highlight)}>
           <span className={styles.stepLabel}>Add Keyword</span>
           <FaUserPlus className={clsx(styles.iconRed, styles.icon)} title="Add user" />
         </span>
@@ -147,7 +123,7 @@ export default function HydroShareAppMock({ isAppResource,title,home_url, keywor
       <div className={styles.resourceRow}>
         <div className={styles.resourceLabel}>Subject Keywords:</div>
         <div className={styles.resourceValue}>
-          <span className={clsx(styles.highlightContent, 'highlightable')}>
+          <span className={clsx(styles.highlightContent, styles.highlight)}>
             <span className={styles.stepLabel}>Add Keyword</span>
             <code>{keywords}</code>
           </span>
@@ -162,7 +138,7 @@ export default function HydroShareAppMock({ isAppResource,title,home_url, keywor
             <div className={clsx(styles.resourceRow)}>
             <div className={styles.resourceLabel}>Home Page URL:</div>
             <div className={styles.resourceValue}>
-              <span className={clsx(styles.highlightContent, 'highlightable')}>
+              <span className={clsx(styles.highlightContent, styles.highlight)}>
                 <span className={styles.stepLabel}>Set Home Page URL</span>
                 <a href={home_url} target="_blank" rel="noreferrer">
                   {home_url}
@@ -178,7 +154,7 @@ export default function HydroShareAppMock({ isAppResource,title,home_url, keywor
           <div className={styles.resourceRow}>
             <div className={styles.resourceLabel}>App Icon URL:</div>
             <div className={styles.resourceValue}>
-              <span className={clsx(styles.highlightContent, 'highlightable')}>
+              <span className={clsx(styles.highlightContent, styles.highlight)}>
                 <span className={styles.stepLabel}>Add Your Icon</span>
                 <div className={styles.iconPreview}>
                   <img
