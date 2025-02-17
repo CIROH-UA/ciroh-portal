@@ -35,7 +35,7 @@ function useScrollHighlight(selector, options = { threshold: 0.5 }) {
   }, [selector, options]);
 }
 
-export default function HydroShareAppMock({ home_url, keywords, iconUrl }) {
+export default function HydroShareAppMock({ isAppResource,title,home_url, keywords, iconUrl }) {
   const { colorMode } = useColorMode();
   // Apply scroll highlighting to elements with the class "highlightable"
   useScrollHighlight('.highlightable');
@@ -45,20 +45,25 @@ export default function HydroShareAppMock({ home_url, keywords, iconUrl }) {
       {/* Top row: Title and Open Web App button */}
       <div className={styles.topRow}>
         <h2 className={clsx(styles.resourceTitle)}>
-          TethysDash
+          {title}
         </h2>
-        <button
-          className={clsx(
-            'button',
-            'button--primary',
-            styles.webAppButton,
-            styles.highlightContent,
-            'highlightable'
-          )}
-        >
-          <span className={styles.stepLabel}>Create an App Connector</span>
-          Open Web App
-        </button>
+        {
+          isAppResource && (
+            <button
+            className={clsx(
+              'button',
+              'button--primary',
+              styles.webAppButton,
+              styles.highlightContent,
+              'highlightable'
+            )}
+            >
+              <span className={styles.stepLabel}>Create an App Connector</span>
+              Open Web App
+            </button>
+          )
+        }
+
       </div>
       <hr className={styles.divider} />
 
@@ -152,17 +157,23 @@ export default function HydroShareAppMock({ home_url, keywords, iconUrl }) {
       {/* Configuration */}
       <div className={styles.configSection}>
         <h3 className={styles.sectionHeading}>Configuration</h3>
-        <div className={clsx(styles.resourceRow)}>
-          <div className={styles.resourceLabel}>Home Page URL:</div>
-          <div className={styles.resourceValue}>
-            <span className={clsx(styles.highlightContent, 'highlightable')}>
-              <span className={styles.stepLabel}>Set Home Page URL</span>
-              <a href={home_url} target="_blank" rel="noreferrer">
-                {home_url}
-              </a>
-            </span>
+        {
+          home_url && (
+            <div className={clsx(styles.resourceRow)}>
+            <div className={styles.resourceLabel}>Home Page URL:</div>
+            <div className={styles.resourceValue}>
+              <span className={clsx(styles.highlightContent, 'highlightable')}>
+                <span className={styles.stepLabel}>Set Home Page URL</span>
+                <a href={home_url} target="_blank" rel="noreferrer">
+                  {home_url}
+                </a>
+              </span>
+            </div>
           </div>
-        </div>
+          )
+
+        }
+
         {iconUrl && (
           <div className={styles.resourceRow}>
             <div className={styles.resourceLabel}>App Icon URL:</div>

@@ -3,12 +3,13 @@
     display: flex;
     justify-content: center;
     background: var(--ifm-background-color);
-    padding: 8rem 0 8rem; 
+    padding: 3rem 0 8rem; 
   }
   .tabLabel {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* space between icon and text */
+    gap: 0.5rem;
+    font-size: 1.5rem;
   }
   .imageContainer {
     text-align: center;
@@ -26,7 +27,7 @@
   }
   .contributeTabs{
     justify-content: center;
-    /* margin-bottom: 1rem; */
+    margin-bottom: 4rem;
   }
   .container {
     max-width: 1000px;
@@ -45,7 +46,7 @@
   .description {
     font-size: 1.5rem;
     /* margin-top: 1rem; */
-    color: var(--ifm-color-primary);
+    color: var(--ifm-font-color-secondary);
   }
   
 
@@ -149,4 +150,58 @@
   display: flex;
   justify-content: center;
   margin-top: 3rem;
+}
+
+/* The final CTA button */
+
+/* Action buttons */
+.actionButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 40px;
+}
+.actionButtons a {
+  text-decoration: none;
+
+}
+
+.actionButtons a button {
+  height: 60.5px;
+  padding: 0 36px;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+
+}
+
+.install {
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+}
+
+
+
+.quick {
+  
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.quick:hover {
+  background: var(--ifm-color-emphasis-100);
+  
+}
+
+.quickIcon {
+  margin-left: 10px;
+  margin-right: -12px;
+  height: 26px;
+  width: 26px;
 }

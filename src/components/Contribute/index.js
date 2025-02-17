@@ -13,7 +13,7 @@ export default function Contribute({ title, description }) {
       <div className={styles.wrapper}>
         <div className={styles.container}>
 
-          <div className='contributeTabs'>
+          {/* <div className='contributeTabs'> */}
           <Tabs className={styles.contributeTabs}>
             <TabItem 
               value="apps" 
@@ -57,6 +57,6 @@ export default function Contribute({ title, description }) {
 
         </div>
       </div>
-    </div>
+    // </div>
   );
 }
