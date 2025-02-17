@@ -1,13 +1,17 @@
 .resourceCard {
   border-radius: 6px;
   background-color: var(--ifm-background-color);
-  max-width: min(100%, 700px); /* Added width constraint */
+  max-width: min(100%, 800px); /* Added width constraint */
   margin: 1.5rem auto; /* Center the component */
   width: 100%;
-  box-shadow: 0 4px 6px -1px rgba(15, 15, 15, 0.1); /* Optional subtle shadow */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+
+  /* For dark mode */
+  [data-theme='dark'] & {
+    box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.08);
+  }
 }
 
-/* Top row */
 .topRow {
   display: flex;
   align-items: center;
@@ -163,14 +167,22 @@
 }
 
 @keyframes pulseHighlight {
-  from {
-    box-shadow: 0 0 0 0 var(--ifm-color-primary);
+  0% {
+    box-shadow: 
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0.4),
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0.1);
   }
-  to {
-    box-shadow: 0 0 10px 5px var(--ifm-color-secondary);
+  50% {
+    box-shadow: 
+      0 0 0 8px rgba(var(--ifm-color-secondary-rgb), 0),
+      0 0 0 12px rgba(var(--ifm-color-secondary-rgb), 0);
+  }
+  100% {
+    box-shadow: 
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0),
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0);
   }
 }
-
 /* Step label overlay */
 .stepLabel {
   position: absolute;

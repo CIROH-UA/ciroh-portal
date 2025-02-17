@@ -20,6 +20,7 @@ body{
   --ifm-color-primary-lighter: #b2dbfb;
   --ifm-color-primary-lightest: #ffffff;
   --ifm-color-secondary: #4bc1d3;
+  --ifm-color-secondary-rgb: 75, 193, 211;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-font-family-base: "Optimistic Display", system-ui, -apple-system, sans-serif;
@@ -36,6 +37,8 @@ body{
   --ifm-color-primary-lighter: #d6fcff;
   --ifm-color-primary-lightest: #c6ebf1;
   --ifm-color-secondary: #255f9c;
+  --ifm-color-secondary-rgb: 37, 95, 156;
+
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
