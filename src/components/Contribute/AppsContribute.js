@@ -26,10 +26,10 @@ export default function AppsTabContributeContent({ description }) {
               <a href="https://docs.ciroh.org/docs/products/Portal/research-portal/#applications">
                 <button className={styles.install}>Add your App</button>
               </a>
-              <a href="https://help.hydroshare.org/introduction-to-hydroshare/getting-started/">
+              <a href="#add-steps">
                 <button className={styles.quick}>
                 {/* <button className={styles.quick}> */}
-                  Getting Started
+                  Quick Start
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
@@ -53,10 +53,13 @@ export default function AppsTabContributeContent({ description }) {
             iconUrl={AppIconUrl}
             keywords="nwm_portal_app"
         />
-      <div className={styles.headerContainer}>
-        <h2 className={styles.title}>Create an App Resource on 5 Easy Steps</h2>
-      </div>
-        <div className={styles.cardContainer}>
+      
+
+      <div id="add-steps" tabIndex={-1}>
+        <div className={styles.headerContainer}>
+          <h2 className={styles.title}>Create an App Resource on 5 Easy Steps</h2>
+        </div>
+        <div  className={styles.cardContainer}>
         {/* Step Card 1 */}
         <div className={styles.card}>
           <img
@@ -130,7 +133,7 @@ export default function AppsTabContributeContent({ description }) {
         
         </div>
 
-
+      </div>
       </div>
 
       <hr className={styles.sectionDivider} />
