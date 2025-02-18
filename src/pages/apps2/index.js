@@ -30,8 +30,6 @@ const poweredByItems = [
 ];
 
 
-
-
 export default function AppsPage() {
 
     const globalData = useGlobalData();

@@ -1,0 +1,186 @@
+/* Existing hero banner styles */
+.heroBanner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    overflow: hidden;
+    color: var(--ifm-color-primary);
+    padding: 8rem 0 8rem;
+  }
+  .heroImage{
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+    padding: 40px 40px 10px 40px;
+  }
+  
+  .heroContainer {
+    position: relative;
+    z-index: 10;
+  }
+  .heroTitle {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    z-index: 10;
+    color: var(--ifm-color-secondary);
+  }
+  .heroSubtitle {
+    font-weight: 700;
+    margin-bottom: 3rem;
+    color: var(--ifm-color-primary);
+  }
+  
+  /* Wave background and SVG styling */
+  .waveBackground {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30vh;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .waves {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+  }
+  .wavePaths use {
+    fill: url(#wave-gradient-light);
+    animation: move-waves 10s ease-in-out infinite;
+  }
+  :root[data-theme='dark'] .wavePaths use {
+    fill: url(#wave-gradient-dark);
+  }
+  .wavePaths use:nth-child(odd) {
+    animation-direction: reverse;
+    animation-duration: 13s;
+  }
+  .wavePaths use:nth-child(1) {
+    animation-delay: -2s;
+    opacity: 0.7;
+  }
+  .wavePaths use:nth-child(2) {
+    animation-delay: -3s;
+    opacity: 0.5;
+  }
+  .wavePaths use:nth-child(3) {
+    animation-delay: -4s;
+    opacity: 0.3;
+  }
+  .wavePaths use:nth-child(4) {
+    animation-delay: -5s;
+  }
+  @keyframes move-waves {
+    0% {
+      transform: translate3d(-30px, 0, 0);
+    }
+    50% {
+      transform: translate3d(30px, 0, 0);
+    }
+    100% {
+      transform: translate3d(-30px, 0, 0);
+    }
+  }
+  
+  /* Responsive adjustments for heroBanner */
+  @media screen and (max-width: 996px) {
+    .heroBanner {
+      padding: 2rem;
+    }
+  }
+  
+  /* --- New Button Styles --- */
+  .buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5rem;
+  }
+  
+  .button {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInScale 0.6s ease-out;
+
+  }
+  
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .button:hover {
+    transform: scale(1.05);
+  }
+  
+  .buttonPrimary {
+    background-color: var(--ifm-color-primary-dark);
+    color: #fff;
+  }
+  
+  :root[data-theme='dark'] .buttonPrimary {
+    background-color: var(--ifm-color-primary-dark);
+    color: #fff;
+  }
+  
+  .buttonSecondary {
+    background-color: var(--ifm-color-primary-light);
+    color: #fff;
+    border: 2px solid var(--ifm-color-primary-light);
+  }
+  
+  :root[data-theme='dark'] .buttonSecondary {
+    background-color: var(--ifm-color-primary-light);
+    color: #fff;
+    border: 2px solid var(--ifm-color-primary-light);
+  }
+  
+  .cursor {
+    display: inline-block;
+    width: 5px;             /* narrow vertical line */
+    height: 1.5em;            /* match line-height of text */
+    background-color: currentColor;
+    margin-left: 2px;
+    animation: blink 1s infinite;
+    vertical-align: bottom;
+  }
+  
+  @keyframes blink {
+    0%   { opacity: 0 }
+    50%  { opacity: 1 }
+    100% { opacity: 0 }
+  }
+  
+  /* Optional: style the container around the typed text */
+  .typewriterContainer {
+    font-size: 3rem;
+    margin: 0.5rem 0;
+    font-weight: bolder;
+    color: var(--ifm-color-secondary)
+    
+  }
+
+
+  
+  

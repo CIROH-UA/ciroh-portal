@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
-import styles from './styles.module.css';
-
+import styles from './header.module.css';
+import TypewriterText from './TypeWritter';
 
 export default function Header({ title,image,  tagline, buttons }) {
 
@@ -57,6 +57,19 @@ export default function Header({ title,image,  tagline, buttons }) {
 
         <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>
                 
+        <div  className={clsx('hero__subtitle',styles.heroSubtitle, styles.typewriterContainer)}>
+          <TypewriterText
+            texts={[
+              'Web Applications',
+              'Datasets',
+              'Publications',
+              'Learning Modules',
+              'and More...',
+            ]}
+            typingSpeed={80}   // Adjust typing speed in ms
+            pauseDuration={1200} // Adjust pause between typing/deleting
+          />
+        </div>
         {buttons && buttons.length > 0 && (
           <div className={styles.buttons}>
             {buttons.map((button, index) => (
