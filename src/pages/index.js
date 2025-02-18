@@ -15,7 +15,7 @@ export default function Home() {
       <main>
         <PortalSection
           title={"Bringing the Whole Community Together"}
-          description={"En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives."}
+          description={"Improve forecasting, analysis, and water resource management by ensuring your web applications and tools are accessible to CIROH and NOAA's hydrologic research initiatives."}
         />
       </main>
 

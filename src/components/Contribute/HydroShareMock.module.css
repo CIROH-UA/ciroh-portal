@@ -153,8 +153,7 @@
 }
 .highlightContent {
   display: inline-block;
-  padding: 5px;
-
+  padding: 6px;
   border-radius: 4px;
 }
 
@@ -163,7 +162,7 @@
   position: relative;
 }
 .highlight {
-  animation: pulseHighlight 1.5s ease-out infinite;
+  animation: pulseHighlight 1s ease-out infinite;
 }
 
 @keyframes pulseHighlight {
