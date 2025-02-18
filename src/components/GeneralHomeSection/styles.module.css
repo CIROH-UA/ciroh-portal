@@ -41,7 +41,6 @@
     align-items: center;
   }
 
-
 .wrapper {
     width: 100%;
     display: flex;
@@ -57,3 +56,16 @@
     background-color: var(--ifm-background-color-secondary);
   }
   
+
+
+    
+  @keyframes fadeInScale {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
