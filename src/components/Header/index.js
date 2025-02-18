@@ -1,11 +1,10 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
-import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
-// import boat from '@site/static/img/boat.svg';
 
-export default function Header({ title, tagline, buttons }) {
-  const { colorMode } = useColorMode();
+
+export default function Header({ title,image,  tagline, buttons }) {
+
 
   return (
     <header className={clsx(styles.heroBanner)}>
@@ -44,26 +43,14 @@ export default function Header({ title, tagline, buttons }) {
             {/* <use xlinkHref="#wavePath" x="150" y="7" /> */}
           </g>
 
-          
-          {/* <g className={styles.boat}>
-            
-            <image
-              xlinkHref={boat}
-              width="32"
-              height="32"
-            >
-              <animateMotion
-                dur="10s"         
-                repeatCount="indefinite"
-                rotate="auto"     
-                path="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18"
-              />
-            </image>
-          </g> */}
+        
         </svg>
       </div>
 
       <div className={clsx('container', styles.heroContainer)}>
+        {image && (
+            <img src={image} alt={title} className={styles.heroImage} />
+        )}
         <Heading as="h1" className={clsx('hero__title', styles.heroTitle)}>
           {title}
         </Heading>

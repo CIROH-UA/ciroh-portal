@@ -81,13 +81,13 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      // Replace with your project's social card
-      image: 'img/CIROHLogo_200x200.png',
+      image: 'img/ciroh_small.png',
       navbar: {
         title: 'CIROH',
         logo: {
           alt: 'CIROH Portal',
-          src: 'img/CIROHLogo_200x200.png',
+          src: 'img/ciroh_small.png',
+          srcDark: 'img/ciroh_small_dark.png',  // Dark mode logo
         },
         items: [          
           {to: '/apps', label: 'Apps', position: 'left'},
