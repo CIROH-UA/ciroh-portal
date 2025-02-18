@@ -111,46 +111,108 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Quick Links',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
+                label: 'Applications',
+                href: '/applications'
               },
-            ],
+              {
+                label: 'Datasets',
+                href: '/datasets'
+              },
+              {
+                label: 'Publications',
+                href: '/'
+              },
+              {
+                label: 'Learning Modules',
+                href: '/'
+              },
+              {
+                label: 'Contribute',
+                href: '/contribute'
+              },
+              {
+                label: 'Develop',
+                href: '/develop'
+              }
+            ]
           },
           {
-            title: 'Community',
+            title: 'External Links',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                label: 'DocuHub',
+                href: 'http://docs.ciroh.org'
               },
               {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'X',
-                href: 'https://x.com/docusaurus',
-              },
-            ],
+                label: 'CIROH Portal',
+                href: 'http://portal.ciroh.org/t'
+              }
+            ]
           },
           {
-            title: 'More',
+            title: 'About CIROH',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
+                label: 'About Us',
+                href: 'https://ciroh.ua.edu/about/'
               },
               {
-                label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                label: 'Members & Partners',
+                href: 'https://ciroh.ua.edu/about/ciroh-partners/'
+              },
+              {
+                label: 'Contact CIROH',
+                href: 'https://ciroh.ua.edu/contact-us/'
+              },
+              {
+                label: 'DocuHub Repository',
+                href: 'https://github.com/CIROH-UA/ciroh-ua_website'
+              }
+            ]
+          },
+          {
+            title: "Follow us on",
+            items: [
+              {
+                html: `
+                <div class="footer-social-links">
+                <a href="https://www.youtube.com/@UA_CIROH" target="_blank" rel="noreferrer noopener" aria-label="Visit CIROH" style="margin-left:-15px">
+                <img src="https://static.vecteezy.com/system/resources/previews/018/930/572/non_2x/youtube-logo-youtube-icon-transparent-free-png.png" alt="CIROH on YouTube" width="70" height="60" />
+              </a>
+              <a href="https://www.linkedin.com/company/uaciroh/" target="_blank" rel="noreferrer noopener" aria-label="Visit CIROH"  style="margin-left:-15px">
+                <img src="https://static.vecteezy.com/system/resources/previews/018/930/587/non_2x/linkedin-logo-linkedin-icon-transparent-free-png.png" alt="CIROH on LinkedIn" width="70" height="60" />
+              </a>
+              <a href="https://www.facebook.com/UACIROH/" target="_blank" rel="noreferrer noopener" aria-label="Visit CIROH"  style="margin-left:-25px">
+                <img src="https://static.vecteezy.com/system/resources/previews/018/930/702/original/facebook-logo-facebook-icon-transparent-free-png.png" alt="CIROH on Facebook" width="70" height="60" />
+              </a> 
+              </div>
+                `,
+              },
+              {
+                html: `               
+              <a href="https://twitter.com/UA_CIROH" target="_blank" rel="noreferrer noopener" aria-label="Visit CIROH"  style="margin-left:5px;">
+                <img src="https://seeklogo.com/images/T/twitter-x-logo-0339F999CF-seeklogo.com.png?v=638264860180000000" alt="CIROH on X" width="40" height="40" />
+              </a>
+              <a href="https://github.com/CIROH-UA" target="_blank" rel="noreferrer noopener" aria-label="Visit CIROH"  style="margin-left:5px;">
+                <img src="https://cdn4.iconfinder.com/data/icons/iconsimple-logotypes/512/github-512.png" alt="CIROH on GitHUb" width="40" height="40" />
+              </a>
+                
+                `,
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `<div class="footer__funding">
+        This project received funding under award NA22NWS4320003 from NOAA Cooperative Institute Program. 
+        The statements, findings, conclusions, and recommendations are those of the author(s) and do not 
+        necessarily reflect the views of NOAA.
+        </div>
+        <div class="footer__bottom">
+          Copyright © ${new Date().getFullYear()} CIROH - Brigham Young University
+        </div>`,
       },
       prism: {
         theme: prismThemes.github,
