@@ -46,8 +46,6 @@ export default function AppsPage() {
               {/* <PoweredBy poweredByItems={poweredByItems} /> */}
               <HydroShareResources resources={resources} />
             </main>
-
-
         </Layout>
 
     );
