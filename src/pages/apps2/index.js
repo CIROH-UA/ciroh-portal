@@ -3,7 +3,7 @@ import Layout from '@theme/Layout';
 import HydroShareResources from '@site/src/components/HydroShareResources';
 import Header from '@site/src/components/Header';
 import useGlobalData from '@docusaurus/useGlobalData';
-import PoweredBy from '@site/src/components/PoweredBy';
+// import PoweredBy from '@site/src/components/PoweredBy';
 import TethysLogoDark from '@site/static/img/tethys_logo2_black.png';
 import TethysLogWhite from '@site/static/img/tethys_white_final.png';
 import HydroShareLogo from '@site/static/img/hydroshare_white.png';
@@ -43,7 +43,7 @@ export default function AppsPage() {
                 tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives." 
             />
             <main>
-              <PoweredBy poweredByItems={poweredByItems} />
+              {/* <PoweredBy poweredByItems={poweredByItems} /> */}
               <HydroShareResources resources={resources} />
             </main>
 

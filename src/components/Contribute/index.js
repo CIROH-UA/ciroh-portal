@@ -17,9 +17,6 @@ export default function Contribute({ title, description }) {
             <h2 className={styles.title}>
               {title}
             </h2>
-            {/* <h3 className={styles.description}>
-              {description}
-            </h3> */}
           </div>
           
           <Tabs className={styles.contributeTabs}>
