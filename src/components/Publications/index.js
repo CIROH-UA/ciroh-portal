@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Zotero from 'zotero-api-client';
 import PublicationCard from './PublicationCard';
 import SkeletonCard from './SkeletonCard';
 import styles from './Publications.module.css';
 
 const PAGE_SIZE = 50;
+const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
 
 export default function Publications({ apiKey, groupId }) {
   const [publications, setPublications] = useState([]);
@@ -13,11 +14,15 @@ export default function Publications({ apiKey, groupId }) {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const containerRef = useRef(null);
+  const fetching = useRef(false);
 
   const loadPublications = useCallback(async (page = 0) => {
-    const isInitialLoad = page === 0;
+    if (fetching.current) return;
+    fetching.current = true;
+    
     try {
-      isInitialLoad ? setLoading(true) : setLoadingMore(true);
+      page === 0 ? setLoading(true) : setLoadingMore(true);
       setError(null);
 
       const client = new Zotero(apiKey);
@@ -34,41 +39,56 @@ export default function Publications({ apiKey, groupId }) {
 
       const newItems = itemsResponse.getData();
       
+      // Maintain scroll position during rapid loads
+      const prevScrollHeight = containerRef.current?.scrollHeight || 0;
+      
       setPublications(prev => [...prev, ...newItems]);
-      // Determine if there's more content based on received items count
       setHasMore(newItems.length === PAGE_SIZE);
+
+      // Restore scroll position after DOM update
+      requestAnimationFrame(() => {
+        if (containerRef.current && page !== 0) {
+          window.scrollTo({
+            top: window.scrollY + (containerRef.current.scrollHeight - prevScrollHeight),
+            behavior: 'auto'
+          });
+        }
+      });
       
     } catch (err) {
       setError(err.message || 'Error fetching publications');
     } finally {
-      isInitialLoad ? setLoading(false) : setLoadingMore(false);
+      fetching.current = false;
+      page === 0 ? setLoading(false) : setLoadingMore(false);
     }
   }, [apiKey, groupId]);
 
   useEffect(() => {
-    const handleScroll = throttle(() => {
-      const nearBottom = window.innerHeight + document.documentElement.scrollTop + 100
-        >= document.documentElement.offsetHeight;
+    const handleScroll = () => {
+      if (fetching.current || !hasMore) return;
       
-      if (nearBottom && hasMore && !loadingMore) {
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      const nearBottom = scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD;
+
+      if (nearBottom) {
         setCurrentPage(prev => {
           const nextPage = prev + 1;
           loadPublications(nextPage);
           return nextPage;
         });
       }
-    }, 200);
+    };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasMore, loadingMore, loadPublications]);
+  }, [hasMore, loadPublications]);
 
   useEffect(() => {
     loadPublications(0);
   }, [loadPublications]);
 
   return (
-    <div className={styles.publicationsContainer}>
+    <div className={styles.publicationsContainer} ref={containerRef}>
       {publications.map((pub, index) => (
         <PublicationCard 
           key={pub.key || index} 
@@ -77,30 +97,15 @@ export default function Publications({ apiKey, groupId }) {
         />
       ))}
 
-      {/* Show skeletons only when loading and there's more data */}
-      {(loading || loadingMore) && hasMore && (
-        Array.from({ length: PAGE_SIZE }).map((_, i) => (
-          <SkeletonCard key={`skeleton-${currentPage}-${i}`} />
-        ))
-      )}
+      {(loading || loadingMore) && Array.from({ length: PAGE_SIZE }).map((_, i) => (
+        <SkeletonCard key={`skeleton-${currentPage}-${i}`} />
+      ))}
 
-      {/* Show end message only when not loading and no more data */}
-      {!hasMore && !loading && !loadingMore && (
+      {!hasMore && !loading && (
         <div className={styles.endMessage}>
-          All publications loaded
+          All publications loaded ({publications.length} items)
         </div>
       )}
     </div>
   );
-}
-
-// Throttle function remains the same
-function throttle(fn, wait) {
-  let time = Date.now();
-  return function() {
-    if ((time + wait - Date.now()) < 0) {
-      fn();
-      time = Date.now();
-    }
-  };
 }

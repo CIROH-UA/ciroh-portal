@@ -111,6 +111,21 @@
     animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
   
+
+.publicationCard, .skeletonCard {
+    min-height: 350px; /* Match card height */
+    contain: strict; /* Improve rendering performance */
+  }
+  
+  /* Publications.module.css */
+  .publicationsContainer {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    padding: 1rem 0;
+    will-change: transform; /* Optimize for smooth scrolling */
+  }
+
   @keyframes slideUp {
     to {
       opacity: 1;
