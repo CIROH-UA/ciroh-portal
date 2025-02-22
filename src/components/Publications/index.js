@@ -33,7 +33,9 @@ export default function Publications({ apiKey, groupId }) {
         });
 
       const newItems = itemsResponse.getData();
+      
       setPublications(prev => [...prev, ...newItems]);
+      // Determine if there's more content based on received items count
       setHasMore(newItems.length === PAGE_SIZE);
       
     } catch (err) {
@@ -44,11 +46,7 @@ export default function Publications({ apiKey, groupId }) {
   }, [apiKey, groupId]);
 
   useEffect(() => {
-    loadPublications(1);
-  }, [loadPublications]);
-
-  useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = throttle(() => {
       const nearBottom = window.innerHeight + document.documentElement.scrollTop + 100
         >= document.documentElement.offsetHeight;
       
@@ -59,30 +57,18 @@ export default function Publications({ apiKey, groupId }) {
           return nextPage;
         });
       }
-    };
+    }, 200);
 
-    const scrollHandler = throttle(handleScroll, 200);
-    window.addEventListener('scroll', scrollHandler);
-    return () => window.removeEventListener('scroll', scrollHandler);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [hasMore, loadingMore, loadPublications]);
 
-  if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <p className={styles.error}>Error: {error}</p>
-        <button 
-          className="button button--primary"
-          onClick={() => loadPublications(currentPage)}
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
+  useEffect(() => {
+    loadPublications(0);
+  }, [loadPublications]);
 
   return (
     <div className={styles.publicationsContainer}>
-      {/* Existing publications */}
       {publications.map((pub, index) => (
         <PublicationCard 
           key={pub.key || index} 
@@ -91,27 +77,24 @@ export default function Publications({ apiKey, groupId }) {
         />
       ))}
 
-      {/* Loading skeletons for initial load */}
-      {loading && Array.from({ length: PAGE_SIZE }).map((_, i) => (
-        <SkeletonCard key={`skeleton-initial-${i}`} />
-      ))}
+      {/* Show skeletons only when loading and there's more data */}
+      {(loading || loadingMore) && hasMore && (
+        Array.from({ length: PAGE_SIZE }).map((_, i) => (
+          <SkeletonCard key={`skeleton-${currentPage}-${i}`} />
+        ))
+      )}
 
-      {/* Loading skeletons for pagination */}
-      {loadingMore && Array.from({ length: PAGE_SIZE }).map((_, i) => (
-        <SkeletonCard key={`skeleton-more-${i}`} />
-      ))}
-
-      {/* End of results */}
-      {!hasMore && !loading && (
+      {/* Show end message only when not loading and no more data */}
+      {!hasMore && !loading && !loadingMore && (
         <div className={styles.endMessage}>
-          No more publications to load
+          All publications loaded
         </div>
       )}
     </div>
   );
 }
 
-// Helper function to throttle scroll events
+// Throttle function remains the same
 function throttle(fn, wait) {
   let time = Date.now();
   return function() {
