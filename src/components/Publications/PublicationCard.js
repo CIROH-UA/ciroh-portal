@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import styles from './PublicationCard.module.css';
 import { useColorMode } from '@docusaurus/theme-common';
 
-export default function PublicationCard({ publication }) {
+export default function PublicationCard({ publication, index }) {
   const { colorMode } = useColorMode();
 
   if (!publication) return null;
@@ -36,11 +36,14 @@ export default function PublicationCard({ publication }) {
     : null;
 
   return (
-    <div className={clsx(
-      styles.publicationCard,
-      'card',
-      colorMode === 'dark' && styles.cardDark
-    )}>
+    <div 
+      className={clsx(
+        styles.publicationCard,
+        'card',
+        colorMode === 'dark' && styles.cardDark
+        )}
+        style={{ animationDelay: `${index * 0.1}s` }}
+    >
       <div className={clsx(styles.cardHeader, 'card__header')}>
         <div className={styles.itemType}>{itemType}</div>
         <h3 className={styles.cardTitle}>{title}</h3>

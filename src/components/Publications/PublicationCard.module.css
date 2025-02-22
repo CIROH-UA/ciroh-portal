@@ -1,3 +1,131 @@
+.errorContainer {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .error {
+    color: var(--ifm-color-danger);
+    margin-bottom: 1rem;
+  }
+  
+  .endMessage {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--ifm-color-emphasis-600);
+  }
+  
+  /* Add loading spinner */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .loadingSpinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--ifm-color-emphasis-200);
+    border-top-color: var(--ifm-color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 2rem auto;
+  }
+
+/* Add these new skeleton styles */
+.skeletonCard {
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: var(--ifm-global-radius);
+    padding: 1rem;
+    margin: 0;
+    height: 100%;
+    background: var(--ifm-background-surface-color);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .skeletonCard::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(var(--ifm-color-emphasis-100-rgb), 0.4),
+      transparent
+    );
+    animation: skeletonShine 1.5s infinite;
+  }
+  
+  @keyframes skeletonShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .skeletonHeader,
+  .skeletonBody,
+  .skeletonFooter {
+    margin-bottom: 1rem;
+  }
+  
+  .skeletonItemType {
+    width: 40%;
+    height: 12px;
+    background: var(--ifm-color-emphasis-100);
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .skeletonTitle {
+    width: 90%;
+    height: 20px;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 4px;
+  }
+  
+  .skeletonAuthors {
+    width: 80%;
+    height: 16px;
+    background: var(--ifm-color-emphasis-100);
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+  }
+  
+  .skeletonDate {
+    width: 60%;
+    height: 14px;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 4px;
+  }
+  
+  .skeletonFooter {
+    width: 30%;
+    height: 32px;
+    background: var(--ifm-color-emphasis-100);
+    border-radius: 4px;
+    margin-top: auto;
+  }
+  
+  /* Add slide-up animation */
+  .publicationCard {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  
+  @keyframes slideUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Delay animations for staggered effect */
+  .publicationCard:nth-child(1) { animation-delay: 0.1s; }
+  .publicationCard:nth-child(2) { animation-delay: 0.2s; }
+  .publicationCard:nth-child(3) { animation-delay: 0.3s; }
+  .publicationCard:nth-child(4) { animation-delay: 0.4s; }
+  .publicationCard:nth-child(n+5) { animation-delay: 0.5s; }
+  
+
 .publicationCard {
     border: 1px solid var(--ifm-color-emphasis-200);
     border-radius: var(--ifm-global-radius);
@@ -57,3 +185,7 @@
   [data-theme='dark'] .publicationCard {
     background-color: var(--ifm-background-surface-color-dark);
   }
+
+
+
+  
