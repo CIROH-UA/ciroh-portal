@@ -6,6 +6,7 @@
 
 import {themes as prismThemes} from 'prism-react-renderer';
 import path from 'path';
+import 'dotenv/config';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 /** @type {import('@docusaurus/types').Config} */
@@ -19,7 +20,10 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-
+  customFields:{
+    zotero_api_key: process.env.ZOTERO_API_KEY,
+    zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
+  },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'facebook', // Usually your GitHub org/user name.
@@ -92,6 +96,7 @@ const config = {
         items: [          
           {to: '/apps', label: 'Apps', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
+          {to: '/publications', label: 'Publications', position: 'left'},
           {to: '/contribute', label: 'Contribute', position: 'right'},
           {to: '/develop', label: 'Develop', position: 'right'},
           {
