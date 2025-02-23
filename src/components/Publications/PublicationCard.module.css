@@ -192,6 +192,12 @@
     color: inherit;
     display: block;
   }
+  .cardLink:hover,
+  .cardLink:focus,
+  .cardLink:active {
+    text-decoration: none;
+    color: inherit;
+  }
   
   /* -------------------------------------
      Card Specific Elements Layout
@@ -226,6 +232,11 @@
     margin-bottom: 0.5rem;
   }
   
+  /* Separator between authors, making the dot smaller */
+  .separator {
+    font-size: 0.75rem;
+  }
+  
   /* 5. Journal */
   .journal {
     font-size: 0.9rem;
@@ -241,7 +252,7 @@
     margin-bottom: 0.75rem;
   }
   .doi a {
-    text-decoration: underline;
+    text-decoration: none;
     color: var(--ifm-color-primary);
   }
   

@@ -16,16 +16,13 @@ function parseDateForDisplay(dateStr) {
   return new Date(dateStr);
 }
 
-
 function addSpacesOnCaseTransition(str) {
-    return str
-      // Add space between lowercase and uppercase
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      // Add space between uppercase and lowercase (for consecutive capitals)
-      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
-  }
-  
-
+  return str
+    // Add space between lowercase and uppercase
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    // Add space between uppercase and lowercase (for consecutive capitals)
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+}
 
 export default function PublicationCard({ publication, index }) {
   const { colorMode } = useColorMode();
@@ -42,15 +39,18 @@ export default function PublicationCard({ publication, index }) {
     DOI,
   } = publication;
 
-  // Handle creators
-  const authorList = creators.length > 0
-    ? creators.map((creator, i) => (
-        <span key={i}>
-          {creator.lastName || creator.name || 'Anonymous'}
-          {i < creators.length - 1 ? ' • ' : ''}
-        </span>
-      ))
-    : 'No authors listed';
+  // Handle creators with a smaller separator between names
+  const authorList =
+    creators.length > 0
+      ? creators.map((creator, i) => (
+          <span key={i}>
+            {creator.lastName || creator.name || 'Anonymous'}
+            {i < creators.length - 1 && (
+              <span className={styles.separator}> • </span>
+            )}
+          </span>
+        ))
+      : 'No authors listed';
 
   // Format the date
   const pubDate = date
@@ -72,10 +72,16 @@ export default function PublicationCard({ publication, index }) {
       style={{ animationDelay: `${index * 0.1}s` }}
     >
       {/* 1. Item Type */}
-      {itemType && <div className={styles.itemType}>{addSpacesOnCaseTransition(itemType)}</div>}
+      {itemType && (
+        <div className={styles.itemType}>
+          {addSpacesOnCaseTransition(itemType)}
+        </div>
+      )}
 
       {/* 2. Published on Date (below item type) */}
-      {pubDate && <div className={styles.publishDate}>Published on {pubDate}</div>}
+      {pubDate && (
+        <div className={styles.publishDate}>Published on {pubDate}</div>
+      )}
 
       {/* 3. Title */}
       <h3 className={styles.cardTitle}>{title}</h3>
@@ -84,7 +90,9 @@ export default function PublicationCard({ publication, index }) {
       <div className={styles.authors}>{authorList}</div>
 
       {/* 5. Journal */}
-      {publicationTitle && <div className={styles.journal}>{publicationTitle}</div>}
+      {publicationTitle && (
+        <div className={styles.journal}>{publicationTitle}</div>
+      )}
 
       {/* 6. DOI */}
       {DOI && (
