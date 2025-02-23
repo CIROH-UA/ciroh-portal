@@ -1,9 +1,28 @@
 /* Publications.module.css */
+.wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #f7f7f7;
+    padding: 3rem 0 8rem; 
+  }
+  
+  :root[data-theme='dark'] .wrapper {
+    background-color: #222227;
+  }
+  .container {
+    width: 100%;
+    max-width: 1000px;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: center;
+  }
 .publicationsContainer {
     display: grid;
     gap: 2rem;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     padding: 1rem 0;
+    align-items: center;
   }
   
   @media (max-width: 996px) {

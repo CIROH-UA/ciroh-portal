@@ -99,7 +99,9 @@ export default function Publications({ apiKey, groupId }) {
   const totalSlots = publications.length + (loading || loadingMore ? PAGE_SIZE : 0);
 
   return (
-    <div className={styles.publicationsContainer} ref={containerRef}>
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        <div className={styles.publicationsContainer} ref={containerRef}>
       {Array.from({ length: totalSlots }).map((_, index) => {
         const pub = publications[index];
         return pub ? (
@@ -119,5 +121,9 @@ export default function Publications({ apiKey, groupId }) {
         </div>
       )} */}
     </div>
+
+      </div>
+    </div>
+
   );
 }
