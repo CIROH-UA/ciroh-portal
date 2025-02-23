@@ -3,8 +3,10 @@ import clsx from 'clsx';
 import styles from './PublicationCard.module.css';
 import { useColorMode } from '@docusaurus/theme-common';
 
+// Helper function to handle "MM/YYYY" dates
 function parseDateForDisplay(dateStr) {
-  // Check for "M/YYYY" or "MM/YYYY" format
+  if (!dateStr) return null;
+  // Check for "M/YYYY" or "MM/YYYY"
   const match = dateStr.match(/^(\d{1,2})\/(\d{4})$/);
   if (match) {
     const month = parseInt(match[1], 10);
@@ -13,6 +15,17 @@ function parseDateForDisplay(dateStr) {
   }
   return new Date(dateStr);
 }
+
+
+function addSpacesOnCaseTransition(str) {
+    return str
+      // Add space between lowercase and uppercase
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // Add space between uppercase and lowercase (for consecutive capitals)
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2');
+  }
+  
+
 
 export default function PublicationCard({ publication, index }) {
   const { colorMode } = useColorMode();
@@ -25,58 +38,83 @@ export default function PublicationCard({ publication, index }) {
     date,
     url,
     itemType,
+    publicationTitle,
+    DOI,
   } = publication;
 
-  // Safely handle creator data
+  // Handle creators
   const authorList = creators.length > 0
-    ? creators.map((creator, index) => (
-        <span key={index}>
+    ? creators.map((creator, i) => (
+        <span key={i}>
           {creator.lastName || creator.name || 'Anonymous'}
-          {index < creators.length - 1 ? ', ' : ''}
+          {i < creators.length - 1 ? ' • ' : ''}
         </span>
       ))
     : 'No authors listed';
 
-  // Format date
+  // Format the date
   const pubDate = date
-  ? parseDateForDisplay(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    })
-  : null;
+    ? parseDateForDisplay(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
 
-  return (
-    <div 
+  // Card content component
+  const CardContent = () => (
+    <div
       className={clsx(
         styles.publicationCard,
         'card',
         colorMode === 'dark' && styles.cardDark
-        )}
-        style={{ animationDelay: `${index * 0.1}s` }}
+      )}
+      style={{ animationDelay: `${index * 0.1}s` }}
     >
-      <div className={clsx(styles.cardHeader, 'card__header')}>
-        <div className={styles.itemType}>{itemType}</div>
-        <h3 className={styles.cardTitle}>{title}</h3>
-      </div>
-      
-      <div className={clsx(styles.cardBody, 'card__body')}>
-        <div className={styles.authors}>{authorList}</div>
-        {pubDate && <div className={styles.date}>{pubDate}</div>}
-      </div>
+      {/* 1. Item Type */}
+      {itemType && <div className={styles.itemType}>{addSpacesOnCaseTransition(itemType)}</div>}
 
-      {url && (
-        <div className={clsx(styles.cardFooter, 'card__footer')}>
+      {/* 2. Published on Date (below item type) */}
+      {pubDate && <div className={styles.publishDate}>Published on {pubDate}</div>}
+
+      {/* 3. Title */}
+      <h3 className={styles.cardTitle}>{title}</h3>
+
+      {/* 4. Authors */}
+      <div className={styles.authors}>{authorList}</div>
+
+      {/* 5. Journal */}
+      {publicationTitle && <div className={styles.journal}>{publicationTitle}</div>}
+
+      {/* 6. DOI */}
+      {DOI && (
+        <div className={styles.doi}>
+          doi{' '}
           <a
-            href={url}
-            className="button button--sm button--secondary"
+            href={`https://doi.org/${DOI}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Read Paper
+            {DOI}
           </a>
         </div>
       )}
     </div>
   );
+
+  // If there's a URL, wrap the card in a link
+  if (url) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.cardLink}
+      >
+        <CardContent />
+      </a>
+    );
+  }
+
+  return <CardContent />;
 }

@@ -1,3 +1,6 @@
+/* -------------------------------------
+   Error and End Message
+------------------------------------- */
 .errorContainer {
     text-align: center;
     padding: 2rem;
@@ -15,9 +18,13 @@
     color: var(--ifm-color-emphasis-600);
   }
   
-  /* Add loading spinner */
+  /* -------------------------------------
+     Loading Spinner
+  ------------------------------------- */
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
   
   .loadingSpinner {
@@ -29,9 +36,11 @@
     animation: spin 1s linear infinite;
     margin: 2rem auto;
   }
-
-/* Add these new skeleton styles */
-.skeletonCard {
+  
+  /* -------------------------------------
+     Skeleton Styles
+  ------------------------------------- */
+  .skeletonCard {
     border: 1px solid var(--ifm-color-emphasis-200);
     border-radius: var(--ifm-global-radius);
     padding: 1rem;
@@ -57,8 +66,12 @@
   }
   
   @keyframes skeletonShine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
   
   .skeletonHeader,
@@ -105,20 +118,9 @@
     margin-top: auto;
   }
   
-  /* Add slide-up animation */
-  .publicationCard {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-  
-
-.publicationCard, .skeletonCard {
-    min-height: 350px; /* Match card height */
-    contain: strict; /* Improve rendering performance */
-  }
-  
-  /* Publications.module.css */
+  /* -------------------------------------
+     Publications Grid
+  ------------------------------------- */
   .publicationsContainer {
     display: grid;
     gap: 2rem;
@@ -126,7 +128,10 @@
     padding: 1rem 0;
     will-change: transform; /* Optimize for smooth scrolling */
   }
-
+  
+  /* -------------------------------------
+     Card Animations
+  ------------------------------------- */
   @keyframes slideUp {
     to {
       opacity: 1;
@@ -134,15 +139,38 @@
     }
   }
   
-  /* Delay animations for staggered effect */
-  .publicationCard:nth-child(1) { animation-delay: 0.1s; }
-  .publicationCard:nth-child(2) { animation-delay: 0.2s; }
-  .publicationCard:nth-child(3) { animation-delay: 0.3s; }
-  .publicationCard:nth-child(4) { animation-delay: 0.4s; }
-  .publicationCard:nth-child(n+5) { animation-delay: 0.5s; }
+  .publicationCard {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
   
-
-.publicationCard {
+  /* Delay animations for staggered effect */
+  .publicationCard:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .publicationCard:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .publicationCard:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .publicationCard:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .publicationCard:nth-child(n+5) {
+    animation-delay: 0.5s;
+  }
+  
+  /* -------------------------------------
+     Card Layout and Hover
+  ------------------------------------- */
+  .publicationCard, .skeletonCard {
+    min-height: 350px; /* Match card height */
+    contain: strict;   /* Improve rendering performance */
+  }
+  
+  .publicationCard {
     border: 1px solid var(--ifm-color-emphasis-200);
     border-radius: var(--ifm-global-radius);
     padding: 1rem;
@@ -158,50 +186,69 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  .cardHeader {
-    margin-bottom: 0.75rem;
+  /* Make the entire card clickable */
+  .cardLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
   }
   
-  .cardTitle {
-    font-size: 1.1rem;
-    margin: 0 0 0.5rem 0;
-    color: var(--ifm-heading-color);
-  }
-  
+  /* -------------------------------------
+     Card Specific Elements Layout
+  ------------------------------------- */
+  /* 1. Item Type */
   .itemType {
-    font-size: 0.8rem;
-    color: var(--ifm-color-primary);
+    font-size: 0.75rem;
+    font-weight: bold;
     text-transform: uppercase;
+    color: var(--ifm-color-primary);
     margin-bottom: 0.25rem;
   }
   
-  .cardBody {
-    flex: 1;
-    margin-bottom: 1rem;
+  /* 2. Published on Date */
+  .publishDate {
+    font-size: 0.75rem;
+    color: var(--ifm-color-emphasis-600);
+    margin-bottom: 0.5rem;
   }
   
+  /* 3. Title */
+  .cardTitle {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    color: var(--ifm-heading-color);
+  }
+  
+  /* 4. Authors */
   .authors {
     font-size: 0.9rem;
     color: var(--ifm-font-color-base);
     margin-bottom: 0.5rem;
   }
   
-  .date {
-    font-size: 0.85rem;
-    color: var(--ifm-color-emphasis-600);
+  /* 5. Journal */
+  .journal {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--ifm-color-emphasis-700);
+    margin-bottom: 0.5rem;
   }
   
-  .cardFooter {
-    margin-top: auto;
-    padding-top: 1rem;
-    border-top: 1px solid var(--ifm-color-emphasis-100);
+  /* 6. DOI */
+  .doi {
+    font-size: 0.9rem;
+    color: var(--ifm-color-emphasis-700);
+    margin-bottom: 0.75rem;
+  }
+  .doi a {
+    text-decoration: underline;
+    color: var(--ifm-color-primary);
   }
   
-  /* Dark mode adjustments */
+  /* -------------------------------------
+     Dark Mode Adjustments
+  ------------------------------------- */
   [data-theme='dark'] .publicationCard {
     background-color: var(--ifm-background-surface-color-dark);
   }
-
-
-
   

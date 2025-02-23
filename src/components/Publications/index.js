@@ -7,7 +7,6 @@ import styles from './Publications.module.css';
 const PAGE_SIZE = 50;
 const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
 
-
 export default function Publications({ apiKey, groupId }) {
   const [publications, setPublications] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -47,14 +46,6 @@ export default function Publications({ apiKey, groupId }) {
       // Merge and sort the publications: latest dates first, no date goes to the end.
       setPublications(prev => {
         const combined = [...prev, ...newItems];
-        // combined.sort((a, b) => {
-        //   const dateA = a.date ? parseDate(a.date) : null;
-        //   const dateB = b.date ? parseDate(b.date) : null;
-        //   if (!dateA && !dateB) return 0;
-        //   if (!dateA) return 1;
-        //   if (!dateB) return -1;
-        //   return dateB - dateA;
-        // });
         return combined;
       });
       setHasMore(newItems.length === PAGE_SIZE);
