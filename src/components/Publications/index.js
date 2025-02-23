@@ -113,11 +113,11 @@ export default function Publications({ apiKey, groupId }) {
         );
       })}
 
-      {!hasMore && !loading && (
+      {/* {!hasMore && !loading && (
         <div className={styles.endMessage}>
           All publications loaded ({publications.length} items)
         </div>
-      )}
+      )} */}
     </div>
   );
 }

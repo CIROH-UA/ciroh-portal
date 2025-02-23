@@ -10,12 +10,12 @@ export default function PublicationsPage() {
       } = useDocusaurusContext();
 
   return (
-    <Layout title="Publications" description="CIROH Publications">
+    <Layout title="Publications" description="Ciroh pubs">
     
       <div className="margin-top--lg">
         <Header 
             title="Publications" 
-            tagline="Your publications are great!" 
+            tagline="Ex­plore a rich selection of pub­lic­a­tions and papers featuring CIROH and NOAA's collaborative research in hydrology. Discover insights on water management, forecasting, and climate impacts through this comprehensive resource for scholars and professionals." 
         />
       </div>
 
