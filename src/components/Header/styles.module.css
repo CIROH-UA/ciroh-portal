@@ -124,6 +124,7 @@
 .buttonPrimary {
   background-color: var(--ifm-color-primary-dark);
   color: #fff;
+  
 }
 
 :root[data-theme='dark'] .buttonPrimary {
@@ -134,11 +135,9 @@
 .buttonSecondary {
   background-color: var(--ifm-color-primary-light);
   color: #fff;
-  border: 2px solid var(--ifm-color-primary-light);
 }
 
 :root[data-theme='dark'] .buttonSecondary {
   background-color: var(--ifm-color-primary-light);
   color: #fff;
-  border: 2px solid var(--ifm-color-primary-light);
 }
