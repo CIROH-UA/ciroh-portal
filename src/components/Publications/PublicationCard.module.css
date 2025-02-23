@@ -166,7 +166,7 @@
      Card Layout and Hover
   ------------------------------------- */
   .publicationCard, .skeletonCard {
-    min-height: 350px; /* Match card height */
+    min-height: 450px; /* Match card height */
     contain: strict;   /* Improve rendering performance */
   }
   
