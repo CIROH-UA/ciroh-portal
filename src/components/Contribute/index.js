@@ -4,7 +4,7 @@ import AppsTabContributeContent from './AppsContribute';
 import DatasetsTabContributeContent from './DatasetsContribute';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import { IoLayers, IoAppsSharp   } from "react-icons/io5";
+import { IoLayers, IoAppsSharp,IoBookmarks } from "react-icons/io5";
 
 
 export default function Contribute({ title, description }) {
@@ -40,22 +40,39 @@ export default function Contribute({ title, description }) {
                 }
               />
             </TabItem>
-            <TabItem 
-              value="datasets" 
-              label={
-                <span className={styles.tabLabel}>
-                  <IoLayers className={styles.tabIcon} /> Datasets
-                </span>
-              }
-            >
-              <DatasetsTabContributeContent
-                description={
-                  <div>
-                    Create a new <a href="https://www.hydroshare.org/" target="_blank" rel="noopener">HydroShare</a> resource, add the required metadata, while adding the <code>ciroh_portal_data</code> keyword to make it discoverable
-                  </div>
+              <TabItem 
+                value="datasets" 
+                label={
+                  <span className={styles.tabLabel}>
+                    <IoLayers className={styles.tabIcon} /> Datasets
+                  </span>
                 }
-              />
+              >
+                <DatasetsTabContributeContent
+                  description={
+                    <div>
+                      Create a new <a href="https://www.hydroshare.org/" target="_blank" rel="noopener">HydroShare</a> resource, add the required metadata, while adding the <code>ciroh_portal_data</code> keyword to make it discoverable
+                    </div>
+                  }
+                />
             </TabItem>
+
+            <TabItem 
+                value="publications" 
+                label={
+                  <span className={styles.tabLabel}>
+                    <IoBookmarks className={styles.tabIcon} /> Publications
+                  </span>
+                }
+              >
+                <div>
+                  <strong>
+                  we are working on it
+                  </strong>
+                  
+                </div>
+            </TabItem>
+
           </Tabs>
           </div>
 
