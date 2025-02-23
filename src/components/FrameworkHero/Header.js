@@ -62,6 +62,7 @@ export default function Header({ title,image,  tagline, buttons }) {
             texts={[
               'Web Applications',
               'Datasets',
+              'Docs',
               'Publications',
               'Learning Modules',
               'and More...',
