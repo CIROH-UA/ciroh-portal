@@ -3,6 +3,17 @@ import clsx from 'clsx';
 import styles from './PublicationCard.module.css';
 import { useColorMode } from '@docusaurus/theme-common';
 
+function parseDateForDisplay(dateStr) {
+  // Check for "M/YYYY" or "MM/YYYY" format
+  const match = dateStr.match(/^(\d{1,2})\/(\d{4})$/);
+  if (match) {
+    const month = parseInt(match[1], 10);
+    const year = parseInt(match[2], 10);
+    return new Date(year, month - 1, 1);
+  }
+  return new Date(dateStr);
+}
+
 export default function PublicationCard({ publication, index }) {
   const { colorMode } = useColorMode();
 
@@ -28,12 +39,12 @@ export default function PublicationCard({ publication, index }) {
 
   // Format date
   const pubDate = date
-    ? new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : null;
+  ? parseDateForDisplay(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
 
   return (
     <div 

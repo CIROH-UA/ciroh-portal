@@ -40,6 +40,7 @@
     background: var(--ifm-background-surface-color);
     position: relative;
     overflow: hidden;
+    transition: opacity 0.5s ease;
   }
   
   .skeletonCard::after {

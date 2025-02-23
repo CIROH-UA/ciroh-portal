@@ -7,6 +7,7 @@ import styles from './Publications.module.css';
 const PAGE_SIZE = 50;
 const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
 
+
 export default function Publications({ apiKey, groupId }) {
   const [publications, setPublications] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -24,7 +25,7 @@ export default function Publications({ apiKey, groupId }) {
     try {
       page === 0 ? setLoading(true) : setLoadingMore(true);
       setError(null);
-
+  
       const client = new Zotero(apiKey);
       const itemsResponse = await client
         .library('group', groupId)
@@ -36,20 +37,36 @@ export default function Publications({ apiKey, groupId }) {
           sort: 'date',
           direction: 'desc'
         });
-
+  
       const newItems = itemsResponse.getData();
+      console.log('newItems', newItems);
       
-      // Maintain scroll position during rapid loads
-      const prevScrollHeight = containerRef.current?.scrollHeight || 0;
+      // Record the scroll height before new items are appended.
+      const prevScrollHeight = document.documentElement.scrollHeight;
       
-      setPublications(prev => [...prev, ...newItems]);
+      // Merge and sort the publications: latest dates first, no date goes to the end.
+      setPublications(prev => {
+        const combined = [...prev, ...newItems];
+        // combined.sort((a, b) => {
+        //   const dateA = a.date ? parseDate(a.date) : null;
+        //   const dateB = b.date ? parseDate(b.date) : null;
+        //   if (!dateA && !dateB) return 0;
+        //   if (!dateA) return 1;
+        //   if (!dateB) return -1;
+        //   return dateB - dateA;
+        // });
+        return combined;
+      });
       setHasMore(newItems.length === PAGE_SIZE);
-
-      // Restore scroll position after DOM update
+  
+      // After new items are rendered, if the user was near the bottom,
+      // scroll down by the exact increase in height.
       requestAnimationFrame(() => {
-        if (containerRef.current && page !== 0) {
+        const { scrollTop, clientHeight } = document.documentElement;
+        if (scrollTop + clientHeight >= prevScrollHeight - 10) {
+          const newScrollHeight = document.documentElement.scrollHeight;
           window.scrollTo({
-            top: window.scrollY + (containerRef.current.scrollHeight - prevScrollHeight),
+            top: scrollTop + (newScrollHeight - prevScrollHeight),
             behavior: 'auto'
           });
         }
@@ -62,7 +79,7 @@ export default function Publications({ apiKey, groupId }) {
       page === 0 ? setLoading(false) : setLoadingMore(false);
     }
   }, [apiKey, groupId]);
-
+  
   useEffect(() => {
     const handleScroll = () => {
       if (fetching.current || !hasMore) return;
@@ -87,19 +104,23 @@ export default function Publications({ apiKey, groupId }) {
     loadPublications(0);
   }, [loadPublications]);
 
+  // Determine the total slots to render (publications plus placeholders if loading)
+  const totalSlots = publications.length + (loading || loadingMore ? PAGE_SIZE : 0);
+
   return (
     <div className={styles.publicationsContainer} ref={containerRef}>
-      {publications.map((pub, index) => (
-        <PublicationCard 
-          key={pub.key || index} 
-          publication={pub} 
-          index={index}
-        />
-      ))}
-
-      {(loading || loadingMore) && Array.from({ length: PAGE_SIZE }).map((_, i) => (
-        <SkeletonCard key={`skeleton-${currentPage}-${i}`} />
-      ))}
+      {Array.from({ length: totalSlots }).map((_, index) => {
+        const pub = publications[index];
+        return pub ? (
+          <PublicationCard 
+            key={pub.key || index} 
+            publication={pub} 
+            index={index}
+          />
+        ) : (
+          <SkeletonCard key={`skeleton-${index}`} />
+        );
+      })}
 
       {!hasMore && !loading && (
         <div className={styles.endMessage}>
