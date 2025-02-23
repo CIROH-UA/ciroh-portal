@@ -4,7 +4,7 @@ import AppsTabContributeContent from './AppsContribute';
 import DatasetsTabContributeContent from './DatasetsContribute';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import { IoLayers, IoAppsSharp,IoBookmarks } from "react-icons/io5";
+import { IoLayers, IoAppsSharp,IoBookmarks,IoSchool,IoFileTrayFull   } from "react-icons/io5";
 
 
 export default function Contribute({ title, description }) {
@@ -72,7 +72,37 @@ export default function Contribute({ title, description }) {
                   
                 </div>
             </TabItem>
+            <TabItem 
+                value="docs" 
+                label={
+                  <span className={styles.tabLabel}>
+                    <IoFileTrayFull className={styles.tabIcon} /> Docs
+                  </span>
+                }
+              >
+                <div>
+                  <strong>
+                  we are working on it
+                  </strong>
+                  
+                </div>
+            </TabItem>
 
+            <TabItem 
+                value="learning_modules" 
+                label={
+                  <span className={styles.tabLabel}>
+                    <IoSchool className={styles.tabIcon} /> Learning Modules
+                  </span>
+                }
+              >
+                <div>
+                  <strong>
+                  we are working on it
+                  </strong>
+                  
+                </div>
+            </TabItem>
           </Tabs>
           </div>
 

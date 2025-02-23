@@ -102,7 +102,7 @@ const config = {
           {
             href: "https://docs.ciroh.org/",
             label: "Docs",
-            position: "right",
+            position: "left",
           },
           {
             href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
