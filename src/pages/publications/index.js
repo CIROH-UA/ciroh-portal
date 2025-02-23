@@ -3,6 +3,8 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import Publications from "@site/src/components/Publications";
+import { items } from "./constants";
+import TechBox from "@site/src/components/TechBox";
 
 export default function PublicationsPage() {
     const {
@@ -25,6 +27,7 @@ export default function PublicationsPage() {
           apiKey={customFields.zotero_api_key}
           groupId={customFields.zotero_group_id}
        />
+       <TechBox items={items} type={"Publications"}  />
       </main>
     
     </Layout>
