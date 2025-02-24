@@ -67,11 +67,11 @@ export default function Contribute({ title, description }) {
                 }
               >
               <PublicationsTabContributeContent
-                  description={
-                    <div>
-                      Add your publications to <a href="https://www.zotero.org//" target="_blank" rel="noopener">Zotero</a>
-                    </div>
-                  }
+                  // description={
+                  //   <div>
+                  //     Whether it’s a recent paper, thesis, conference presentation, or even a relevant article, your input will enrich this growing hub. Let’s learn from and support one another!
+                  //   </div>
+                  // }
               />
             </TabItem>
             <TabItem 

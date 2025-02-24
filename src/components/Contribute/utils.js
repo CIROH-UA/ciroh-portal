@@ -15,11 +15,11 @@ import ZoteroAPILogo from '@site/static/img/zotero-app-icon-512.png';
 import ZoteroLoginDark from '@site/static/img/zotero_login_dark.png';
 import ZoteroLoginLight from '@site/static/img/zotero_login_light.png';
 
-import ZoteroSyncDark from '@site/static/img/zotero_sync_dark2.png';
-import ZoteroSyncLight from '@site/static/img/zotero_sync_light2.png';
+import ZoteroSyncDark from '@site/static/img/zotero_sync_dark.png';
+import ZoteroSyncLight from '@site/static/img/zotero_sync_light.png';
 
-import ZoteroAddDark from '@site/static/img/zotero_add_dark2.png';
-import ZoteroAddLight from '@site/static/img/zotero_add_light2.png';
+import ZoteroAddDark from '@site/static/img/zotero_add_dark.png';
+import ZoteroAddLight from '@site/static/img/zotero_add_light.png';
 
 import ZoteroJoinGroupDark from '@site/static/img/zotero_join_dark.png';
 import ZoteroJoinGroupLight from '@site/static/img/zotero_join_light.png';
