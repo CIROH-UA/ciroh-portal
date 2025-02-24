@@ -11,6 +11,17 @@ import CodeImageDark from '@site/static/img/hs_app_icon_web_dark.png';
 import WebAppImageLight from '@site/static/img/hs_app_urls_light.png';
 import WebAppImageDark from '@site/static/img/hs_app_urls_dark.png';
 
+import ZoteroAPILogo from '@site/static/img/zotero-app-icon-512.png';
+import ZoteroLoginDark from '@site/static/img/zotero_login_dark.png';
+import ZoteroLoginLight from '@site/static/img/zotero_login_light.png';
+
+import ZoteroSyncDark from '@site/static/img/zotero_sync_dark.png';
+import ZoteroSyncLight from '@site/static/img/zotero_sync_light.png';
+
+
+import ZoteroAddDark from '@site/static/img/zotero_add_dark.png';
+import ZoteroAddLight from '@site/static/img/zotero_add_light.png';
+
 export const contributeAppCards = [
   {
     imgSrcLight: CreateAppImageLight,
@@ -73,3 +84,42 @@ export const contributeDatasetsCards = [
     cardDescription: 'Make your Dataset Resource public to share it with the CIROH community.',
   },
 ]
+
+
+export const contributePublicationsCards = [
+  {
+    imgSrcLight: ZoteroAPILogo,
+    imgSrcDark: ZoteroAPILogo,
+    imgAlt: 'Install Zotero',
+    cardTitle: '1. Install Zotero',
+    cardDescription: 'Install Zotero and its web connector plugin or access it through its web ui to manage your publications',
+  },
+  {
+    imgSrcLight: ZoteroLoginLight,
+    imgSrcDark: ZoteroLoginDark,
+    imgAlt: 'Register with Zotero',
+    cardTitle: '2. Register with Zotero',
+    cardDescription: 'Create an account with Zotero to manage your publications',
+  },
+  {
+    imgSrcLight: CodeImageLight,
+    imgSrcDark: CodeImageDark,
+    imgAlt: 'Request Permission to the Library Group',
+    cardTitle: '3. Request Permission to the Library Group',
+    cardDescription: 'Request Permission to the Zotero CIROH Library Group',
+  },
+  {
+    imgSrcLight: ZoteroSyncLight,
+    imgSrcDark: ZoteroSyncDark,
+    imgAlt: 'Sync your Zotero account to see your group folder',
+    cardTitle: '4. Sync your Zotero account to see your group folder',
+    cardDescription: 'If using the Zotero desktop app, sync your account to see the CIROH Library Group',
+  },
+  {
+    imgSrcLight: ZoteroAddLight,
+    imgSrcDark: ZoteroAddDark,
+    imgAlt: 'Add your Publications',
+    cardTitle: '5. Add your Publications',
+    cardDescription: 'Add new citations using the Zotero icon in the URL bar or drag and drop items from other folders into your group folders',
+  },
+];

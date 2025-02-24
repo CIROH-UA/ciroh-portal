@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './styles.module.css';
 import AppsTabContributeContent from './AppsContribute';
 import DatasetsTabContributeContent from './DatasetsContribute';
+import PublicationsTabContributeContent from './PublicationsContribute';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { IoLayers, IoAppsSharp,IoBookmarks,IoSchool,IoFileTrayFull   } from "react-icons/io5";
@@ -65,12 +66,13 @@ export default function Contribute({ title, description }) {
                   </span>
                 }
               >
-                <div>
-                  <strong>
-                  we are working on it
-                  </strong>
-                  
-                </div>
+              <PublicationsTabContributeContent
+                  description={
+                    <div>
+                      Add your publications to <a href="https://www.zotero.org//" target="_blank" rel="noopener">Zotero</a>
+                    </div>
+                  }
+              />
             </TabItem>
             <TabItem 
                 value="docs" 
