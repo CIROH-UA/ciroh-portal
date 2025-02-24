@@ -14,6 +14,10 @@ import PortalDatasetsExampleDark from '@site/static/img/home_datasets_dark.png';
 import PortalLearningExampleLight from '@site/static/img/home_learning_ modules_light.png';
 import PortalLearningExampleDark from '@site/static/img/home_learning_ modules_dark.png';
 
+import DocuHubLight from '@site/static/img/docuhub_light.png';
+import DocuHubDark from '@site/static/img/docuhub_dark.png';
+
+
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
 
@@ -34,13 +38,21 @@ export default function Home() {
           darkImage={PortalAppExampleDark}
         />
 
+        {/* Documents Section */}
+        <GeneralHomeSection
+          title="CIROH DocuHub"
+          description="A carefully curated central repository providing in-depth technical insights into CIROH's projects, services, and documentation"
+          lightImage={DocuHubLight}
+          darkImage={DocuHubDark}
+          background="secondary"
+        />
+
         {/* Datasets Section */}
         <GeneralHomeSection
           title="Streamlined Hydrological Datasets"
           description="Access curated datasets from CIROH and NOAA, offering timely and historical water-related data. From river flows to atmospheric conditions, these resources support advanced modeling, forecasting, and decision-making."
           lightImage={PortalDatasetsExampleLight}
           darkImage={PortalDatasetsExampleDark}
-          background="secondary"
         />
 
         {/* Publications Section */}
@@ -49,6 +61,7 @@ export default function Home() {
           description="Discover groundbreaking studies, peer-reviewed papers, and technical reports authored by CIROH and NOAA experts. Dive into cutting-edge research on hydrological forecasting, water quality, and the impacts of a changing climate."
           lightImage={PublicationsExampleLight}
           darkImage={PublicationsExampleDark}
+          background="secondary"
         />
 
         {/* Learning Modules Section */}
@@ -57,7 +70,6 @@ export default function Home() {
           description="Explore open courses and self-paced modules designed to foster deeper understanding of critical hydrological concepts. Created by CIROH in collaboration with NOAA, these resources cater to both novice learners and seasoned professionals."
           lightImage={PortalLearningExampleLight}
           darkImage={PortalLearningExampleDark}
-          background="secondary"
         />
       </main>
     </Layout>
