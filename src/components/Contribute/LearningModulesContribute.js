@@ -32,7 +32,7 @@ export default function LearningModulesContribute({ description }) {
         />
         <StepsCards
             steps={contributeLearningModulesCards}
-            containerId="add-publication-steps"
+            containerId="add-learning-steps"
         />
       </div>
     
