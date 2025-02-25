@@ -16,9 +16,10 @@ import PortalLearningExampleDark from '@site/static/img/home_learning_ modules_d
 import DocuHubLight from '@site/static/img/docuhub_light.png';
 import DocuHubDark from '@site/static/img/docuhub_dark.png';
 
-import NoaaLogo from '@site/static/img/NOAA_logo.png';
-import OWPLight from '@site/static/img/owp_logo_light.png';
-import OWPDark from '@site/static/img/owp_logo_light.png';
+import NoaaLogoLight from '@site/static/img/noaa_logo.png';
+import NoaaLogoDark from '@site/static/img/noaa_logo.png';
+import OWPLight from '@site/static/img/owp_logo.png';
+import OWPDark from '@site/static/img/owp_logo.png';
 
 
 export default function Home() {
@@ -38,8 +39,8 @@ export default function Home() {
           description="CIROH en­hances U.S. hy­dro­lo­gic­al fore­cast­ing in col­lab­or­a­tion with NOAA, fo­cus­ing on wa­ter events and qual­ity through a con­sor­ti­um of di­verse in­sti­tu­tions. Ex­plore this portal for re­search pub­lic­a­tions, ap­plic­a­tions, and data­sets from the NOAA and CIROH com­munity of sci­ent­ists."
           images={[
             {
-              lightImage: NoaaLogo,
-              darkImage: NoaaLogo,
+              lightImage: NoaaLogoLight,
+              darkImage: NoaaLogoDark,
             },
             {
               lightImage: OWPLight,

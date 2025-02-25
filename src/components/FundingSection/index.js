@@ -23,7 +23,9 @@ export default function FundingSection({
       <div className={styles.container}>
         <div className={styles.currentAppSection}>
           <div className={styles.headerContainer}>
-            <h1 className={styles.title}>{title}</h1>
+            <h3 className={styles.description}>{description}</h3>
+
+            {/* <h1 className={styles.title}>{title}</h1> */}
             {images && images.length > 0 && (
               <div className={styles.imagesContainer}>
                 {images.map((img, index) => (
@@ -36,7 +38,6 @@ export default function FundingSection({
                 ))}
               </div>
             )}
-            <h3 className={styles.description}>{description}</h3>
 
           </div>
         </div>

@@ -5,7 +5,9 @@
   font-size: 1.5rem;
   margin-top: 1rem;
   margin-bottom: 4rem;
-  color: var(--ifm-color-primary);
+  /* color: var(--ifm-color-primary); */
+  color: var(--ifm-color-secondary);
+  
 }
 
 /* Header container styling */
@@ -17,6 +19,7 @@
 /* Container for the array of images, arranged horizontally */
 .imagesContainer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem; /* Adjust spacing between images */
@@ -31,15 +34,17 @@
   display: block;
   background: var(--ifm-background-color);
   margin: 1.5rem auto 2rem;
-  width: 200px;
+  width: 250px;
+  
+
 }
 
-.sectionImage:hover {
+/* .sectionImage:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
               0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border-color: var(--ifm-color-primary-lightest);
-}
+} */
 
 /* Title styling */
 .title {
