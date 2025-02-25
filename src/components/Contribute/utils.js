@@ -38,6 +38,10 @@ import DocsForkLight from '@site/static/img/docuhub_fork_light.png';
 import DocsMDDark from '@site/static/img/docuhub_md_dark3.png';
 import DocsMDLight from '@site/static/img/docuhub_md_light3.png';
 
+
+import Hydrolearn101Dark from '@site/static/img/hydrolearn_101_dark.png';
+import Hydrolearn101Light from '@site/static/img/hydrolearn_101_light.png';
+
 export const contributeAppCards = [
   {
     imgSrcLight: CreateAppImageLight,
@@ -188,6 +192,14 @@ export const contributeBlogsDocsCards = [
 
 
 export const contributeLearningModulesCards = [
+  {
+    imgSrcLight: Hydrolearn101Light,
+    imgSrcDark: Hydrolearn101Dark,
+    imgAlt: 'Complete HydroLearn 101',
+    cardTitle: '1. Complete HydroLearn 101',
+    cardDescription: 'Complete the HydroLearn 101 course to learn how to create a learning module.',
+  },
+
   {
     imgSrcLight: CreateAppImageLight,
     imgSrcDark: CreateAppImageDark,

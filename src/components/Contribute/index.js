@@ -36,9 +36,9 @@ export default function Contribute({ title, description }) {
               <AppsTabContributeContent 
                 description={
                   <div>
-                    🚀 <strong>Have an existing App? </strong> 
-                    <br />
-                    Create a public <a href="https://www.hydroshare.org/" target="_blank" rel="noopener">HydroShare</a> App Resource
+                    🚀 <strong>Have an Existing App? </strong> 
+                    {/* <br /> */}
+                    {/* Create a public <a href="https://www.hydroshare.org/" target="_blank" rel="noopener">HydroShare</a> App Resource */}
                   </div>
                 }
               />
