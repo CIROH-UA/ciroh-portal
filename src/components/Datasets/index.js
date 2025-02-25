@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-import { FaThLarge, FaBars } from "react-icons/fa";
+import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { fetchResourcesByGroup } from "./utils";
+
+import { getCommunityResources, getCuratedIds } from "./utils";
 
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
 
-export default function Datasets({ groupId = 4 }) {
-  
-    const { colorMode } = useColorMode(); // Get the current theme
-    const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
-    const PLACEHOLDER_ITEMS = 10;
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-  // Initialize with placeholder objects so that the component renders immediately.
+import { MdFilterList } from "react-icons/md";
+
+export default function Datasets({ community_id = 4 }) {
+  const { colorMode } = useColorMode(); // Get the current theme
+  const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
+  const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
+
+  const PLACEHOLDER_ITEMS = 10;
   const initialPlaceholders = Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => ({
     resource_id: `placeholder-${index}`,
     title: "",
@@ -26,16 +31,34 @@ export default function Datasets({ groupId = 4 }) {
     app_icon: ""
   }));
 
-  const [resources, setResources] = useState(initialPlaceholders);
-  const [error, setError] = useState(null);
+  const [resources, setResources] = useState(initialPlaceholders);   // all resources
+  const [curatedResources, setCuratedResources] = useState([]);     // subset for the curated tab
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [view, setView] = useState("row");
 
   useEffect(() => {
-    (async () => {
+    // Fetch the curated IDs first (from the "parent" resource).
+    const fetchCurated = async () => {
       try {
-        // Start data fetching (while placeholders are already rendered)
-        const resourceList = await fetchResourcesByGroup(groupId);
+        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+        console.log("Curated IDs:", curatedIds);
+        return curatedIds;
+      } catch (err) {
+        console.error("Error fetching curated IDs:", err);
+        return [];
+      }
+    };
+
+    // Fetch all resources by group, then filter them based on curated IDs
+    const fetchAll = async () => {
+      try {
+        const [curatedIds, resourceList] = await Promise.all([
+          fetchCurated(),                // get array of curated resource IDs
+          getCommunityResources() // get all resources for the group
+        ]);
+
+        // Map the full resource list to your internal format
         const mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
           title: res.resource_title,
@@ -44,18 +67,25 @@ export default function Datasets({ groupId = 4 }) {
           description: res.abstract || "No description available.",
           app_icon: hs_icon,
         }));
+        console.log("Mapped resources:", mappedList);
+        // Filter to get only curated subset
+        const curatedSubset = mappedList.filter(item =>
+          curatedIds.includes(item.resource_id)
+        );
 
-        // Replace placeholders with fetched data
         setResources(mappedList);
+        setCuratedResources(curatedSubset);
         setLoading(false);
-
       } catch (err) {
         console.error(`Error fetching resources: ${err.message}`);
         setError(err.message);
         setLoading(false);
       }
-    })();
-  }, [groupId]);
+    };
+
+    // Kick off fetch
+    fetchAll();
+  }, [community_id]);
 
   if (error) {
     return <p style={{ color: "red" }}>Error: {error}</p>;
@@ -64,6 +94,7 @@ export default function Datasets({ groupId = 4 }) {
   return (
     <div className={clsx(styles.wrapper)}>
       <div className={clsx("container", "margin-bottom--lg")}>
+        {/* Toggle between grid view & list view */}
         <div className={styles.header}>
           <div className={styles.viewToggle}>
             <button
@@ -83,11 +114,39 @@ export default function Datasets({ groupId = 4 }) {
           </div>
         </div>
 
-        {view === "grid" ? (
-          <HydroShareResourcesTiles resources={resources}/>
-        ) : (
-          <HydroShareResourcesRows resources={resources}/>
-        )}
+        {/* Tabs for "All" and "Curated" */}
+        <Tabs className={styles.contributeTabs}>
+          <TabItem
+            value="all"
+            label={
+              <span className={styles.tabLabel}>
+                <FaListUl className={styles.tabIcon} /> All
+              </span>
+            }
+            default
+          >
+            {view === "grid" ? (
+              <HydroShareResourcesTiles resources={resources} loading={loading} />
+            ) : (
+              <HydroShareResourcesRows resources={resources} loading={loading} />
+            )}
+          </TabItem>
+
+          <TabItem
+            value="curated"
+            label={
+              <span className={styles.tabLabel}>
+                <MdFilterList className={styles.tabIcon} /> Curated
+              </span>
+            }
+          >
+            {view === "grid" ? (
+              <HydroShareResourcesTiles resources={curatedResources} loading={loading} />
+            ) : (
+              <HydroShareResourcesRows resources={curatedResources} loading={loading} />
+            )}
+          </TabItem>
+        </Tabs>
       </div>
     </div>
   );

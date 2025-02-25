@@ -6,6 +6,21 @@
   padding: 4rem 0 4rem;
 }
 
+/* tabs */
+.contributeTabs{
+  justify-content: center;
+  margin-bottom: 4rem;
+}
+.tabLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+}
+.tabIcon {
+  font-size: 1.5rem;
+}
+
 /* Header with title and toggle buttons */
 .header {
     display: flex;
@@ -75,3 +90,4 @@
     }
   }
   
+
