@@ -11,38 +11,17 @@ import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
 
 export default function AppsTabContributeContent({ description }) {
-  const { colorMode } = useColorMode();
-  // Destructure your card data
-  const [card1, card2, card3, card4, card5] = contributeAppCards;
-
   return (
     <>
       
       <div className={styles.currentAppSection}>
-        <div className={styles.headerContainer}>
-          <h3 className={styles.description2}>
-             {description}
-          </h3>
-        </div>
-        
-
+        <CardsHeader header="Create an App Resource on 5 Easy Steps" />
         <ActionButtons
             buttons={[
                 { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
                 { label: "Quick Start", href: "#add-steps" }
               ]}
         />
-
-
-        <HydroShareMock
-            isAppResource={true}
-            title="TethysDash"
-            home_url="https://github.com/FIRO-Tethys/aquainsight"
-            iconUrl={AppIconUrl}
-            keywords="nwm_portal_app"
-        />
-        <CardsHeader header="Create an App Resource on 5 Easy Steps" />
-
 
         <StepsCards
             steps={contributeAppCards}
