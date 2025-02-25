@@ -1,5 +1,4 @@
 import React from 'react';
-import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 import { contributeDatasetsCards } from './utils';
 import StepsCards from './StepsCards';
@@ -7,9 +6,7 @@ import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
 
 
-export default function DatasetsTabContributeContent({ description }) {
-  // const { colorMode } = useColorMode();
-  // const [card1, card2, card3] = contributeDatasetsCards;
+export default function DatasetsTabContributeContent() {
 
   return (
           
