@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 import { IoLayers, IoAppsSharp} from "react-icons/io5";
 import HydroShareMock from './HydroShareMock';
 import AppIconUrl from '@site/static/img/tethysdash_icon.png';
-
+import ActionButtons from './ActionButtons';
 
 export default function HydroShareHelp({ title, description }) {
   return (
@@ -19,11 +19,19 @@ export default function HydroShareHelp({ title, description }) {
               {title}
             </h2>
           </div>
-          <h3 className={styles.description}>
-            Elevate Your Impact: Share Data & Tools with HydroShare
-            <br/>
-            Build Resources or Seamlessly Integrate Apps via Connectors
+            <h3 className={styles.description}>
+                    Elevate Your Impact: Share Data & Tools with HydroShare
+                    <br/>
+                    Build Resources or Seamlessly Integrate Apps via Connectors
             </h3>
+
+            <ActionButtons
+                buttons={[
+                    { label: "Getting Started", href: "https://help.hydroshare.org/introduction-to-hydroshare/getting-started/", primary: true },
+                    { label: "HydroShare Help", href: "https://help.hydroshare.org/"}
+                ]}
+            />
+
           <Tabs className={styles.contributeTabs}>
             <TabItem 
               value="app" 

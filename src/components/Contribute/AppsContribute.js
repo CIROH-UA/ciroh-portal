@@ -5,16 +5,16 @@ import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
 
-export default function AppsTabContributeContent({ description }) {
+export default function AppsTabContributeContent() {
   return (
     <>
       
       <div className={styles.currentAppSection}>
-        <CardsHeader header="Create an App Resource on 5 Easy Steps" />
+        <CardsHeader header="Create a HydroShare App Resource on 5 Easy Steps" />
         <ActionButtons
             buttons={[
                 { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
-                { label: "Quick Start", href: "#add-steps" }
+                { label: "Quick Start", href: "/hydroshare" }
               ]}
         />
 

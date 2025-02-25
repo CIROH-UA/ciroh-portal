@@ -4,7 +4,6 @@ import { contributeLearningModulesCards } from './utils';
 import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
-import HydroShareMock from './HydroShareMock';
 
 
 export default function LearningModulesContribute({ description }) {
@@ -22,14 +21,9 @@ export default function LearningModulesContribute({ description }) {
         <ActionButtons
             buttons={[
                 { label: "Add your Module", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#learning-modules", primary: true },
-                { label: "Visit the Courses", href: "https://edx.hydrolearn.org/courses" }
+                { label: "Quick Start", href: "/hydroshare" }
               ]}
         />
-        {/* <HydroShareMock
-            isAppResource={false}
-            title="Quantifying Runoff Generation"
-            keywords="nwm_portal_module"
-        /> */}
 
         <StepsCards
             steps={contributeLearningModulesCards}

@@ -1,0 +1,68 @@
+.actionButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  animation: fadeInScale 0.6s ease-out;
+  
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.buttonPrimary {
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+  
+}
+
+:root[data-theme='dark'] .buttonPrimary {
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+}
+
+.buttonSecondary {
+  background-color: var(--ifm-color-primary-light);
+  color: #fff;
+}
+
+:root[data-theme='dark'] .buttonSecondary {
+  background-color: var(--ifm-color-primary-light);
+  color: #fff;
+}
+
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
