@@ -97,6 +97,7 @@ const config = {
           {to: '/apps', label: 'Apps', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/publications', label: 'Publications', position: 'left'},
+          {to: '/learning_modules', label: 'Modules', position: 'left'},
           {to: '/contribute', label: 'Contribute', position: 'right'},
           {to: '/develop', label: 'Develop', position: 'right'},
           {
