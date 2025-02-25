@@ -3,6 +3,8 @@ import styles from './styles.module.css';
 import AppsTabContributeContent from './AppsContribute';
 import DatasetsTabContributeContent from './DatasetsContribute';
 import PublicationsTabContributeContent from './PublicationsContribute';
+import DocsContribute from './DocsContribute';
+import LearningModulesContribute from './LearningModulesContribute';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { IoLayers, IoAppsSharp,IoBookmarks,IoSchool,IoFileTrayFull   } from "react-icons/io5";
@@ -66,13 +68,12 @@ export default function Contribute({ title, description }) {
                   </span>
                 }
               >
-              <PublicationsTabContributeContent
-                  // description={
+              <PublicationsTabContributeContent/>
+                  {/* // description={
                   //   <div>
                   //     Whether it’s a recent paper, thesis, conference presentation, or even a relevant article, your input will enrich this growing hub. Let’s learn from and support one another!
                   //   </div>
-                  // }
-              />
+                  // } */}
             </TabItem>
             <TabItem 
                 value="docs" 
@@ -82,12 +83,7 @@ export default function Contribute({ title, description }) {
                   </span>
                 }
               >
-                <div>
-                  <strong>
-                  we are working on it
-                  </strong>
-                  
-                </div>
+              <DocsContribute/>
             </TabItem>
 
             <TabItem 
@@ -98,12 +94,7 @@ export default function Contribute({ title, description }) {
                   </span>
                 }
               >
-                <div>
-                  <strong>
-                  we are working on it
-                  </strong>
-                  
-                </div>
+                <LearningModulesContribute/>
             </TabItem>
           </Tabs>
           </div>

@@ -43,6 +43,7 @@
   
 .cardContent {
     padding: 1rem;
+    height: 50%;
 }
   
 :root[data-theme='dark'] .cardContent {

@@ -24,6 +24,20 @@ import ZoteroAddLight from '@site/static/img/zotero_add_light.png';
 import ZoteroJoinGroupDark from '@site/static/img/zotero_join_dark.png';
 import ZoteroJoinGroupLight from '@site/static/img/zotero_join_light.png';
 
+import DocsLogo from '@site/static/img/docuhub_logo.png';
+
+import DocsEditDark from '@site/static/img/docs_edit_dark.png';
+import DocsEditLight from '@site/static/img/docs_edit_light.png';
+
+import DocsPRDark from '@site/static/img/docuhub_pr_dark.png';
+import DocsPRLight from '@site/static/img/docuhub_pr_light.png';
+
+import DocsForkDark from '@site/static/img/docuhub_fork_dark.png';
+import DocsForkLight from '@site/static/img/docuhub_fork_light.png';
+
+import DocsMDDark from '@site/static/img/docuhub_md_dark3.png';
+import DocsMDLight from '@site/static/img/docuhub_md_light3.png';
+
 export const contributeAppCards = [
   {
     imgSrcLight: CreateAppImageLight,
@@ -62,7 +76,6 @@ export const contributeAppCards = [
   },
 ];
 
-
 export const contributeDatasetsCards = [
   {
     imgSrcLight: CreateAppImageLight,
@@ -86,7 +99,6 @@ export const contributeDatasetsCards = [
     cardDescription: 'Make your Dataset Resource public to share it with the CIROH community.',
   },
 ]
-
 
 export const contributePublicationsCards = [
   {
@@ -125,3 +137,76 @@ export const contributePublicationsCards = [
     cardDescription: 'Add new citations using the Zotero icon in the URL bar or drag and drop items from other folders into your group folders',
   },
 ];
+
+export const contributeSimpleDocsCards = [
+  {
+    imgSrcLight: DocsLogo,
+    imgSrcDark: DocsLogo,
+    imgAlt: 'Visit the Documentation',
+    cardTitle: '1. Visit the Documentation',
+    cardDescription: 'Visit docs.ciroh.org and navigate to the page you wish to modify.',
+  },
+  {
+    imgSrcLight:DocsEditLight ,
+    imgSrcDark: DocsEditDark,
+    imgAlt: 'Edit page',
+    cardTitle: '2. Edit page',
+    cardDescription: 'Click on "Edit page" at the bottom of the page to make any necessary changes.',
+  },
+  {
+    imgSrcLight: DocsPRLight,
+    imgSrcDark: DocsPRDark,
+    imgAlt: 'Submit a Pull Request',
+    cardTitle: '3. Submit a Pull Request',
+    cardDescription: 'Submit a pull request with your changes to the repository.',
+  }
+];
+
+export const contributeBlogsDocsCards = [
+  {
+    imgSrcLight: DocsForkLight,
+    imgSrcDark: DocsForkDark,
+    imgAlt: 'Visit the Documentation',
+    cardTitle: '1. Create a Fork',
+    cardDescription: 'Fork the repository ciroh-ua_website to your GitHub account.',
+  },
+  {
+    imgSrcLight:DocsMDLight ,
+    imgSrcDark: DocsMDDark,
+    imgAlt: 'Create a Blog page',
+    cardTitle: '2. Create a Blog page',
+    cardDescription: 'Create a new markdown file (YYYY-MM-DD-my-blog-post-title.md or YYYY/MM/DD/my-blog-post-title.md) in the blog folder with the necessary metadata.',
+  },
+  {
+    imgSrcLight: DocsPRLight,
+    imgSrcDark: DocsPRDark,
+    imgAlt: 'Submit a Pull Request',
+    cardTitle: '3. Submit a Pull Request',
+    cardDescription: 'Submit a pull request with your changes to the repository.',
+  }
+];
+
+
+export const contributeLearningModulesCards = [
+  {
+    imgSrcLight: CreateAppImageLight,
+    imgSrcDark: CreateAppImageDark,
+    imgAlt: 'Create a Resource',
+    cardTitle: '1. Create a Resource',
+    cardDescription: 'Provide the necessary metadata to make your resource public on HydroShare.',
+  },
+  {
+    imgSrcLight: KeywordsAppImageLight,
+    imgSrcDark: KeywordsAppImageDark,
+    imgAlt: 'Add Keywords to your Resource',
+    cardTitle: '2. Add Keywords',
+    cardDescription: 'Add nwm_portal_module keyword to your Resource to make it discoverable.',
+  },
+  {
+    imgSrcLight: AppListImageLight,
+    imgSrcDark: AppListImageDark,
+    imgAlt: 'View your Dataset on the Resource List',
+    cardTitle: '3. Make your Dataset Public',
+    cardDescription: 'Make your Resource public to share it with the CIROH community.',
+  },
+]
