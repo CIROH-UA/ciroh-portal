@@ -1,11 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
-import { useColorMode } from '@docusaurus/theme-common';
 import styles from './styles.module.css';
 import { contributeAppCards } from './utils';
-import AppIconUrl from '@site/static/img/tethysdash_icon.png';
-// This is your "example app" resource card
-import HydroShareMock from './HydroShareMock';
 import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
