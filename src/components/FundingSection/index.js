@@ -2,10 +2,9 @@ import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import clsx from 'clsx';
 import styles from './styles.module.css';
-import OWPLogoLight from '@site/static/img/owp_logo_light.png';
+
 
 export default function FundingSection({
-  title,
   description,
   images, // an array of objects: { lightImage, darkImage }
   background = 'primary', // default to primary background
@@ -25,7 +24,6 @@ export default function FundingSection({
           <div className={styles.headerContainer}>
             <h3 className={styles.description}>{description}</h3>
 
-            {/* <h1 className={styles.title}>{title}</h1> */}
             {images && images.length > 0 && (
               <div className={styles.imagesContainer}>
                 {images.map((img, index) => (

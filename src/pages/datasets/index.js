@@ -1,9 +1,10 @@
 import React from "react";
-import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
+// import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import { items } from "./constants";
 import TechBox from "@site/src/components/TechBox";
+import Datasets from "@site/src/components/Datasets";
 
 export default function DatasetsPage() {
   return (
@@ -20,7 +21,9 @@ export default function DatasetsPage() {
       </div>
 
       <main>
-        <HydroShareResourcesSelector keyword="ciroh_portal_data" />
+        <Datasets/>
+
+        {/* <HydroShareResourcesSelector keyword="ciroh_portal_data" /> */}
         <TechBox items={items} type={"Datasets"}  />
       </main>
     

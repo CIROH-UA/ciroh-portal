@@ -2,7 +2,6 @@ import React from "react";
 import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
-// import PoweredBy from '@site/src/components/PoweredBy';
 import { items } from "./constants";
 import TechBox from "@site/src/components/TechBox";
 
@@ -20,9 +19,7 @@ export default function AppsPage() {
             ]}
         />
       </div>
-
       <main>
-        {/* <PoweredBy poweredByItems={poweredByItems} /> */}
         <HydroShareResourcesSelector keyword="nwm_portal_app" />
         <TechBox items={items} type={"Applications"} tethys/>
       </main>

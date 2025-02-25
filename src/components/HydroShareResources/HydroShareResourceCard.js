@@ -22,16 +22,13 @@ export default function HydroShareResourceCard({ resource }) {
       <div className={styles.imageWrapper}>
         <img src={app_icon} alt={title} className={styles.image} />
 
-        {/* Hover overlay */}
+        
         <div className={styles.hoverOverlay}>
-          {/* Title */}
           <h5
             className={styles.overlayTitle}
           >
             {title}
           </h5>
-
-          {/* Icons */}
           <div className={styles.overlayIcons}>
             {source_code_url && (
               <a
