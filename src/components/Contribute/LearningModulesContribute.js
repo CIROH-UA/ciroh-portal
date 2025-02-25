@@ -17,19 +17,20 @@ export default function LearningModulesContribute({ description }) {
           </h3>
         </div>
 
-        <HydroShareMock
-            isAppResource={false}
-            title="Quantifying Runoff Generation"
-            keywords="nwm_portal_module"
-        />
-        <CardsHeader header="Add your Learning Module on 3 Easy Steps" />
 
+        <CardsHeader header="Add your Learning Module on 3 Easy Steps" />
         <ActionButtons
             buttons={[
                 { label: "Add your Module", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#learning-modules", primary: true },
                 { label: "Visit the Courses", href: "https://edx.hydrolearn.org/courses" }
               ]}
         />
+        {/* <HydroShareMock
+            isAppResource={false}
+            title="Quantifying Runoff Generation"
+            keywords="nwm_portal_module"
+        /> */}
+
         <StepsCards
             steps={contributeLearningModulesCards}
             containerId="add-learning-steps"
