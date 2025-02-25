@@ -1,0 +1,200 @@
+.resourceCard {
+  border-radius: 6px;
+  background-color: var(--ifm-background-color);
+  max-width: min(100%, 800px); /* Added width constraint */
+  margin: 1.5rem auto; /* Center the component */
+  width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+
+  /* For dark mode */
+  [data-theme='dark'] & {
+    box-shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.08);
+  }
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.divider {
+  margin: 0.5rem 0 1rem 0;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Title styling */
+.resourceTitle {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--ifm-color-primary);
+}
+
+/* Button styling */
+.webAppButton {
+  white-space: nowrap;
+  padding: 6px 12px;
+}
+
+/* Icon row */
+.iconRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.icon {
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.icon:hover {
+  transform: scale(1.1);
+}
+.iconRed {
+  color: #d9534f;
+}
+.iconBlue {
+  color: #0275d8;
+}
+
+/* Metadata layout */
+.resourceBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.resourceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+.resourceLabel {
+  font-weight: bolder;
+  margin-right: 0.5rem;
+  color: var(--ifm-heading-color);
+  min-width: 120px;
+}
+.resourceValue {
+  color: var(--ifm-font-color-base);
+}
+.withdrawButton {
+  margin-left: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.85rem;
+  border-radius: 4px;
+}
+.withdrawButton:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+/* Section divider */
+.sectionDivider {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Section headings */
+.sectionHeading {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: var(--ifm-color-primary);
+}
+
+/* Abstract & other text */
+.abstractSection {
+  margin-bottom: 1rem;
+}
+.abstractText {
+  line-height: 1.6;
+  color: var(--ifm-font-color-base);
+}
+
+/* Config & citation sections */
+.configSection {
+  margin-top: 1.5rem;
+}
+.citationSection {
+  margin-top: 1.5rem;
+}
+
+/* Credits section */
+.creditsSection {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+.fundingTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+.fundingTable th,
+.fundingTable td {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  padding: 0.5rem;
+  text-align: left;
+}
+
+/* App Icon URL preview */
+.iconPreview img {
+  display: block;
+}
+.highlightContent {
+  display: inline-block;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+/* Scroll highlight effect */
+.highlightable {
+  position: relative;
+}
+.highlight {
+  animation: pulseHighlight 1s ease-out infinite;
+}
+
+@keyframes pulseHighlight {
+  0% {
+    box-shadow: 
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0.4),
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 8px rgba(var(--ifm-color-secondary-rgb), 0),
+      0 0 0 12px rgba(var(--ifm-color-secondary-rgb), 0);
+  }
+  100% {
+    box-shadow: 
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0),
+      0 0 0 0px rgba(var(--ifm-color-secondary-rgb), 0);
+  }
+}
+/* Step label overlay */
+.stepLabel {
+  position: absolute;
+  top: -1.5rem;
+  left: 0;
+  background-color: var(--ifm-color-primary);
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.highlightable .highlightContent .stepLabel {
+  opacity: 1;
+}
