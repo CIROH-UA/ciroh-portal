@@ -209,13 +209,6 @@ html {
   color: var(--ifm-heading-color);
 }
 
-/* A simple horizontal divider between sections */
-.sectionDivider {
-  margin: 2rem 0;
-  border: none;
-  border-top: 1px solid var(--ifm-color-emphasis-200);
-}
-
 /* Container for final CTA button */
 .ctaContainer {
   display: flex;

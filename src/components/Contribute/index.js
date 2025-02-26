@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 import { IoLayers, IoAppsSharp,IoBookmarks,IoSchool,IoFileTrayFull   } from "react-icons/io5";
 
 
-export default function Contribute({ title, description }) {
+export default function Contribute({ title }) {
   return (
     <div>
       <div className={styles.wrapper}>

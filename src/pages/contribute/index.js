@@ -19,11 +19,6 @@ export default function ContributePage() {
       <main>
         <Contribute 
           title="Your contributions drive the future of water science."
-          description={
-            <div>
-              Amplify Your Hydrologic Impact Through Shared Innovation
-            </div>
-          }
         />
       </main>
     

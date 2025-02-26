@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './styles.module.css';
+import Appstyles from './AppsStyles.module.css';
 import { contributeAppCards } from './utils';
 import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
@@ -25,10 +26,10 @@ export default function AppsTabContributeContent() {
 
       </div>
 
-      <hr className={styles.sectionDivider} />
+        <hr className={Appstyles.sectionDivider} />
 
-        <div className={styles.headerContainer}>
-          <h3 className={styles.description2}>
+        <div className={Appstyles.headerContainer}>
+          <h3 className={Appstyles.description2}>
               <div>
                 💧 <strong>Thinking about an App? </strong> Develop applications using our <a href="https://www.tethysplatform.org/" target="_blank" rel="noopener">Tethys Platform</a> toolkit
               </div>

@@ -1,0 +1,29 @@
+/* A simple horizontal divider between sections */
+.sectionDivider {
+    margin: 2rem 0;
+    border: none;
+    border-top: 1px solid var(--ifm-color-emphasis-200);
+  }
+
+  .headerContainer {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeInScale 0.6s ease-out;
+  }
+  .description2 {
+    font-size: 1.5rem;
+    line-height: 2.5rem;
+    color: var(--ifm-font-color-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .headerContainer {
+      margin: 0 1rem 2rem;
+      padding: 1rem;
+    }
+    
+    .description2 {
+      font-size: 1.15rem;
+      line-height: 1.6;
+    }
+  }
