@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './styles.module.css';
+import tabStyles from './tabsStyles.module.css';
 import AppsTabContributeContent from './AppsContribute';
 import DatasetsTabContributeContent from './DatasetsContribute';
 import PublicationsTabContributeContent from './PublicationsContribute';
@@ -22,12 +23,12 @@ export default function Contribute({ title, description }) {
             </h2>
           </div>
           
-          <Tabs className={styles.contributeTabs}>
+          <Tabs className={tabStyles.contributeTabs}>
             <TabItem 
               value="apps" 
               label={
-                <span className={styles.tabLabel}>
-                  <IoAppsSharp  className={styles.tabIcon} /> Apps
+                <span className={tabStyles.tabLabel}>
+                  <IoAppsSharp  className={tabStyles.tabIcon} /> Apps
                 </span>
               }
               default
@@ -38,8 +39,8 @@ export default function Contribute({ title, description }) {
               <TabItem 
                 value="datasets" 
                 label={
-                  <span className={styles.tabLabel}>
-                    <IoLayers className={styles.tabIcon} /> Datasets
+                  <span className={tabStyles.tabLabel}>
+                    <IoLayers className={tabStyles.tabIcon} /> Datasets
                   </span>
                 }
               >
@@ -55,23 +56,18 @@ export default function Contribute({ title, description }) {
             <TabItem 
                 value="publications" 
                 label={
-                  <span className={styles.tabLabel}>
-                    <IoBookmarks className={styles.tabIcon} /> Publications
+                  <span className={tabStyles.tabLabel}>
+                    <IoBookmarks className={tabStyles.tabIcon} /> Publications
                   </span>
                 }
               >
               <PublicationsTabContributeContent/>
-                  {/* // description={
-                  //   <div>
-                  //     Whether it’s a recent paper, thesis, conference presentation, or even a relevant article, your input will enrich this growing hub. Let’s learn from and support one another!
-                  //   </div>
-                  // } */}
             </TabItem>
             <TabItem 
                 value="docs" 
                 label={
-                  <span className={styles.tabLabel}>
-                    <IoFileTrayFull className={styles.tabIcon} /> Docs
+                  <span className={tabStyles.tabLabel}>
+                    <IoFileTrayFull className={tabStyles.tabIcon} /> Docs
                   </span>
                 }
               >
@@ -81,8 +77,8 @@ export default function Contribute({ title, description }) {
             <TabItem 
                 value="learning_modules" 
                 label={
-                  <span className={styles.tabLabel}>
-                    <IoSchool className={styles.tabIcon} /> Learning Modules
+                  <span className={tabStyles.tabLabel}>
+                    <IoSchool className={tabStyles.tabIcon} /> Learning Modules
                   </span>
                 }
               >

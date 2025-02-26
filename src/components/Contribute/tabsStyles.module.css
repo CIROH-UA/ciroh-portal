@@ -1,0 +1,31 @@
+
+  
+.contributeTabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 4rem;
+}
+ 
+  
+.tabLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.tabIcon {
+    font-size: 1.5rem;
+}
+
+/* Media query to shrink font sizes & spacing on smaller screens */
+@media (max-width: 600px) {
+    .tabLabel {
+    font-size: 1.1rem;
+    gap: 0.25rem;
+    }
+    .tabIcon {
+    font-size: 1.2rem;
+    }
+}
