@@ -15,11 +15,14 @@ const StepsCards = ({ header, steps, containerId }) => {
         {steps.map((step, index) => {
           const cardContent = (
             <div className={styles.card} key={index}>
-              <img
-                src={colorMode === 'dark' ? step.imgSrcDark : step.imgSrcLight}
-                alt={step.imgAlt}
-                className={styles.cardImage}
-              />
+              <div className={styles.cardImageContainer}>
+                <img
+                  src={colorMode === 'dark' ? step.imgSrcDark : step.imgSrcLight}
+                  alt={step.imgAlt}
+                  className={styles.cardImage}
+                />
+              </div>
+
               <div className={styles.cardContent}>
                 <h4 className={styles.cardTitle}>{step.cardTitle}</h4>
                 <p className={styles.cardDescription}>{step.cardDescription}</p>

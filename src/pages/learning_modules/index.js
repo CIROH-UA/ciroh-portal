@@ -1,5 +1,7 @@
 import React from "react";
 import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
+
+// import LearningModules from "@site/src/components/LearningModules";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import { items } from "./constants";
@@ -21,6 +23,7 @@ export default function LearningModulesPage() {
       </div>
 
       <main>
+      {/* <LearningModules keyword="nwm_portal_module"/> */}
         <HydroShareResourcesSelector keyword="nwm_portal_module" />
         <TechBox items={items} type={"Learning Modules"}  />
       </main>

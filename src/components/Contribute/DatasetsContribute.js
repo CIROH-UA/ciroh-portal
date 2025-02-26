@@ -12,7 +12,7 @@ export default function DatasetsTabContributeContent() {
           
     <div className={styles.currentAppSection}>
 
-      <CardsHeader header="Create a HydroShare Resource on 3 Easy Steps" />
+      <CardsHeader header="Create a HydroShare Resource on 4 Easy Steps" />
         <ActionButtons
             buttons={[
                 { label: "Add your Data", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#data", primary: true },

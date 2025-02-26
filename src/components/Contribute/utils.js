@@ -38,9 +38,17 @@ import DocsForkLight from '@site/static/img/docuhub_fork_light.png';
 import DocsMDDark from '@site/static/img/docuhub_md_dark3.png';
 import DocsMDLight from '@site/static/img/docuhub_md_light3.png';
 
-
 import Hydrolearn101Dark from '@site/static/img/hydrolearn_101_dark.png';
 import Hydrolearn101Light from '@site/static/img/hydrolearn_101_light.png';
+
+import JoinCommunityDark from '@site/static/img/join_community_dark.png';
+import JoinCommunityLight from '@site/static/img/join_community_light.png';
+
+import JoinGroupDark from '@site/static/img/join_group_dark.png';
+import JoinGroupLight from '@site/static/img/join_group_light.png';
+
+import DatasetsDark from '@site/static/img/datasets_dark.png';
+import DatasetsLight from '@site/static/img/datasets_light.png';
 
 export const contributeAppCards = [
   {
@@ -81,25 +89,33 @@ export const contributeAppCards = [
 ];
 
 export const contributeDatasetsCards = [
+
+  {
+    imgSrcLight: JoinCommunityLight,
+    imgSrcDark: JoinCommunityDark,
+    imgAlt: 'Join the CIORH Community',
+    cardTitle: '1. Join the CIORH Community',
+    cardDescription: 'Join the CIORH Community on HydroShare to share your datasets.',
+  },
+  {
+    imgSrcLight: JoinGroupLight,
+    imgSrcDark: JoinGroupDark,
+    imgAlt: 'Join any Community Group',
+    cardTitle: '2. Join any CIROH Group',
+    cardDescription: 'Join any of the different Group on the CIROH HydroShare Community.',
+  },
   {
     imgSrcLight: CreateAppImageLight,
     imgSrcDark: CreateAppImageDark,
     imgAlt: 'Create a Resource',
-    cardTitle: '1. Create a Resource',
+    cardTitle: '3. Create a Resource',
     cardDescription: 'Provide the necessary metadata to make your resource public on HydroShare.',
   },
   {
-    imgSrcLight: KeywordsAppImageLight,
-    imgSrcDark: KeywordsAppImageDark,
-    imgAlt: 'Add Keywords to your Resource',
-    cardTitle: '2. Add Keywords',
-    cardDescription: 'Add ciroh_portal_data keyword to your Resource to make it discoverable.',
-  },
-  {
-    imgSrcLight: AppListImageLight,
-    imgSrcDark: AppListImageDark,
+    imgSrcLight: DatasetsLight,
+    imgSrcDark: DatasetsDark,
     imgAlt: 'View your Dataset on the Resource List',
-    cardTitle: '3. Make your Dataset Public',
+    cardTitle: '4. Make your Dataset Public',
     cardDescription: 'Make your Dataset Resource public to share it with the CIROH community.',
   },
 ]
