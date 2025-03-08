@@ -132,7 +132,7 @@
   /* -------------------------------------
      Card Animations
   ------------------------------------- */
-  @keyframes slideUp {
+  /* @keyframes slideUp {
     to {
       opacity: 1;
       transform: translateY(0);
@@ -146,7 +146,7 @@
   }
   
   /* Delay animations for staggered effect */
-  .publicationCard:nth-child(1) {
+  /* .publicationCard:nth-child(1) {
     animation-delay: 0.1s;
   }
   .publicationCard:nth-child(2) {
@@ -160,7 +160,7 @@
   }
   .publicationCard:nth-child(n+5) {
     animation-delay: 0.5s;
-  }
+  }  */
   
   /* -------------------------------------
      Card Layout and Hover
@@ -178,13 +178,16 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    /* Transition on hover is okay, but you can remove it too if you want zero movement */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* No initial "opacity: 0" or "transform: translateY(20px)"! */
   }
   
   .publicationCard:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
+  
   
   /* Make the entire card clickable */
   .cardLink {
