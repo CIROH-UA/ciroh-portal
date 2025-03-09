@@ -3,6 +3,7 @@ import styles from './styles.module.css';
 import Appstyles from './AppsStyles.module.css';
 import { contributeAppCards } from './utils';
 import StepsCards from './StepsCards';
+import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
 
@@ -18,12 +19,12 @@ export default function AppsTabContributeContent() {
                 { label: "Quick Start", href: "/hydroshare" }
               ]}
         />
+        <HydroShareToolResourceForm/>
 
         <StepsCards
             steps={contributeAppCards}
             containerId="add-apps-steps"
         />
-
       </div>
 
         <hr className={Appstyles.sectionDivider} />
