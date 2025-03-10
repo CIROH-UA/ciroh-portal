@@ -94,8 +94,13 @@
   color: var(--ifm-color-content-secondary);
   font-size: 1.5rem;
   font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--ifm-background-surface-color); /* or a specific color */
+  z-index: 1;
+  padding: 1.3rem 0;
   margin-bottom: 0.3rem;
-
 }
 
 .description {
