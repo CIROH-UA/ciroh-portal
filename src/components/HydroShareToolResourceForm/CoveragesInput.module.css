@@ -1,0 +1,129 @@
+/* Container for the coverages section */
+.container {
+    border: 1px solid var(--ifm-color-emphasis-200);
+    padding: 1rem;
+    border-radius: var(--ifm-global-radius);
+    background-color: var(--ifm-background-surface-color);
+    margin-bottom: 1rem;
+  }
+  
+  /* Header container: title and add button */
+  .headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Header text */
+  .header {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--ifm-heading-color);
+  }
+  
+  /* Add button styling */
+  .addButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+  }
+  
+  .addIcon {
+    font-size: 1.25rem;
+    color: var(--ifm-color-primary);
+  }
+  
+  /* Coverage card styling */
+  .coverageCard {
+    border: 1px solid var(--ifm-color-emphasis-200);
+    padding: 1rem;
+    border-radius: var(--ifm-global-radius);
+    background-color: var(--ifm-background-surface-color);
+    margin-top: 1rem;
+    position: relative;
+  }
+  
+  /* Card header: title and remove button */
+  .cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .cardTitle {
+    font-weight: 600;
+    color: var(--ifm-heading-color);
+    font-size: 1.2rem;
+  }
+  
+  .removeButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--ifm-color-danger);
+  }
+  
+  /* Label styling */
+  .label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--ifm-font-color-base);
+  }
+  
+  /* Select styling */
+  .select {
+    padding: 0.5rem;
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 4px;
+    background-color: var(--ifm-background-surface-color);
+    color: var(--ifm-font-color-base);
+    margin-bottom: 0.75rem;
+    width: 100%;
+  }
+  
+  /* Input styling (for date pickers) */
+  .input {
+    padding: 0.5rem;
+    border: 1px solid var(--ifm-color-emphasis-200);
+    border-radius: 4px;
+    background-color: var(--ifm-background-surface-color);
+    color: var(--ifm-font-color-base);
+    width: 100%;
+  }
+  
+  /* Date pickers container */
+  .datePickers {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  /* Note for geospatial selection */
+  .note {
+    font-size: 0.9rem;
+    color: var(--ifm-color-emphasis-600);
+    margin-top: 0.5rem;
+  }
+  
+  /* Dark mode adjustments */
+  :root[data-theme="dark"] .container {
+    background-color: var(--ifm-background-surface-color-dark);
+    border-color: var(--ifm-color-emphasis-600);
+  }
+  
+  :root[data-theme="dark"] .select,
+  :root[data-theme="dark"] .input {
+    background-color: var(--ifm-background-surface-color-dark);
+    border-color: var(--ifm-color-emphasis-600);
+    color: var(--ifm-font-color-base);
+  }
+  
+  :root[data-theme="dark"] .header,
+  :root[data-theme="dark"] .cardTitle,
+  :root[data-theme="dark"] .label {
+    color: var(--ifm-heading-color);
+  }
+  
