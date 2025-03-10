@@ -228,7 +228,7 @@ export default function HydroShareResourceCreator() {
         </label>
   
         {/* Coverages Section */}
-        <CoveragesInput onChange={setCoverages} />
+        <CoveragesInput onChange={(covs) => setCoverages(covs || [])} />
   
         {/* Funding Agency Fields */}
         <div className={styles.fundingAgencyHeaderContainer}>
