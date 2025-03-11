@@ -12,13 +12,8 @@ export default function AppsTabContributeContent() {
     <>
       
       <div className={styles.currentAppSection}>
-        <CardsHeader header="Create a HydroShare App Resource on 5 Easy Steps" />
-        <ActionButtons
-            buttons={[
-                { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
-                { label: "Quick Start", href: "/hydroshare" }
-              ]}
-        />
+        <CardsHeader header="Add your App!" />
+
         <HydroShareToolResourceForm/>
 
         <StepsCards
@@ -26,7 +21,12 @@ export default function AppsTabContributeContent() {
             containerId="add-apps-steps"
         />
       </div>
-
+      <ActionButtons
+            buttons={[
+                { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
+                { label: "Quick Start", href: "/hydroshare" }
+              ]}
+        />
         <hr className={Appstyles.sectionDivider} />
 
         <div className={Appstyles.headerContainer}>

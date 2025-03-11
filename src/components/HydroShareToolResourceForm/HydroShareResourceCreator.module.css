@@ -1,6 +1,6 @@
 /* Container for the form */
 .container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
   background-color: var(--ifm-background-color);
@@ -116,24 +116,56 @@
 
 /* Submit button styling */
 .button {
-  background-color: var(--ifm-color-primary);
-  color: var(--ifm-color-primary-inverse);
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 2rem;
+  font-size: 1rem;
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .button:hover {
-  background-color: var(--ifm-color-primary-dark);
+  transform: scale(1.05);
 }
+
+.buttonPrimary {
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+  
+}
+
+:root[data-theme='dark'] .buttonPrimary {
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+}
+
 
 .button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.spinner {
+  margin-right: 0.5rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.progressMessage {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
 
 /* Error message styling */
 .errorMessage {
@@ -144,8 +176,8 @@
 
 /* Success message styling */
 .successMessage {
-  background-color: var(--ifm-color-success);
-  color: var(--ifm-color-success-inverse);
+  /* background-color: var(--ifm-color-success); */
+  /* color: var(--ifm-color-success-inverse); */
   padding: 0.75rem 1rem;
   border-radius: 4px;
   text-align: center;

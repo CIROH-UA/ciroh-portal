@@ -102,7 +102,7 @@
     flex-wrap: wrap;
   }
   
-  /* Note for geospatial selection */
+  /* Note for spatial selection */
   .note {
     font-size: 0.9rem;
     color: var(--ifm-color-emphasis-600);

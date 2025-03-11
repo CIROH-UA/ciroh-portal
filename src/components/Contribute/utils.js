@@ -51,39 +51,39 @@ import DatasetsDark from '@site/static/img/datasets_dark.png';
 import DatasetsLight from '@site/static/img/datasets_light.png';
 
 export const contributeAppCards = [
-  {
-    imgSrcLight: CreateAppImageLight,
-    imgSrcDark: CreateAppImageDark,
-    imgAlt: 'Create an App Resource',
-    cardTitle: '1. Create an App Resource',
-    cardDescription: 'Provide the necessary metadata and URLs to make your app public on HydroShare. Provide an image to make your app visually appealing.',
-  },
-  {
-    imgSrcLight: KeywordsAppImageLight,
-    imgSrcDark: KeywordsAppImageDark,
-    imgAlt: 'Add Keywords to your Resource',
-    cardTitle: '2. Add Keywords',
-    cardDescription: 'Add nwm_portal_app keyword to your App Connector Resource to make it discoverable.',
-  },
+  // {
+  //   imgSrcLight: CreateAppImageLight,
+  //   imgSrcDark: CreateAppImageDark,
+  //   imgAlt: 'Create an App Resource',
+  //   cardTitle: '1. Create an App Resource',
+  //   cardDescription: 'Provide the necessary metadata and URLs to make your app public on HydroShare. Provide an image to make your app visually appealing.',
+  // },
+  // {
+  //   imgSrcLight: KeywordsAppImageLight,
+  //   imgSrcDark: KeywordsAppImageDark,
+  //   imgAlt: 'Add Keywords to your Resource',
+  //   cardTitle: '2. Add Keywords',
+  //   cardDescription: 'Add nwm_portal_app keyword to your App Connector Resource to make it discoverable.',
+  // },
   {
     imgSrcLight: CodeImageLight,
     imgSrcDark: CodeImageDark,
     imgAlt: 'Add an App Icon to your Resource',
-    cardTitle: '3. Add an App Icon',
+    cardTitle: '1. Add an App Icon',
     cardDescription: 'Provide a png icon with transparent background with dimentsions 200x200.',
   },
   {
     imgSrcLight: WebAppImageLight,
     imgSrcDark: WebAppImageDark,
     imgAlt: 'Add Source Code to your Resource',
-    cardTitle: '4. Link Source Code',
+    cardTitle: '2. Link Source Code',
     cardDescription: 'Provide a link to the source code repository for your app.',
   },
   {
     imgSrcLight: AppListImageLight,
     imgSrcDark: AppListImageDark,
     imgAlt: 'View your App on the App List',
-    cardTitle: '5. Make your App Public',
+    cardTitle: '3. Make your App Public',
     cardDescription: 'Make your App Connector Resource public to share it with the CIROH community.',
   },
 ];
@@ -93,9 +93,9 @@ export const contributeDatasetsCards = [
   {
     imgSrcLight: JoinCommunityLight,
     imgSrcDark: JoinCommunityDark,
-    imgAlt: 'Join the CIORH Community',
-    cardTitle: '1. Join the CIORH Community',
-    cardDescription: 'Join the CIORH Community on HydroShare to share your datasets.',
+    imgAlt: 'Join the CIROH Community',
+    cardTitle: '1. Join the CIROH Community',
+    cardDescription: 'Join the CIROH Community on HydroShare to share your datasets.',
   },
   {
     imgSrcLight: JoinGroupLight,

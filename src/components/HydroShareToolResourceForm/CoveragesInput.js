@@ -6,16 +6,16 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 export default function CoveragesInput({ onChange }) {
   // Each coverage entry is an object with:
-  // { type: "spatial" or "geospatial", startDate: Date|null, endDate: Date|null }
+  // { type: "temporal" or "spatial", startDate: Date|null, endDate: Date|null }
   const [coverages, setCoverages] = useState([]);
 
   // When coverages change, call onChange prop with the array in metadata format.
   useEffect(() => {
-    // For each coverage entry with type "spatial" and both dates set,
+    // For each coverage entry with type "temporal" and both dates set,
     // we create an object in the form:
     // { coverage: { type: 'period', value: { start: "MM/DD/YYYY", end: "MM/DD/YYYY" } } }
     const metadataCoverages = coverages
-      .filter(cov => cov.type === 'spatial' && cov.startDate && cov.endDate)
+      .filter(cov => cov.type === 'temporal' && cov.startDate && cov.endDate)
       .map(cov => ({
         coverage: {
           type: 'period',
@@ -35,7 +35,7 @@ export default function CoveragesInput({ onChange }) {
   };
 
   const addCoverage = () => {
-    setCoverages([...coverages, { type: 'spatial', startDate: null, endDate: null }]);
+    setCoverages([...coverages, { type: 'temporal', startDate: null, endDate: null }]);
   };
 
   const updateCoverage = (index, field, value) => {
@@ -76,11 +76,11 @@ export default function CoveragesInput({ onChange }) {
               value={cov.type}
               onChange={(e) => updateCoverage(index, 'type', e.target.value)}
             >
-              <option value="spatial">Spatial</option>
-              <option value="geospatial">Geospatial</option>
+              <option value="temporal">temporal</option>
+              <option value="spatial">spatial</option>
             </select>
           </label>
-          {cov.type === 'spatial' && (
+          {cov.type === 'temporal' && (
             <div className={styles.datePickers}>
               <label className={styles.label}>
                 Start Date:
@@ -104,8 +104,8 @@ export default function CoveragesInput({ onChange }) {
               </label>
             </div>
           )}
-          {cov.type === 'geospatial' && (
-            <p className={styles.note}>No additional input required for geospatial coverage.</p>
+          {cov.type === 'spatial' && (
+            <p className={styles.note}>No additional input required for spatial coverage.</p>
           )}
         </div>
       ))}

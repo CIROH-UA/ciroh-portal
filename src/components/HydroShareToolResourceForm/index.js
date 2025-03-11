@@ -1,64 +1,63 @@
-import React, { useState } from 'react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import React, { useState, useCallback } from 'react';
+import { FaSpinner } from 'react-icons/fa';
 import CoveragesInput from './CoveragesInput';
+import FundingAgenciesInput from './FundingAgenciesInput';
 import styles from './HydroShareResourceCreator.module.css';
+import clsx from 'clsx';
 
-export default function HydroShareResourceCreator() {
-  // ----- Resource Creation Form Fields -----
+export default function HydroShareResourceCreator({
+  resourceType = "ToolResource",
+  makePublic = false,
+  keywordToAdd = "nwm_portal_app",
+}) {
+  // Credentials
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+
+  // Resource Info
   const [title, setTitle] = useState('');
   const [abstract, setAbstract] = useState('');
   const [keywords, setKeywords] = useState('');
-  
-  // ----- Funding Agency Fields as an Array -----
-  const [fundingAgencies, setFundingAgencies] = useState([
-    { agency_name: '', award_title: '', award_number: '', agency_url: '' },
-  ]);
-  
-  // ----- Coverages State from CoveragesInput -----
+
+  // Funding Agencies state from FundingAgenciesInput component
+  const [fundingAgencies, setFundingAgencies] = useState([]);
+
+  // Coverages state from CoveragesInput
   const [coverages, setCoverages] = useState([]);
-  
-  // ----- UI Feedback State -----
+
+  // Files state for uploaded files
+  const [files, setFiles] = useState([]);
+
+  // UI Feedback
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  
+  // Instead of a list of progress messages, we keep a single message.
+  const [progressMessage, setProgressMessage] = useState('');
+  // Once complete, store the final resource URL.
+  const [resourceUrl, setResourceUrl] = useState('');
+
   const urlBase = 'https://www.hydroshare.org/hsapi';
-  
+
   // Utility: Count words in abstract
-  const countWords = (str) => str.trim().split(/\s+/).filter(Boolean).length;
-  
-  // Handler to update a funding agency at given index
-  const updateFundingAgency = (index, field, value) => {
-    const newAgencies = [...fundingAgencies];
-    newAgencies[index][field] = value;
-    setFundingAgencies(newAgencies);
-  };
-  
-  // Handler to add a new funding agency entry
-  const addFundingAgency = () => {
-    setFundingAgencies([
-      ...fundingAgencies,
-      { agency_name: '', award_title: '', award_number: '', agency_url: '' },
-    ]);
-  };
-  
-  // Handler to remove a funding agency entry by index
-  const removeFundingAgency = (index) => {
-    if (fundingAgencies.length > 1) {
-      const newAgencies = fundingAgencies.filter((_, i) => i !== index);
-      setFundingAgencies(newAgencies);
-    }
-  };
-  
+  const countWords = (str) =>
+    str.trim().split(/\s+/).filter(Boolean).length;
+
+  // Memoize callbacks to avoid recreating them on every render.
+  const handleCoveragesChange = useCallback((covs) => {
+    setCoverages(covs || []);
+  }, []);
+
+  const handleFundingAgenciesChange = useCallback((agencies) => {
+    setFundingAgencies(agencies);
+  }, []);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
-    setSuccess('');
-  
-    // ----- Basic Validation -----
+    setProgressMessage('');
+    setResourceUrl('');
+
+    // Basic Validation
     if (!username || !password) {
       setError('Username and password are required.');
       return;
@@ -87,24 +86,23 @@ export default function HydroShareResourceCreator() {
       setError('At least one complete funding agency entry is required.');
       return;
     }
-  
-    // ----- Prepare Keywords -----
+
+    // Prepare Keywords
     const keywordArr = keywords
       .split(/[,\s]+/)
       .map((k) => k.trim())
       .filter((k) => k);
-    if (!keywordArr.includes('nwm_data_ciroh')) {
-      keywordArr.push('nwm_data_ciroh');
+    if (!keywordArr.includes(keywordToAdd)) {
+      keywordArr.push(keywordToAdd);
     }
-  
-    // ----- Prepare Metadata for Resource Creation -----
-    // Instead of hardcoding coverage, use coverages from the CoveragesInput component.
+
+    // Prepare Metadata for Resource Creation (coverages)
     const metadataArray = [...coverages];
     const metadataJson = JSON.stringify(metadataArray);
-  
-    // ----- Build the FormData for the POST Request -----
+
+    // Build the FormData for the POST Request to create the resource.
     const formData = new FormData();
-    formData.append('resource_type', 'ToolResource');
+    formData.append('resource_type', resourceType);
     formData.append('title', title.trim());
     formData.append('abstract', abstract.trim());
     keywordArr.forEach((kw, i) => {
@@ -112,10 +110,10 @@ export default function HydroShareResourceCreator() {
     });
     formData.append('metadata', metadataJson);
     formData.append('extra_metadata', '{}');
-  
-    // ----- Prepare Basic Auth Header -----
+
+    // Prepare Basic Auth Header
     const authString = btoa(`${username}:${password}`);
-  
+
     setLoading(true);
     try {
       // POST: Create the resource
@@ -135,7 +133,8 @@ export default function HydroShareResourceCreator() {
       if (!resourceId) {
         throw new Error('No resource ID returned');
       }
-  
+      setProgressMessage(`Resource created (ID: ${resourceId})`);
+
       // PUT: Update Science Metadata with Funding Agencies
       const scienceMetadata = {
         funding_agencies: validAgencies,
@@ -157,22 +156,69 @@ export default function HydroShareResourceCreator() {
           `Updating science metadata failed: HTTP ${putMetaResp.status} - ${errText}`
         );
       }
-  
-      // Notify the user with the resource URL
+      setProgressMessage('Funding agencies updated');
+
+      // Upload files one at a time using the endpoint POST /resource/{id}/files/
+      if (files.length > 0) {
+        for (const file of files) {
+          const fileFormData = new FormData();
+          fileFormData.append('file', file);
+          const fileResp = await fetch(
+            `${urlBase}/resource/${resourceId}/files/`,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Basic ${authString}`,
+              },
+              body: fileFormData,
+            }
+          );
+          if (!fileResp.ok) {
+            const errText = await fileResp.text();
+            throw new Error(
+              `Uploading file ${file.name} failed: HTTP ${fileResp.status} - ${errText}`
+            );
+          }
+          setProgressMessage(`Uploaded file: ${file.name}`);
+        }
+      }
+
+      // If the makePublic prop is true, call the access rules endpoint.
+      if (makePublic) {
+        const putAccessResp = await fetch(
+          `${urlBase}/resource/accessRules/${resourceId}/`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Basic ${authString}`,
+            },
+            body: JSON.stringify({ public: true }),
+          }
+        );
+        if (putAccessResp.status !== 200) {
+          const errText = await putAccessResp.text();
+          throw new Error(
+            `Setting access rules failed: HTTP ${putAccessResp.status} - ${errText}`
+          );
+        }
+        setProgressMessage('Resource made public');
+      }
+
+      // Final success message with resource URL
       const resourceUrl = `https://www.hydroshare.org/resource/${resourceId}`;
-      setSuccess(`Resource created successfully! ID: ${resourceId}. You can view it here: ${resourceUrl}`);
+      setResourceUrl(resourceUrl);
+      setProgressMessage('Resource created successfully! Visit your resource ');
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }
-  
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.header}>Create a HydroShare Resource</h2>
       {error && <div className={styles.errorMessage}>{error}</div>}
-      {success && <div className={styles.successMessage}>{success}</div>}
       <form className={styles.form} onSubmit={handleSubmit}>
         {/* Credentials */}
         <label className={styles.label}>
@@ -211,7 +257,6 @@ export default function HydroShareResourceCreator() {
             rows={5}
             value={abstract}
             onChange={(e) => setAbstract(e.target.value)}
-            placeholder="Provide a detailed abstract"
           />
         </label>
         <label className={styles.label}>
@@ -226,69 +271,54 @@ export default function HydroShareResourceCreator() {
             "nwm_data_ciroh" is auto-added if missing
           </small>
         </label>
-  
+
+        {/* File Upload */}
+        <label className={styles.label}>
+          Attach Files:
+          <input
+            className={styles.input}
+            type="file"
+            multiple
+            onChange={(e) => setFiles(Array.from(e.target.files))}
+          />
+        </label>
+
         {/* Coverages Section */}
-        <CoveragesInput onChange={(covs) => setCoverages(covs || [])} />
-  
-        {/* Funding Agency Fields */}
-        <div className={styles.fundingAgencyHeaderContainer}>
-          <h3 className={styles.fundingAgencyHeader}>Funding Agencies</h3>
-          <button type="button" className={styles.addButton} onClick={addFundingAgency}>
-            <FaPlus className={styles.addIcon} />
-          </button>
-        </div>
-        {fundingAgencies.map((agency, index) => (
-          <div key={index} className={styles.fundingAgencyCard}>
-            <button
-              type="button"
-              className={styles.removeIcon}
-              onClick={() => removeFundingAgency(index)}
-            >
-              <FaTrash />
-            </button>
-            <label className={styles.label}>
-              Agency Name:
-              <input
-                className={styles.input}
-                value={agency.agency_name}
-                onChange={(e) => updateFundingAgency(index, 'agency_name', e.target.value)}
-                placeholder="e.g. National Science Foundation"
-              />
-            </label>
-            <label className={styles.label}>
-              Award Title:
-              <input
-                className={styles.input}
-                value={agency.award_title}
-                onChange={(e) => updateFundingAgency(index, 'award_title', e.target.value)}
-                placeholder="e.g. Model Execution Cyberinfrastructure"
-              />
-            </label>
-            <label className={styles.label}>
-              Award Number:
-              <input
-                className={styles.input}
-                value={agency.award_number}
-                onChange={(e) => updateFundingAgency(index, 'award_number', e.target.value)}
-                placeholder="e.g. NSF_9087658_2017"
-              />
-            </label>
-            <label className={styles.label}>
-              Agency URL:
-              <input
-                className={styles.input}
-                type="url"
-                value={agency.agency_url}
-                onChange={(e) => updateFundingAgency(index, 'agency_url', e.target.value)}
-                placeholder="http://www.nsf.gov"
-              />
-            </label>
-          </div>
-        ))}
-        <button type="submit" className={styles.button} disabled={loading}>
+        <CoveragesInput onChange={handleCoveragesChange} />
+
+        {/* Funding Agencies Section */}
+        <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
+
+        <button
+          type="submit"
+          className={clsx(styles.button, styles.buttonPrimary)}
+          disabled={loading}
+        >
           {loading ? 'Processing...' : 'Create Resource'}
         </button>
       </form>
+
+      {progressMessage && (
+        <div className={styles.progressMessage}>
+          {loading && (
+            <FaSpinner className={styles.spinner} />
+          )}
+          <span>
+            {progressMessage}
+            {!loading && resourceUrl && (
+              <>
+                <a
+                  href={resourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  here
+                </a>
+              </>
+            )}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,0 +1,93 @@
+.container {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  padding: 1rem;
+  border-radius: var(--ifm-global-radius);
+  background-color: var(--ifm-background-surface-color);
+  margin-bottom: 1rem;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--ifm-heading-color);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.addButton,
+.removeAllButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.addIcon {
+  font-size: 1.25rem;
+  color: var(--ifm-color-primary);
+}
+
+.agencyCard {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  padding: 1rem;
+  border-radius: var(--ifm-global-radius);
+  background-color: var(--ifm-background-surface-color);
+  margin-top: 1rem;
+  position: relative;
+}
+
+.removeButton {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--ifm-color-danger);
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-font-color-base);
+}
+
+.input {
+  padding: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  background-color: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+:root[data-theme="dark"] .container {
+  background-color: var(--ifm-background-surface-color-dark);
+  border-color: var(--ifm-color-emphasis-600);
+}
+
+:root[data-theme="dark"] .select,
+:root[data-theme="dark"] .input {
+  background-color: var(--ifm-background-surface-color-dark);
+  border-color: var(--ifm-color-emphasis-600);
+  color: var(--ifm-font-color-base);
+}
+
+:root[data-theme="dark"] .header,
+:root[data-theme="dark"] .cardTitle,
+:root[data-theme="dark"] .label {
+  color: var(--ifm-heading-color);
+}
