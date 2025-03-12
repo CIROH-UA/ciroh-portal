@@ -4,8 +4,14 @@ import { contributePublicationsCards } from './utils';
 import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
-export default function PublicationsTabContributeContent({ description }) {
+import PublicationsImporter from '@site/src/components/PublicationsImporter';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
+
+export default function CitationImporter({ description }) {
+    const {
+        siteConfig: {customFields},
+      } = useDocusaurusContext();
   return (
       <div className={styles.currentAppSection}>
         <div className={styles.headerContainer}>
@@ -15,6 +21,10 @@ export default function PublicationsTabContributeContent({ description }) {
         </div>
 
         <CardsHeader header="Add your Publications on 5 Easy Steps" />
+        <PublicationsImporter
+            apiKey={customFields.zotero_api_key}
+            groupId={customFields.zotero_group_id}
+        />
         <ActionButtons
             buttons={[
                 { label: "Add your Publication", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#publications", primary: true },
