@@ -25,6 +25,24 @@
     align-items: center;
   }
   
+  .filterForm {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .filterForm input[type="text"],
+  .filterForm select {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  .filterForm button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
   @media (max-width: 996px) {
     .publicationsContainer {
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

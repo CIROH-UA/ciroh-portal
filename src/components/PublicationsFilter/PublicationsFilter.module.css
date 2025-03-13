@@ -1,0 +1,40 @@
+.filterContainer {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    align-items: center;
+  }
+  
+  .searchInput {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .typeSelect {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    min-width: 180px;
+  }
+  
+  .yearFilters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .yearInput {
+    width: 100px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .yearSeparator {
+    color: #666;
+  }

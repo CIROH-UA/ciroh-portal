@@ -8,7 +8,7 @@ const PAGE_SIZE = 50;
 const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
 
 export default function Publications({ apiKey, groupId }) {
-  // Single array that holds both placeholders and real items
+  // State for the list of publications and pagination
   const [displayedItems, setDisplayedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -16,58 +16,63 @@ export default function Publications({ apiKey, groupId }) {
   const [error, setError] = useState(null);
   const fetching = useRef(false);
 
-  /**
-   * Fetches a page of items, appending placeholders first, then
-   * replacing them with real items.
-   */
+  // States for filters
+  const [filterTitle, setFilterTitle] = useState("");
+  const [filterItemType, setFilterItemType] = useState("all");
+
+  // New states for sorting options
+  const [sortType, setSortType] = useState("date"); // default sort field
+  const [sortDirection, setSortDirection] = useState("desc"); // default sort direction
+
+  // Fetch a page of items with the current filter and sort settings
   const loadPublications = useCallback(async (page) => {
     if (fetching.current) return;
     fetching.current = true;
-
     try {
       setLoading(true);
       setError(null);
 
-      // 1) Immediately add 50 placeholders
+      // Add placeholders for smooth UX
       const placeholderBatch = Array.from({ length: PAGE_SIZE }).map(() => ({
         placeholder: true,
       }));
       setDisplayedItems((prev) => [...prev, ...placeholderBatch]);
 
-      // 2) Fetch real items
+      // Build query options using filters and sorting values
+      const queryOptions = {
+        start: page * PAGE_SIZE,
+        limit: PAGE_SIZE,
+        sort: sortType,
+        direction: sortDirection,
+      };
+
+      if (filterTitle) {
+        queryOptions.q = filterTitle;
+      }
+      if (filterItemType && filterItemType !== 'all') {
+        queryOptions.itemType = filterItemType;
+      }
+
       const client = new Zotero(apiKey);
       const itemsResponse = await client
         .library('group', groupId)
         .items()
         .top()
-        .get({
-          start: page * PAGE_SIZE,
-          limit: PAGE_SIZE,
-          sort: 'date',
-          direction: 'desc',
-        });
+        .get(queryOptions);
       const newItems = itemsResponse.getData();
 
-      // If we got fewer than PAGE_SIZE items, no more pages remain
+      // If fewer than PAGE_SIZE were returned, no more pages remain
       setHasMore(newItems.length === PAGE_SIZE);
 
-      // 3) Replace placeholders with real items (in place)
+      // Replace placeholders with real items
       setDisplayedItems((prev) => {
         const updated = [...prev];
-        // Find the first placeholder in updated
         const firstPlaceholderIndex = updated.findIndex((item) => item.placeholder);
-
         newItems.forEach((item, i) => {
           updated[firstPlaceholderIndex + i] = item;
         });
-
-        // If there were fewer than PAGE_SIZE real items,
-        // remove the leftover placeholders at the end
         if (newItems.length < PAGE_SIZE) {
-          updated.splice(
-            firstPlaceholderIndex + newItems.length,
-            PAGE_SIZE - newItems.length
-          );
+          updated.splice(firstPlaceholderIndex + newItems.length, PAGE_SIZE - newItems.length);
         }
         return updated;
       });
@@ -77,27 +82,22 @@ export default function Publications({ apiKey, groupId }) {
       fetching.current = false;
       setLoading(false);
     }
-  }, [apiKey, groupId]);
+  }, [apiKey, groupId, filterTitle, filterItemType, sortType, sortDirection]);
 
-  /**
-   * Load the first page on mount.
-   */
+  // Reset and load first page whenever filters or sorting change
   useEffect(() => {
+    setDisplayedItems([]);
+    setCurrentPage(0);
+    setHasMore(true);
     loadPublications(0);
   }, [loadPublications]);
 
-  /**
-   * Scroll listener - if the user is near bottom, load next page.
-   * Note: We do NOT scroll the user anywhere in code;
-   * we just let them stay where they are.
-   */
+  // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
       if (fetching.current || !hasMore) return;
-
       const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
-      const nearBottom = scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD;
-      if (nearBottom) {
+      if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
         const nextPage = currentPage + 1;
         setCurrentPage(nextPage);
         loadPublications(nextPage);
@@ -108,22 +108,76 @@ export default function Publications({ apiKey, groupId }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage, hasMore, loadPublications]);
 
-  /**
-   * Render
-   */
+  // Handle filter form submission
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    // Reset state for new filter settings
+    setDisplayedItems([]);
+    setCurrentPage(0);
+    setHasMore(true);
+    loadPublications(0);
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className={styles.publicationsContainer}>
+        {/* Filter and sort form */}
+        <form onSubmit={handleFilterSubmit} className={styles.filterForm}>
+          <input
+            type="text"
+            placeholder="Search title..."
+            value={filterTitle}
+            onChange={(e) => setFilterTitle(e.target.value)}
+          />
+          <select
+            value={filterItemType}
+            onChange={(e) => setFilterItemType(e.target.value)}
+          >
+            <option value="all">All types</option>
+            <option value="book">Book</option>
+            <option value="journalArticle">Journal Article</option>
+            <option value="conferencePaper">Conference Paper</option>
+            <option value="prePrint">Pre Print</option>
+            <option value="document">Document</option>
+            <option value="bookSection">Book Section</option>
+          </select>
+          <select
+            value={sortType}
+            onChange={(e) => setSortType(e.target.value)}
+          >
+            <option value="dateAdded">dateAdded</option>
+            <option value="dateModified">dateModified</option>
+            <option value="title">title</option>
+            <option value="creator">creator</option>
+            <option value="itemType">itemType</option>
+            <option value="date">date</option>
+            <option value="publisher">publisher</option>
+            <option value="publicationTitle">publicationTitle</option>
+            <option value="journalAbbreviation">journalAbbreviation</option>
+            <option value="language">language</option>
+            <option value="accessDate">accessDate</option>
+            <option value="libraryCatalog">libraryCatalog</option>
+            <option value="callNumber">callNumber</option>
+            <option value="rights">rights</option>
+            <option value="addedBy">addedBy</option>
+            <option value="numItems">numItems</option>
+          </select>
+          <select
+            value={sortDirection}
+            onChange={(e) => setSortDirection(e.target.value)}
+          >
+            <option value="desc">Descending</option>
+            <option value="asc">Ascending</option>
+          </select>
+          <button type="submit">Apply Filters</button>
+        </form>
 
-          {/* Show error if any */}
+        <div className={styles.publicationsContainer}>
           {error && (
             <div className={styles.errorContainer}>
               <div className={styles.error}>{error}</div>
             </div>
           )}
-
-          {/* Render real items or placeholder skeletons in the same array */}
           {displayedItems.map((item, index) =>
             item.placeholder ? (
               <SkeletonCard key={`placeholder-${index}`} />
@@ -135,8 +189,6 @@ export default function Publications({ apiKey, groupId }) {
               />
             )
           )}
-
-          {/* If no more items, show a final message */}
           {!hasMore && !loading && (
             <div className={styles.endMessage}>
               All publications loaded (
