@@ -77,7 +77,7 @@ export default function CoveragesInput({ onChange }) {
               onChange={(e) => updateCoverage(index, 'type', e.target.value)}
             >
               <option value="temporal">temporal</option>
-              <option value="spatial">spatial</option>
+              {/* <option value="spatial">spatial</option> */}
             </select>
           </label>
           {cov.type === 'temporal' && (

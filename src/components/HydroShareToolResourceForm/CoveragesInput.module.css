@@ -73,7 +73,9 @@
     color: var(--ifm-font-color-base);
     padding-right: 1.5rem;
   }
-  
+  .input{
+    margin-left:10px;
+  }
   /* Select styling */
   .select {
     padding: 0.5rem;
@@ -82,7 +84,9 @@
     background-color: var(--ifm-background-surface-color);
     color: var(--ifm-font-color-base);
     margin-bottom: 0.75rem;
-    width: 100%;
+    margin-left:10px;
+    width: 50%;
+
   }
   
   /* Input styling (for date pickers) */

@@ -12,9 +12,26 @@ export default function AppsTabContributeContent() {
     <>
       
       <div className={styles.currentAppSection}>
-        <CardsHeader header="Add your App!" />
+        {/* <CardsHeader header="Add your App!" /> */}
+        
+        <div className={Appstyles.headerContainer}>
+            <h3 className={Appstyles.description2}>
+                <div>
+                🚀  <strong> </strong> Create a HydroShare App Resource
+                </div>
+            </h3>
+        </div>
 
         <HydroShareToolResourceForm/>
+
+        <hr className={Appstyles.sectionDivider} />
+        <div className={Appstyles.headerContainer}>
+            <h3 className={Appstyles.description2}>
+                <div>
+                   Now follow These <strong>Steps </strong> 👣
+                </div>
+            </h3>
+        </div>
 
         <StepsCards
             steps={contributeAppCards}
@@ -27,6 +44,7 @@ export default function AppsTabContributeContent() {
                 { label: "Quick Start", href: "/hydroshare" }
               ]}
         />
+
         <hr className={Appstyles.sectionDivider} />
 
         <div className={Appstyles.headerContainer}>
