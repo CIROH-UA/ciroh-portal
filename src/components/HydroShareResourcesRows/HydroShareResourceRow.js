@@ -18,8 +18,6 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
 
   } = resource;
 
-  
-
   return (
     <div className={clsx(styles.rowItem, "card")}>
       <div className={styles.imageWrapper}>
@@ -61,8 +59,20 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
       </div>
 
       <div className={styles.textWrapper}>
-        <h1 className={styles.title}>{title}</h1>
-        <p className={styles.description}>{description}</p>
+        {title ? (
+          <h1 className={styles.title}>{title}</h1>
+        ) : (
+          <h1 className={styles.titlePlaceholder}></h1>
+        )}
+
+        {description ? (
+          <p className={styles.description}>{description}</p>
+        ) : (
+          <p className={styles.descriptionPlaceholder}></p>
+        )}
+
+        {/* <h1 className={styles.title}>{title}</h1>
+        <p className={styles.description}>{description}</p> */}
       </div>
     </div>
   );

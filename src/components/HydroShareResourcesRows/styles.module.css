@@ -139,13 +139,13 @@
 /* Title Placeholder */
 .titlePlaceholder {
   width: 60%;
-  height: 20px;
+  height: 20%;
 }
 
 /* Description Placeholder */
 .descriptionPlaceholder {
   width: 90%;
-  height: 60px;
+  height: 100%;
 }
 
 /* Image Placeholder */
