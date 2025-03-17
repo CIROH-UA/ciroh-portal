@@ -3,6 +3,10 @@ import Zotero from 'zotero-api-client';
 import PublicationCard from './PublicationCard';
 import SkeletonCard from './SkeletonCard';
 import styles from './Publications.module.css';
+import clsx from 'clsx';
+
+import { HiOutlineSortDescending, HiOutlineSortAscending } from "react-icons/hi";
+
 
 const PAGE_SIZE = 50;
 const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
@@ -17,7 +21,7 @@ export default function Publications({ apiKey, groupId }) {
   const fetching = useRef(false);
 
   // States for filters
-  const [filterTitle, setFilterTitle] = useState("");
+  const [filterSearch, setFilterSearch] = useState("");
   const [filterItemType, setFilterItemType] = useState("all");
 
   // New states for sorting options
@@ -44,10 +48,12 @@ export default function Publications({ apiKey, groupId }) {
         limit: PAGE_SIZE,
         sort: sortType,
         direction: sortDirection,
+        // q: "everything"
       };
 
-      if (filterTitle) {
-        queryOptions.q = filterTitle;
+      if (filterSearch) {
+        console.log("filterSearch", filterSearch);
+        queryOptions.q = filterSearch;
       }
       if (filterItemType && filterItemType !== 'all') {
         queryOptions.itemType = filterItemType;
@@ -82,7 +88,9 @@ export default function Publications({ apiKey, groupId }) {
       fetching.current = false;
       setLoading(false);
     }
-  }, [apiKey, groupId, filterTitle, filterItemType, sortType, sortDirection]);
+  }, [apiKey, groupId, filterSearch, filterItemType, sortType, sortDirection]);
+
+
 
   // Reset and load first page whenever filters or sorting change
   useEffect(() => {
@@ -108,30 +116,42 @@ export default function Publications({ apiKey, groupId }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentPage, hasMore, loadPublications]);
 
+
+
+
   // Handle filter form submission
-  const handleFilterSubmit = (e) => {
-    e.preventDefault();
-    // Reset state for new filter settings
-    setDisplayedItems([]);
-    setCurrentPage(0);
-    setHasMore(true);
-    loadPublications(0);
-  };
+  // const handleFilterSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Reset state for new filter settings
+  //   setDisplayedItems([]);
+  //   setCurrentPage(0);
+  //   setHasMore(true);
+  //   loadPublications(0);
+  // };
+
+  const onBlurHandler = (e) => {
+    // https://www.peterbe.com/plog/onchange-in-reactjs
+    setFilterSearch(e.target.value);
+  }
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
         {/* Filter and sort form */}
-        <form onSubmit={handleFilterSubmit} className={styles.filterForm}>
+        {/* <form onSubmit={handleFilterSubmit} className={styles.filterForm}> */}
+        <form className={styles.filterForm}>
           <input
             type="text"
-            placeholder="Search title..."
-            value={filterTitle}
-            onChange={(e) => setFilterTitle(e.target.value)}
+            placeholder="Search title, author, etc."
+            // value={filterSearch}
+            onBlur={onBlurHandler}
+            className={styles.searchInput}
+
           />
           <select
             value={filterItemType}
             onChange={(e) => setFilterItemType(e.target.value)}
+            className={styles.typeSelect}
           >
             <option value="all">All types</option>
             <option value="book">Book</option>
@@ -144,32 +164,37 @@ export default function Publications({ apiKey, groupId }) {
           <select
             value={sortType}
             onChange={(e) => setSortType(e.target.value)}
+            className={styles.sortSelect}
           >
-            <option value="dateAdded">dateAdded</option>
-            <option value="dateModified">dateModified</option>
-            <option value="title">title</option>
-            <option value="creator">creator</option>
-            <option value="itemType">itemType</option>
-            <option value="date">date</option>
+            <option value="dateAdded">Date added to the library</option>
+            {/* <option value="dateModified">Date Modified on the library</option> */}
+            <option value="title">Title</option>
+            <option value="creator">Creator</option>
+            <option value="itemType">Item Type</option>
+            <option value="date">Published Date</option>
             <option value="publisher">publisher</option>
-            <option value="publicationTitle">publicationTitle</option>
-            <option value="journalAbbreviation">journalAbbreviation</option>
-            <option value="language">language</option>
-            <option value="accessDate">accessDate</option>
-            <option value="libraryCatalog">libraryCatalog</option>
-            <option value="callNumber">callNumber</option>
-            <option value="rights">rights</option>
-            <option value="addedBy">addedBy</option>
-            <option value="numItems">numItems</option>
+            <option value="publicationTitle">Publication Title</option>
+            <option value="journalAbbreviation">Journal Abbreviation</option>
           </select>
-          <select
-            value={sortDirection}
-            onChange={(e) => setSortDirection(e.target.value)}
+          <button
+            type="button"
+            onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+              className={clsx(
+                'button',
+                styles.button,
+                styles.buttonPrimary
+              )}
+            aria-label={`Sort direction ${sortDirection}`}
           >
-            <option value="desc">Descending</option>
-            <option value="asc">Ascending</option>
-          </select>
-          <button type="submit">Apply Filters</button>
+            {sortDirection === 'asc' ? (
+              <HiOutlineSortAscending size={25} className={styles.sortIcon} />
+            ) : (
+              <HiOutlineSortDescending  size={25} className={styles.sortIcon} />
+            )}
+          </button>
+
+
+          {/* <button type="submit">Apply Filters</button> */}
         </form>
 
         <div className={styles.publicationsContainer}>

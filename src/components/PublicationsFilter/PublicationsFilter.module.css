@@ -22,19 +22,3 @@
     min-width: 180px;
   }
   
-  .yearFilters {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .yearInput {
-    width: 100px;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .yearSeparator {
-    color: #666;
-  }
