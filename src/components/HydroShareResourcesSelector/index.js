@@ -6,7 +6,7 @@ import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTi
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
 import { fetchResourcesByKeyword, fetchResourceMetadata } from "./utils";
 
-export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app" }) {
+export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app", defaultImage }) {
   const PLACEHOLDER_ITEMS = 10;
 
   // Initialize with placeholder objects so that the component renders immediately.
@@ -105,7 +105,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         {view === "grid" ? (
           <HydroShareResourcesTiles resources={resources}/>
         ) : (
-          <HydroShareResourcesRows resources={resources}/>
+          <HydroShareResourcesRows resources={resources} defaultImage={defaultImage} />
         )}
       </div>
     </div>

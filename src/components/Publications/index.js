@@ -48,7 +48,7 @@ export default function Publications({ apiKey, groupId }) {
         limit: PAGE_SIZE,
         sort: sortType,
         direction: sortDirection,
-        // q: "everything"
+        include: 'data',
       };
 
       if (filterSearch) {
@@ -66,7 +66,6 @@ export default function Publications({ apiKey, groupId }) {
         .top()
         .get(queryOptions);
       const newItems = itemsResponse.getData();
-
       // If fewer than PAGE_SIZE were returned, no more pages remain
       setHasMore(newItems.length === PAGE_SIZE);
 
@@ -83,7 +82,7 @@ export default function Publications({ apiKey, groupId }) {
         return updated;
       });
     } catch (err) {
-      setError(err.message || 'Error fetching publications');
+      setError('Error retrieving the publications');
     } finally {
       fetching.current = false;
       setLoading(false);
@@ -139,7 +138,10 @@ export default function Publications({ apiKey, groupId }) {
       <div className={styles.container}>
         {/* Filter and sort form */}
         {/* <form onSubmit={handleFilterSubmit} className={styles.filterForm}> */}
-        <form className={styles.filterForm}>
+        
+
+
+          <form className={styles.filterForm}>
           <input
             type="text"
             placeholder="Search title, author, etc."
@@ -166,15 +168,12 @@ export default function Publications({ apiKey, groupId }) {
             onChange={(e) => setSortType(e.target.value)}
             className={styles.sortSelect}
           >
+            <option value="date">Published Date</option>
             <option value="dateAdded">Date added to the library</option>
-            {/* <option value="dateModified">Date Modified on the library</option> */}
             <option value="title">Title</option>
             <option value="creator">Creator</option>
             <option value="itemType">Item Type</option>
-            <option value="date">Published Date</option>
-            <option value="publisher">publisher</option>
-            <option value="publicationTitle">Publication Title</option>
-            <option value="journalAbbreviation">Journal Abbreviation</option>
+            <option value="publisher">Publisher</option>
           </select>
           <button
             type="button"
@@ -196,14 +195,17 @@ export default function Publications({ apiKey, groupId }) {
 
           {/* <button type="submit">Apply Filters</button> */}
         </form>
-
-        <div className={styles.publicationsContainer}>
-          {error && (
+        {error && (
             <div className={styles.errorContainer}>
               <div className={styles.error}>{error}</div>
             </div>
           )}
-          {displayedItems.map((item, index) =>
+
+        <div className={styles.publicationsContainer}>
+
+          {!error && 
+          
+          displayedItems.map((item, index) =>
             item.placeholder ? (
               <SkeletonCard key={`placeholder-${index}`} />
             ) : (
@@ -214,12 +216,12 @@ export default function Publications({ apiKey, groupId }) {
               />
             )
           )}
-          {!hasMore && !loading && (
+          {/* {!hasMore && !loading && (
             <div className={styles.endMessage}>
               All publications loaded (
               {displayedItems.filter((item) => !item.placeholder).length} items)
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

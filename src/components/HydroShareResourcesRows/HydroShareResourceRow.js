@@ -6,7 +6,7 @@ import { LiaExternalLinkSquareAltSolid } from "react-icons/lia";
 import styles from "./styles.module.css";
 import clsx from "clsx";
 
-export default function HydroShareResourceRow({ resource }) {
+export default function HydroShareResourceRow({ resource, defaultImage }) {
   const {
     title = "Untitled",
     description,
@@ -18,19 +18,20 @@ export default function HydroShareResourceRow({ resource }) {
 
   } = resource;
 
+  
 
   return (
     <div className={clsx(styles.rowItem, "card")}>
       <div className={styles.imageWrapper}>
         {app_icon ? (
           <img src={app_icon} alt={title} className={styles.image} />
-        ) : (
-          <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
-            {/* <div className={styles.iconPlaceholder}>
-              <LuLayers3 size={50}/>
-            </div> */}
+        ) : defaultImage ? (
+          <img src={defaultImage} alt={title} className={styles.image} />
+        ) :(
+        <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
           </div>
-        )}
+        )
+        }
 
         <div className={styles.hoverOverlay}>
           <h5 className={styles.overlayTitle}>{title}</h5>
