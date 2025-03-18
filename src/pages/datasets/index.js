@@ -2,9 +2,21 @@ import React from "react";
 // import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
-import { items } from "./constants";
 import TechBox from "@site/src/components/TechBox";
 import Datasets from "@site/src/components/Datasets";
+import HydroShareLogo from '@site/static/img/hydroshare_white.png';
+import HydroShareLogo from '@site/static/img/hydroshare_white.png';
+
+
+const items = [
+  {
+    lightIcon: HydroShareLogo,
+    darkIcon: HydroShareLogo,
+    alt: 'HydroShare',
+  },
+];
+
+
 
 export default function DatasetsPage() {
   return (

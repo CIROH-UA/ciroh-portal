@@ -3,10 +3,17 @@ import React from "react";
 import LearningModules from "@site/src/components/LearningModules";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
-import { items } from "./constants";
 import TechBox from "@site/src/components/TechBox";
+import HydroLearnLogo from '@site/static/img/hydrolearn_logo.png';
 
 
+const items = [
+  {
+    lightIcon: HydroLearnLogo,
+    darkIcon: HydroLearnLogo,
+    alt: 'HydroLearn',
+  },
+];
 
 
 export default function LearningModulesPage() {
