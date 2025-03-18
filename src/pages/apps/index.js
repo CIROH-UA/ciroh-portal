@@ -33,8 +33,8 @@ export default function AppsPage() {
             title="Web Applications" 
             tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives."
             buttons={[
-              { label: "Add your App", href: {contributeUrl}, primary: true },
-              { label: "Develop Your App", href: {developUrl} }
+              { label: "Add your App", href: contributeUrl, primary: true },
+              { label: "Develop Your App", href: developUrl }
             ]}
         />
       </div>

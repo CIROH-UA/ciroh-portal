@@ -28,7 +28,7 @@ export default function DatasetsPage() {
             title="Datasets" 
             tagline="Datasets from CIROH and NOAA's hydrologic research, designed to enhance forecasting, analysis, and management of water resources."
             buttons={[
-              { label: "Add your Dataset", href: {contributeUrl}, primary: true },
+              { label: "Add your Dataset", href: contributeUrl, primary: true },
             ]}
         />
       </div>
