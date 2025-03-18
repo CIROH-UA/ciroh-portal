@@ -267,9 +267,9 @@ export default function HydroShareResourceCreator({
             onChange={(e) => setKeywords(e.target.value)}
             placeholder="e.g. model HPC weather"
           />
-          <small className={styles.hint}>
+          {/* <small className={styles.hint}>
             "nwm_data_ciroh" is auto-added if missing
-          </small>
+          </small> */}
         </label>
 
         {/* File Upload */}

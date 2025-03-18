@@ -2,9 +2,8 @@
     max-width: 500px;
     margin: 2rem auto;
     padding: 1rem;
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
     border-radius: 8px;
-    background: #fff;
   }
   
   .form {
@@ -26,16 +25,35 @@
     width: 100%;
   }
   
+
   .button {
-    padding: 0.75rem;
+    padding: 1rem 2rem;
     font-size: 1rem;
-    font-weight: 600;
-    color: #fff;
-    background-color: #0070f3;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
+  
+  .button:hover {
+    transform: scale(1.05);
+  }
+  
+  .buttonPrimary {
+    background-color: var(--ifm-color-primary-dark);
+    color: #fff;
+    
+  }
+  
+  :root[data-theme='dark'] .buttonPrimary {
+    background-color: var(--ifm-color-primary-dark);
+    color: #fff;
+  }
+  
   
   .button:disabled {
     opacity: 0.6;

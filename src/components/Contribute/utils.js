@@ -104,19 +104,19 @@ export const contributeDatasetsCards = [
     cardTitle: '2. Join any CIROH Group',
     cardDescription: 'Join any of the different Group on the CIROH HydroShare Community.',
   },
-  {
-    imgSrcLight: CreateAppImageLight,
-    imgSrcDark: CreateAppImageDark,
-    imgAlt: 'Create a Resource',
-    cardTitle: '3. Create a Resource',
-    cardDescription: 'Provide the necessary metadata to make your resource public on HydroShare.',
-  },
+  // {
+  //   imgSrcLight: CreateAppImageLight,
+  //   imgSrcDark: CreateAppImageDark,
+  //   imgAlt: 'Create a Resource',
+  //   cardTitle: '3. Create a Resource',
+  //   cardDescription: 'Provide the necessary metadata to make your resource public on HydroShare.',
+  // },
   {
     imgSrcLight: DatasetsLight,
     imgSrcDark: DatasetsDark,
-    imgAlt: 'View your Dataset on the Resource List',
-    cardTitle: '4. Make your Dataset Public',
-    cardDescription: 'Make your Dataset Resource public to share it with the CIROH community.',
+    imgAlt: 'Share your dataset with the CIROH Community',
+    cardTitle: '3. Share your Dataset ',
+    cardDescription: 'Share your dataset with the CIROH Community',
   },
 ]
 
@@ -149,13 +149,13 @@ export const contributePublicationsCards = [
     cardTitle: '4. Sync your Zotero account to see your group folder',
     cardDescription: 'If using the Zotero desktop app, sync your account to see the CIROH Library Group',
   },
-  {
-    imgSrcLight: ZoteroAddLight,
-    imgSrcDark: ZoteroAddDark,
-    imgAlt: 'Add your Publications',
-    cardTitle: '5. Add your Publications',
-    cardDescription: 'Add new citations using the Zotero icon in the URL bar or drag and drop items from other folders into your group folders',
-  },
+  // {
+  //   imgSrcLight: ZoteroAddLight,
+  //   imgSrcDark: ZoteroAddDark,
+  //   imgAlt: 'Add your Publications',
+  //   cardTitle: '5. Add your Publications',
+  //   cardDescription: 'Add new citations using the Zotero icon in the URL bar or drag and drop items from other folders into your group folders',
+  // },
 ];
 
 export const contributeSimpleDocsCards = [

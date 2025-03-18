@@ -28,7 +28,7 @@ export default function AppsTabContributeContent() {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                   Now follow These <strong>Steps </strong> 👣
+                   Next follow These <strong>Steps </strong> 👣
                 </div>
             </h3>
         </div>

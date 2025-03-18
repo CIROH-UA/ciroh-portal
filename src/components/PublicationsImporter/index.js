@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import styles from './PublicationsImporter.module.css';
-// Import the Zotero API client (used as a function)
+import clsx from 'clsx';
 import api from 'zotero-api-client';
 
 export default function PublicationsImporter({ apiKey, groupId }) {
@@ -81,7 +81,15 @@ export default function PublicationsImporter({ apiKey, groupId }) {
             placeholder="Enter URL, DOI, PMID, etc."
           />
         </label>
-        <button type="submit" className={styles.button} disabled={loading}>
+        <button 
+          type="submit" 
+          className={clsx(
+            'button',
+            styles.button,
+            styles.buttonPrimary
+          )}
+          disabled={loading}
+        >
           {loading ? 'Processing...' : 'Import Citation'}
         </button>
       </form>
