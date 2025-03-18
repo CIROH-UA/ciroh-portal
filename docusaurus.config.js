@@ -126,7 +126,7 @@ const config = {
             items: [
               {
                 label: 'Applications',
-                href: '/applications'
+                href: '/apps'
               },
               {
                 label: 'Datasets',
@@ -134,11 +134,11 @@ const config = {
               },
               {
                 label: 'Publications',
-                href: '/'
+                href: '/publications'
               },
               {
                 label: 'Learning Modules',
-                href: '/'
+                href: '/learning_modules'
               },
               {
                 label: 'Contribute',
