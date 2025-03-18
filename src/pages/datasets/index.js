@@ -5,8 +5,6 @@ import Layout from '@theme/Layout';
 import TechBox from "@site/src/components/TechBox";
 import Datasets from "@site/src/components/Datasets";
 import HydroShareLogo from '@site/static/img/hydroshare_white.png';
-import HydroShareLogo from '@site/static/img/hydroshare_white.png';
-
 
 const items = [
   {
