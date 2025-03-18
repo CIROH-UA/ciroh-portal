@@ -45,7 +45,7 @@ export default function AppsTabContributeContent() {
       <ActionButtons
             buttons={[
                 { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
-                { label: "Quick Start", href: {hydroshareUrl} }
+                { label: "Quick Start", href: hydroshareUrl }
               ]}
         />
 
@@ -61,7 +61,7 @@ export default function AppsTabContributeContent() {
 
         <ActionButtons
             buttons={[
-                { label: "Develop an App", href: {developUrl}, primary: true },
+                { label: "Develop an App", href: developUrl, primary: true },
                 { label: "Getting Started", href: "https://docs.tethysplatform.org/en/stable/index.html" }
               ]}
         />

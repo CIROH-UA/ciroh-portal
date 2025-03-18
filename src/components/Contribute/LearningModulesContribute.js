@@ -23,7 +23,7 @@ export default function LearningModulesContribute({ description }) {
         <ActionButtons
             buttons={[
                 { label: "Add your Module", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#learning-modules", primary: true },
-                { label: "Quick Start", href: {hydroshareUrl} }
+                { label: "Quick Start", href: hydroshareUrl }
               ]}
         />
 

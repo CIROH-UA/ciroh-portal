@@ -43,7 +43,7 @@ export default function DatasetsTabContributeContent() {
         <ActionButtons
             buttons={[
                 { label: "Add your Data", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#data", primary: true },
-                { label: "Quick Start", href: {hydroshareUrl} },
+                { label: "Quick Start", href: hydroshareUrl },
               ]}
         />
 
