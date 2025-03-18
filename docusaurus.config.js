@@ -18,10 +18,10 @@ const config = {
   // Set the production url of your site here
   // url: 'https://portal.ciroh.org',
   // url: 'https://romer8.github.io/docusaurus-ciroh',
-  url: 'https://aquaveo.github.io/docusaurus-ciroh',
+  url: 'https://aquaveo.github.io/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/docusaurus-ciroh/',
   customFields:{
     zotero_api_key: process.env.ZOTERO_API_KEY,
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
@@ -29,7 +29,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'aquaveo', // Usually your GitHub org/user name.
-  projectName: 'docusaurus-ciroh', // Usually your repo name.
+  projectName: 'aquaveo.github.io/docusaurus-ciroh', // Usually your repo name.
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
   onBrokenLinks: 'throw',
