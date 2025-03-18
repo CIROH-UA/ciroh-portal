@@ -22,5 +22,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
       - name: Test build website
         run: npm run build
+        env:
+          ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
+          ZOTERO_CIROH_GROUP_ID: ${{ secrets.ZOTERO_CIROH_GROUP_ID }}
