@@ -273,7 +273,8 @@ export default function HydroShareResourceCreator({
         </label>
 
         {/* File Upload */}
-        <label className={styles.label}>
+        { resourceType != "ToolResource" &&
+          <label className={styles.label}>
           Attach Files:
           <input
             className={styles.input}
@@ -282,6 +283,8 @@ export default function HydroShareResourceCreator({
             onChange={(e) => setFiles(Array.from(e.target.files))}
           />
         </label>
+        }
+
 
         {/* Coverages Section */}
         <CoveragesInput onChange={handleCoveragesChange} />
