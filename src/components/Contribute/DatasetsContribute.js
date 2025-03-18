@@ -6,9 +6,10 @@ import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
 import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
 import Appstyles from './AppsStyles.module.css';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 export default function DatasetsTabContributeContent() {
-
+  const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
           
     <div className={styles.currentAppSection}>
@@ -42,7 +43,7 @@ export default function DatasetsTabContributeContent() {
         <ActionButtons
             buttons={[
                 { label: "Add your Data", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#data", primary: true },
-                { label: "Quick Start", href: "/hydroshare" },
+                { label: "Quick Start", href: {hydroshareUrl} },
               ]}
         />
 

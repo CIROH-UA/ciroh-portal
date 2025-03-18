@@ -5,6 +5,7 @@ import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import TechBox from "@site/src/components/TechBox";
 import HydroLearnLogo from '@site/static/img/hydrolearn_logo.png';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
 const items = [
@@ -17,6 +18,7 @@ const items = [
 
 
 export default function LearningModulesPage() {
+  const contributeUrl = useBaseUrl('/contribute');
 
   return (
     <Layout title="Learning Modules" description="CIROH Learning Modules">
@@ -26,7 +28,7 @@ export default function LearningModulesPage() {
             title="Learning Modules" 
             tagline="Access a range of open courses and modules in hydrology, enriched with CIROH and NOAA research, designed for learners at all levels seeking to deepen their understanding of water science."
             buttons={[
-              { label: "Add your Module", href: "/contribute", primary: true },
+              { label: "Add your Module", href: {contributeUrl}, primary: true },
               { label: "Visit the modules", href: "https://edx.hydrolearn.org/courses" }
             ]}
         />

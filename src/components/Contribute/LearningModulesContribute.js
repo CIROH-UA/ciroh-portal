@@ -4,9 +4,11 @@ import { contributeLearningModulesCards } from './utils';
 import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 
 export default function LearningModulesContribute({ description }) {
+  const hydroshareUrl = useBaseUrl('/hydroshare');
 
   return (
       <div className={styles.currentAppSection}>
@@ -21,7 +23,7 @@ export default function LearningModulesContribute({ description }) {
         <ActionButtons
             buttons={[
                 { label: "Add your Module", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#learning-modules", primary: true },
-                { label: "Quick Start", href: "/hydroshare" }
+                { label: "Quick Start", href: {hydroshareUrl} }
               ]}
         />
 

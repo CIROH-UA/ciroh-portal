@@ -6,6 +6,7 @@ import Publications from "@site/src/components/Publications";
 import TechBox from "@site/src/components/TechBox";
 import ZoteroLightLogo from '@site/static/img/zotero_logo_light.png';
 import ZoteroDarkLogo from '@site/static/img/zotero_logo_dark.png';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 const items = [
   {
@@ -16,12 +17,11 @@ const items = [
 ];
 
 
-
-
 export default function PublicationsPage() {
     const {
         siteConfig: {customFields},
       } = useDocusaurusContext();
+  const contributeUrl = useBaseUrl('/contribute');
 
   return (
     <Layout title="Publications" description="Ciroh pubs">
@@ -31,7 +31,7 @@ export default function PublicationsPage() {
             title="Publications" 
             tagline="Ex­plore a rich selection of pub­lic­a­tions and papers featuring CIROH and NOAA's collaborative research in hydrology. Discover insights on water management, forecasting, and climate impacts through this comprehensive resource for scholars and professionals." 
             buttons={[
-                { label: "Add your Publication", href: "/contribute", primary: true },
+                { label: "Add your Publication", href: {contributeUrl}, primary: true },
                 { label: "Visit Our Library", href: "https://www.zotero.org/groups/5261687/ciroh/library" }
               ]}
         />

@@ -5,6 +5,7 @@ import Layout from '@theme/Layout';
 import TechBox from "@site/src/components/TechBox";
 import Datasets from "@site/src/components/Datasets";
 import HydroShareLogo from '@site/static/img/hydroshare_white.png';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 const items = [
   {
@@ -17,6 +18,8 @@ const items = [
 
 
 export default function DatasetsPage() {
+  const contributeUrl = useBaseUrl('/contribute');
+
   return (
     <Layout title="Datasets" description="CIROH Datasets">
     
@@ -25,7 +28,7 @@ export default function DatasetsPage() {
             title="Datasets" 
             tagline="Datasets from CIROH and NOAA's hydrologic research, designed to enhance forecasting, analysis, and management of water resources."
             buttons={[
-              { label: "Add your Dataset", href: "/contribute", primary: true },
+              { label: "Add your Dataset", href: {contributeUrl}, primary: true },
             ]}
         />
       </div>

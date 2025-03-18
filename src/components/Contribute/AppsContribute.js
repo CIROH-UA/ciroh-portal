@@ -5,9 +5,13 @@ import { contributeAppCards } from './utils';
 import StepsCards from './StepsCards';
 import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
 import ActionButtons from './ActionButtons';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import CardsHeader from './CardsHeader';
 
 export default function AppsTabContributeContent() {
+  const developUrl = useBaseUrl('/develop');
+  const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
     <>
       
@@ -41,7 +45,7 @@ export default function AppsTabContributeContent() {
       <ActionButtons
             buttons={[
                 { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
-                { label: "Quick Start", href: "/hydroshare" }
+                { label: "Quick Start", href: {hydroshareUrl} }
               ]}
         />
 
@@ -57,7 +61,7 @@ export default function AppsTabContributeContent() {
 
         <ActionButtons
             buttons={[
-                { label: "Develop an App", href: "/develop", primary: true },
+                { label: "Develop an App", href: {developUrl}, primary: true },
                 { label: "Getting Started", href: "https://docs.tethysplatform.org/en/stable/index.html" }
               ]}
         />
