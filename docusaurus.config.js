@@ -17,7 +17,8 @@ const config = {
 
   // Set the production url of your site here
   // url: 'https://portal.ciroh.org',
-  url: 'https://romer8.github.io/docusaurus-ciroh',
+  // url: 'https://romer8.github.io/docusaurus-ciroh',
+  url: 'https://aquaveo.github.io/docusaurus-ciroh',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -27,7 +28,7 @@ const config = {
   },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'romer8', // Usually your GitHub org/user name.
+  organizationName: 'aquaveo', // Usually your GitHub org/user name.
   projectName: 'docusaurus-ciroh', // Usually your repo name.
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
