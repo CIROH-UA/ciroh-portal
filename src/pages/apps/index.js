@@ -5,6 +5,7 @@ import Layout from '@theme/Layout';
 import TechBox from "@site/src/components/TechBox";
 import TethysLogoDark from '@site/static/img/tethys_logo2_black.png';
 import TethysLogWhite from '@site/static/img/tethys_white_final.png';
+import HydroShareLogo from '@site/static/img/hydroshare_white.png';
 
 
 const items = [
