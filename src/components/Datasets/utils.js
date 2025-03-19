@@ -123,4 +123,5 @@ async function getCommunityResources(communityId="4") {
 }
 
 
+
 export {getCuratedIds, fetchResourcesByGroup,getCommunityResources };
