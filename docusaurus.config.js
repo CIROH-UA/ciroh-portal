@@ -76,15 +76,6 @@ const config = {
       }),
     ],
   ],
-  plugins: [
-    [
-      // Our local plugin path
-      path.resolve(__dirname, 'plugins/docusaurus-plugin-hydroshare'),
-      {
-        pathToJson: 'hydroshare_resources.json',
-      },
-    ],
-  ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
