@@ -21,17 +21,14 @@ export default function CitationImporter({ description }) {
           </h3>
         </div>
 
-        {/* <CardsHeader header="Add your Publications on 5 Easy Steps" /> */}
-
-
-
+        <CardsHeader header="Add your Publications on 5 Easy Steps" />
 
         <StepsCards
             steps={contributePublicationsCards}
             containerId="add-publication-steps"
         />
         <hr className={Appstyles.sectionDivider} />
-        <div className={Appstyles.headerContainer}>
+        {/* <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
                    Next Add your <strong>Publication </strong>
@@ -42,7 +39,7 @@ export default function CitationImporter({ description }) {
             apiKey={customFields.zotero_api_key}
             groupId={customFields.zotero_group_id}
         />
-        <hr className={Appstyles.sectionDivider} />
+        <hr className={Appstyles.sectionDivider} /> */}
 
         <ActionButtons
             buttons={[
