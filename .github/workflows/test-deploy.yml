@@ -1,4 +1,4 @@
-name: Test deployment
+name: Test Deployment for CIROH portal on GitHub Pages
 
 on:
   pull_request:
