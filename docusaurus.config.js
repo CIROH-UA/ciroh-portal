@@ -16,11 +16,11 @@ const config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://portal.ciroh.org',
-  // url: 'https://aquaveo.github.io/',
+  // url: 'https://portal.ciroh.org',
+  url: 'http://docs.ciroh.org',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/ciroh-portal/',
   customFields:{
     zotero_api_key: process.env.ZOTERO_API_KEY,
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
