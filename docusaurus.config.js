@@ -17,10 +17,10 @@ const config = {
 
   // Set the production url of your site here
   // url: 'https://portal.ciroh.org',
-  url: 'http://docs.ciroh.org',
+  url: 'http://portal.ciroh.org',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/ciroh-portal/',
+  baseUrl: '/',
   customFields:{
     zotero_api_key: process.env.ZOTERO_API_KEY,
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
