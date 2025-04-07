@@ -27,8 +27,8 @@ export default function CitationImporter({ description }) {
             steps={contributePublicationsCards}
             containerId="add-publication-steps"
         />
-        <hr className={Appstyles.sectionDivider} />
-        {/* <div className={Appstyles.headerContainer}>
+        {/* <hr className={Appstyles.sectionDivider} />
+        <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
                    Next Add your <strong>Publication </strong>
