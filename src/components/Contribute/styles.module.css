@@ -145,6 +145,16 @@ html {
     margin-top: 5rem;
     margin-bottom: 5rem;
   }
+
+  /* Use specific card container for Learning Modules */
+  .cardContainerLearningModules {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 1rem !important;
+    width: 35% !important;
+    margin-top: 1rem !important;
+    margin-bottom: 5rem !important;
+  }
   
   .card {
     border: 1px solid #ddd;

@@ -42,6 +42,7 @@ export default function LearningModulesContribute({ description }) {
         <StepsCards
             steps={contributeLearningModulesCards}
             containerId="add-learning-steps"
+            customCardContainerClass={styles.cardContainerLearningModules}
         />
       </div>
     

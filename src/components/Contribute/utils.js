@@ -152,13 +152,6 @@ export const contributePublicationsCards = [
     cardTitle: '4. Sync your Zotero account to see your group folder',
     cardDescription: 'If using the Zotero desktop app, sync your account to see the CIROH Library Group',
   },
-  {
-    imgSrcLight: ZoteroApiKeyLight,
-    imgSrcDark: ZoteroApiKeyDark,
-    imgAlt: 'Create a Zotero api key (optional)',
-    cardTitle: '5. Create a Zotero api key (optional)',
-    cardDescription: 'Create a Zotero api key in your Zotero account settings',
-  },
   // {
   //   imgSrcLight: ZoteroAddLight,
   //   imgSrcDark: ZoteroAddDark,
@@ -224,27 +217,5 @@ export const contributeLearningModulesCards = [
     imgAlt: 'Complete HydroLearn 101',
     cardTitle: '1. Complete HydroLearn 101',
     cardDescription: 'Complete the HydroLearn 101 course to learn how to create a learning module.',
-  },
-
-  {
-    imgSrcLight: CreateAppImageLight,
-    imgSrcDark: CreateAppImageDark,
-    imgAlt: 'Create a Resource',
-    cardTitle: '1. Create a Resource',
-    cardDescription: 'Provide the necessary metadata to make your resource public on HydroShare.',
-  },
-  {
-    imgSrcLight: KeywordsAppImageLight,
-    imgSrcDark: KeywordsAppImageDark,
-    imgAlt: 'Add Keywords to your Resource',
-    cardTitle: '2. Add Keywords',
-    cardDescription: 'Add nwm_portal_module keyword to your Resource to make it discoverable.',
-  },
-  {
-    imgSrcLight: AppListImageLight,
-    imgSrcDark: AppListImageDark,
-    imgAlt: 'View your Dataset on the Resource List',
-    cardTitle: '3. Make your Dataset Public',
-    cardDescription: 'Make your Resource public to share it with the CIROH community.',
   },
 ]

@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import styles from './stepsCardsStyles.module.css';
 import { useColorMode } from '@docusaurus/theme-common';
 
-const StepsCards = ({ header, steps, containerId }) => {
+const StepsCards = ({ header, steps, containerId, customCardContainerClass }) => {
   const { colorMode } = useColorMode();
 
   return (
@@ -11,7 +11,7 @@ const StepsCards = ({ header, steps, containerId }) => {
       <div className={styles.headerContainer}>
         <h2 className={styles.title}>{header}</h2>
       </div>
-      <div className={styles.cardContainer}>
+      <div className={clsx(styles.cardContainer, customCardContainerClass)}>
         {steps.map((step, index) => {
           const cardContent = (
             <div className={styles.card} key={index}>
