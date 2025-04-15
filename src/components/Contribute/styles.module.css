@@ -61,7 +61,11 @@ html {
     color: var(--ifm-font-color-secondary);
   }
 
-
+  .description3 {
+    font-size: 1.0rem;
+    line-height:1.0rem;
+    color: var(--ifm-font-color-secondary);
+  }
 
   .contributeOptions {
     display: grid;

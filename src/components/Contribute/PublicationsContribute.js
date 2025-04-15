@@ -7,7 +7,7 @@ import CardsHeader from './CardsHeader';
 import PublicationsImporter from '@site/src/components/PublicationsImporter';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Appstyles from './AppsStyles.module.css';
-
+import ZoteroAuth from "@site/src/components/ZoteroAuth";
 
 export default function CitationImporter({ description }) {
     const {
@@ -28,18 +28,22 @@ export default function CitationImporter({ description }) {
             containerId="add-publication-steps"
         />
         <hr className={Appstyles.sectionDivider} />
-        {/* <div className={Appstyles.headerContainer}>
+        <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
                    Next Add your <strong>Publication </strong>
                 </div>
             </h3>
+            <h6 className={styles.description3}>
+                <div>
+                   If this fails, you may lack the necessary permissions to add publications to the CIROH group library
+                </div>
+            </h6>
         </div>
         <PublicationsImporter
-            apiKey={customFields.zotero_api_key}
             groupId={customFields.zotero_group_id}
         />
-        <hr className={Appstyles.sectionDivider} /> */}
+        <hr className={Appstyles.sectionDivider} />
 
         <ActionButtons
             buttons={[

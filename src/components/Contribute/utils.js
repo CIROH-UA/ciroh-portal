@@ -18,6 +18,9 @@ import ZoteroLoginLight from '@site/static/img/zotero_login_light.png';
 import ZoteroSyncDark from '@site/static/img/zotero_sync_dark.png';
 import ZoteroSyncLight from '@site/static/img/zotero_sync_light.png';
 
+import ZoteroApiKeyDark from '@site/static/img/zotero_api_key_light.png';
+import ZoteroApiKeyLight from '@site/static/img/zotero_api_key_light.png';
+
 import ZoteroAddDark from '@site/static/img/zotero_add_dark.png';
 import ZoteroAddLight from '@site/static/img/zotero_add_light.png';
 
@@ -148,6 +151,13 @@ export const contributePublicationsCards = [
     imgAlt: 'Sync your Zotero account to see your group folder',
     cardTitle: '4. Sync your Zotero account to see your group folder',
     cardDescription: 'If using the Zotero desktop app, sync your account to see the CIROH Library Group',
+  },
+  {
+    imgSrcLight: ZoteroApiKeyLight,
+    imgSrcDark: ZoteroApiKeyDark,
+    imgAlt: 'Create a Zotero api key (optional)',
+    cardTitle: '5. Create a Zotero api key (optional)',
+    cardDescription: 'Create a Zotero api key in your Zotero account settings',
   },
   // {
   //   imgSrcLight: ZoteroAddLight,
