@@ -34,14 +34,10 @@ export default function CitationImporter({ description }) {
                    Next Add your <strong>Publication </strong>
                 </div>
             </h3>
-            <h6 className={styles.description3}>
-                <div>
-                   If this fails, you may lack the necessary permissions to add publications to the CIROH group library
-                </div>
-            </h6>
         </div>
         <PublicationsImporter
             groupId={customFields.zotero_group_id}
+            zoteroApiKey={customFields.zotero_api_key}
         />
         <hr className={Appstyles.sectionDivider} />
 

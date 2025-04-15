@@ -4,15 +4,17 @@ import styles from './PublicationsImporter.module.css';
 import clsx from 'clsx';
 import api from 'zotero-api-client';
 import useRecaptcha from '@site/src/components/Captcha/useRecaptcha';
-import Captcha from "@site/src/components/Captcha";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useColorMode } from '@docusaurus/theme-common';
 
-export default function PublicationsImporter({ groupId }) {
+export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   const { capchaToken, recaptchaRef, handleRecaptcha } = useRecaptcha();
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [progressMessage, setProgressMessage] = useState('');
   const [citationUrl, setCitationUrl] = useState('');
   const [error, setError] = useState('');
+  const { colorMode } = useColorMode();
 
   // Wikimedia REST API base (using the official REST endpoint)
   const wikimediaBaseUrl = 'https://en.wikipedia.org/api/rest_v1';
@@ -23,18 +25,27 @@ export default function PublicationsImporter({ groupId }) {
     setProgressMessage('');
     setCitationUrl('');
     
-    let zoteroApiKey = document.getElementById('zotero-api-key').value;
-
-    if (!zoteroApiKey.trim()) {
-      setError('Please enter your Zotero API key.');
-      return;
-    }
-
     if (!query.trim()) {
       setError('Please enter an article identifier (URL, DOI, PMID, etc.).');
+      handleRecaptcha('');
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
       return;
     }
-    
+    if (!capchaToken){
+      setError('Please complete the reCAPTCHA to proceed.');
+      handleRecaptcha('');
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      return;
+    }
+    // if (capchaToken && query) {
+    //   // Send login request with captcha token, username, and password
+    //   console.log("great!")
+      
+    // }
     setLoading(true);
     try {
       setProgressMessage('Fetching citation data...');
@@ -57,6 +68,7 @@ export default function PublicationsImporter({ groupId }) {
         } else if (status >= 500) {
           userFriendlyMessage += 'The server is currently unavailable. Please try again later.';
         }
+        recaptchaRef.current?.reset();
 
         throw new Error(userFriendlyMessage || text || `Error fetching citation data: ${resp.status}`);
       }
@@ -93,12 +105,8 @@ export default function PublicationsImporter({ groupId }) {
         response = await zotero.items().post(citationData);
       }
       catch (err) {
-        console.log(err);
-        let status = err.response.status;
-        console.log(status);
         // Check for errors in the response
         if (err.response.status >= 400 && err.response.status < 600) {
-          console.log('Error!');
           // Handle specific status codes with user-friendly messages
           if (err.response.status === 400) {
             throw new Error('The citation data is invalid. Please check the input and try again.');
@@ -118,9 +126,6 @@ export default function PublicationsImporter({ groupId }) {
             throw new Error(`An unexpected error occurred: ${err.response.status}`);
           }
         }
-        else {
-          console.log('TEST HDFJK');
-        }
 
         throw err;
       }
@@ -138,15 +143,7 @@ export default function PublicationsImporter({ groupId }) {
       {error && <div className={styles.errorMessage}>{error}</div>}
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label}>
-          Zotero API Key:
-          <input
-            id="zotero-api-key"
-            type="password"
-            className={styles.input}
-            placeholder=""
-          />
-          <br></br>
-          <br></br>
+          
           Article Identifier:
           <input
             type="text"
@@ -157,6 +154,16 @@ export default function PublicationsImporter({ groupId }) {
           />
         </label>
 
+        <div className={styles.captchaContainer}>
+          <ReCAPTCHA
+            key={colorMode}
+            ref={recaptchaRef}
+            sitekey="6LeJ3xkrAAAAAIjntSFWy7lv0mRgR0WHBBs6qp56"
+            onChange={handleRecaptcha}
+            theme={colorMode === 'dark' ? 'dark' : 'light'}
+          />
+        </div>
+        
         <button 
           type="submit" 
           className={clsx(
@@ -170,7 +177,6 @@ export default function PublicationsImporter({ groupId }) {
           {loading ? 'Processing...' : 'Import Citation'}
         </button>
       </form>
-      <Captcha/>
       {progressMessage && (
         <div className={styles.progressMessage}>
           {loading && <FaSpinner className={styles.spinner} />}
