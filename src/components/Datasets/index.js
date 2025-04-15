@@ -4,16 +4,12 @@ import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-
 import { getCommunityResources, getCuratedIds } from "./utils";
-
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
 import { MdFilterList } from "react-icons/md";
 
 export default function Datasets({ community_id = 4 }) {

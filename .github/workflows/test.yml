@@ -1,4 +1,4 @@
-name: Test Deployment for CIROH portal on GitHub Pages
+name: Test workflow
 
 on:
   push:
@@ -14,3 +14,4 @@ jobs:
     steps:
       - id: step1
         run: echo "hello world"
+    

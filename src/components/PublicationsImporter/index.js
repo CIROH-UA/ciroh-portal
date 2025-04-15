@@ -16,8 +16,6 @@ export default function PublicationsImporter({ groupId }) {
 
   // Wikimedia REST API base (using the official REST endpoint)
   const wikimediaBaseUrl = 'https://en.wikipedia.org/api/rest_v1';
-  // Use AllOrigins proxy to bypass CORS issues.
-  const corsProxyUrl = 'https://api.allorigins.win/get?url=';
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -42,7 +40,7 @@ export default function PublicationsImporter({ groupId }) {
       setProgressMessage('Fetching citation data...');
       const encodedQuery = encodeURIComponent(query.trim());
       const targetUrl = `${wikimediaBaseUrl}/data/citation/zotero/${encodedQuery}`;
-      const resp = await fetch(corsProxyUrl + encodeURIComponent(targetUrl));
+      const resp = await fetch(targetUrl);
       if (!resp.ok) {
         const text = await resp.text();
         const status = resp.status;
@@ -62,10 +60,8 @@ export default function PublicationsImporter({ groupId }) {
 
         throw new Error(userFriendlyMessage || text || `Error fetching citation data: ${resp.status}`);
       }
-      const proxyData = await resp.json();
-      // AllOrigins returns a JSON with a 'contents' property containing the fetched content.
-      const citationData = JSON.parse(proxyData.contents);
-      console.log(citationData);
+      const citationData = await resp.json();
+
       setProgressMessage('Citation data fetched. Importing citation...');
       
       // Call the Zotero API client to import the citation.
