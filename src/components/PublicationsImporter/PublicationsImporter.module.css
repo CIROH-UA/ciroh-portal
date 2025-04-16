@@ -82,3 +82,8 @@
     to { transform: rotate(360deg); }
   }
   
+  .captchaContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

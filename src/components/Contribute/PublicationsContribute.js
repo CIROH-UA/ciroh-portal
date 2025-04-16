@@ -7,7 +7,7 @@ import CardsHeader from './CardsHeader';
 import PublicationsImporter from '@site/src/components/PublicationsImporter';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Appstyles from './AppsStyles.module.css';
-
+import ZoteroAuth from "@site/src/components/ZoteroAuth";
 
 export default function CitationImporter({ description }) {
     const {
@@ -27,7 +27,7 @@ export default function CitationImporter({ description }) {
             steps={contributePublicationsCards}
             containerId="add-publication-steps"
         />
-        {/* <hr className={Appstyles.sectionDivider} />
+        <hr className={Appstyles.sectionDivider} />
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
@@ -36,10 +36,10 @@ export default function CitationImporter({ description }) {
             </h3>
         </div>
         <PublicationsImporter
-            apiKey={customFields.zotero_api_key}
             groupId={customFields.zotero_group_id}
+            zoteroApiKey={customFields.zotero_api_key}
         />
-        <hr className={Appstyles.sectionDivider} /> */}
+        <hr className={Appstyles.sectionDivider} />
 
         <ActionButtons
             buttons={[

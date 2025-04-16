@@ -5,6 +5,8 @@ import StepsCards from './StepsCards';
 import ActionButtons from './ActionButtons';
 import CardsHeader from './CardsHeader';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
+import Appstyles from './AppsStyles.module.css';
 
 
 export default function LearningModulesContribute({ description }) {
@@ -18,18 +20,29 @@ export default function LearningModulesContribute({ description }) {
           </h3>
         </div>
 
+        <div className={Appstyles.headerContainer}>
+            <h3 className={Appstyles.description2}>
+                <div>
+                  🚀 <strong> </strong> Create a HydroShare Resource
+                </div>
+            </h3>
+        </div>
 
-        <CardsHeader header="Add your Learning Module on 3 Easy Steps" />
-        <ActionButtons
-            buttons={[
-                { label: "Add your Module", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#learning-modules", primary: true },
-                { label: "Quick Start", href: hydroshareUrl }
-              ]}
-        />
+        <HydroShareToolResourceForm resourceType="CompositeResource" makePublic={true} keywordToAdd = "nwm_portal_module"/>
+
+        <hr className={Appstyles.sectionDivider} />
+        <div className={Appstyles.headerContainer}>
+            <h3 className={Appstyles.description2}>
+                <div>
+                   Next follow These <strong>Steps </strong> 👣
+                </div>
+            </h3>
+        </div>
 
         <StepsCards
             steps={contributeLearningModulesCards}
             containerId="add-learning-steps"
+            customCardContainerClass={styles.cardContainerLearningModules}
         />
       </div>
     
