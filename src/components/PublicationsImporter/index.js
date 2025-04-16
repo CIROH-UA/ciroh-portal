@@ -37,6 +37,14 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       }
       return;
     }
+    if (!validateDOI(query.trim())) {
+      setError('Please enter a valid DOI.');
+      handleRecaptcha('');
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      return;
+    }
     if (!capchaToken){
       setError('Please complete the reCAPTCHA to proceed.');
       handleRecaptcha('');
@@ -53,7 +61,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     setLoading(true);
     try {
       setProgressMessage('Fetching citation data...');
-      const encodedQuery = encodeURIComponent(query.trim());
+      const encodedQuery = encodeURIComponent('https://doi.org/' + query.trim());
       const targetUrl = `${wikimediaBaseUrl}/data/citation/zotero/${encodedQuery}`;
       const resp = await fetch(targetUrl);
       if (!resp.ok) {
@@ -140,6 +148,11 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     }
   }
 
+  function validateDOI(doi) {
+    const doiRegex = /^(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)$/i;
+    return doiRegex.test(doi);
+  }
+
   return (
     <div className={styles.container}>
       {error && <div className={styles.errorMessage}>{error}</div>}
@@ -151,8 +164,24 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
             type="text"
             className={styles.input}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter URL, DOI, PMID, etc."
+            onChange={(e) => {
+              // Get the current value from the input field
+              const value = e.target.value;
+              setQuery(value);
+          
+              // Validate the DOI and set an error if it fails
+              if (value.trim().length > 0 && !validateDOI(value.trim())) 
+              {
+                // Invalid DOI format
+                setError('Invalid DOI format. Please enter a valid DOI.');
+              } 
+              else
+              {
+                // Clear the error if the DOI is valid
+                setError('');
+              }
+            }}
+            placeholder="Enter DOI following the format 10.1234/abcd.efgh"
           />
         </label>
 
