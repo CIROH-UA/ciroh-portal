@@ -24,6 +24,7 @@ const config = {
   customFields:{
     zotero_api_key: process.env.ZOTERO_API_KEY,
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
+    captcha_key: process.env.CAPTCHA_KEY,
   },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.

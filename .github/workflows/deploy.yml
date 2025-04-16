@@ -28,6 +28,7 @@ jobs:
         env:
           ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
           ZOTERO_CIROH_GROUP_ID: ${{ secrets.ZOTERO_CIROH_GROUP_ID }}
+          CAPTCHA_KEY: ${{ secrets.CAPTCHA_KEY }}
           
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3

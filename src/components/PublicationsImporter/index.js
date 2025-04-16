@@ -6,6 +6,7 @@ import api from 'zotero-api-client';
 import useRecaptcha from '@site/src/components/Captcha/useRecaptcha';
 import ReCAPTCHA from "react-google-recaptcha";
 import { useColorMode } from '@docusaurus/theme-common';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   const { capchaToken, recaptchaRef, handleRecaptcha } = useRecaptcha();
@@ -15,6 +16,9 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   const [citationUrl, setCitationUrl] = useState('');
   const [error, setError] = useState('');
   const { colorMode } = useColorMode();
+  const {
+      siteConfig: {customFields},
+    } = useDocusaurusContext();
 
   // Wikimedia REST API base (using the official REST endpoint)
   const wikimediaBaseUrl = 'https://en.wikipedia.org/api/rest_v1';
@@ -27,6 +31,14 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     
     if (!query.trim()) {
       setError('Please enter an article identifier (URL, DOI, PMID, etc.).');
+      handleRecaptcha('');
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      return;
+    }
+    if (!validateDOI(query.trim())) {
+      setError('Please enter a valid DOI.');
       handleRecaptcha('');
       if (recaptchaRef.current) {
         recaptchaRef.current.reset();
@@ -49,7 +61,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     setLoading(true);
     try {
       setProgressMessage('Fetching citation data...');
-      const encodedQuery = encodeURIComponent(query.trim());
+      const encodedQuery = encodeURIComponent('https://doi.org/' + query.trim());
       const targetUrl = `${wikimediaBaseUrl}/data/citation/zotero/${encodedQuery}`;
       const resp = await fetch(targetUrl);
       if (!resp.ok) {
@@ -77,9 +89,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       setProgressMessage('Citation data fetched. Importing citation...');
       
       // Call the Zotero API client to import the citation.
-      console.log('TEST');
       const importedUrl = await importCitation(citationData, zoteroApiKey, groupId);
-      console.log('TEST2');
       
       setCitationUrl(importedUrl);
       setProgressMessage('Citation imported successfully! Visit your citation ');
@@ -138,6 +148,11 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     }
   }
 
+  function validateDOI(doi) {
+    const doiRegex = /^(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)$/i;
+    return doiRegex.test(doi);
+  }
+
   return (
     <div className={styles.container}>
       {error && <div className={styles.errorMessage}>{error}</div>}
@@ -149,8 +164,24 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
             type="text"
             className={styles.input}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Enter URL, DOI, PMID, etc."
+            onChange={(e) => {
+              // Get the current value from the input field
+              const value = e.target.value;
+              setQuery(value);
+          
+              // Validate the DOI and set an error if it fails
+              if (value.trim().length > 0 && !validateDOI(value.trim())) 
+              {
+                // Invalid DOI format
+                setError('Invalid DOI format. Please enter a valid DOI.');
+              } 
+              else
+              {
+                // Clear the error if the DOI is valid
+                setError('');
+              }
+            }}
+            placeholder="Enter DOI following the format 10.1234/abcd.efgh"
           />
         </label>
 
@@ -158,7 +189,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
           <ReCAPTCHA
             key={colorMode}
             ref={recaptchaRef}
-            sitekey="6LeJ3xkrAAAAAIjntSFWy7lv0mRgR0WHBBs6qp56"
+            sitekey={customFields.captcha_key}
             onChange={handleRecaptcha}
             theme={colorMode === 'dark' ? 'dark' : 'light'}
           />
