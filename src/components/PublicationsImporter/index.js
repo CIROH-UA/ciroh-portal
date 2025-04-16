@@ -6,6 +6,7 @@ import api from 'zotero-api-client';
 import useRecaptcha from '@site/src/components/Captcha/useRecaptcha';
 import ReCAPTCHA from "react-google-recaptcha";
 import { useColorMode } from '@docusaurus/theme-common';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   const { capchaToken, recaptchaRef, handleRecaptcha } = useRecaptcha();
@@ -15,6 +16,9 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   const [citationUrl, setCitationUrl] = useState('');
   const [error, setError] = useState('');
   const { colorMode } = useColorMode();
+  const {
+      siteConfig: {customFields},
+    } = useDocusaurusContext();
 
   // Wikimedia REST API base (using the official REST endpoint)
   const wikimediaBaseUrl = 'https://en.wikipedia.org/api/rest_v1';
@@ -158,7 +162,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
           <ReCAPTCHA
             key={colorMode}
             ref={recaptchaRef}
-            sitekey="6LeJ3xkrAAAAAIjntSFWy7lv0mRgR0WHBBs6qp56"
+            sitekey={customFields.captcha_key}
             onChange={handleRecaptcha}
             theme={colorMode === 'dark' ? 'dark' : 'light'}
           />
