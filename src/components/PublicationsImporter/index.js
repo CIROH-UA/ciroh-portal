@@ -81,9 +81,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       setProgressMessage('Citation data fetched. Importing citation...');
       
       // Call the Zotero API client to import the citation.
-      console.log('TEST');
       const importedUrl = await importCitation(citationData, zoteroApiKey, groupId);
-      console.log('TEST2');
       
       setCitationUrl(importedUrl);
       setProgressMessage('Citation imported successfully! Visit your citation ');
