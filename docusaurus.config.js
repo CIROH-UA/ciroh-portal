@@ -25,6 +25,10 @@ const config = {
     zotero_api_key: process.env.ZOTERO_API_KEY,
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
     captcha_key: process.env.CAPTCHA_KEY,
+    s3_bucket: process.env.S3_BUCKET_NAME,
+    s3_access_key: process.env.S3_ACCESS_KEY,
+    s3_secret_key: process.env.S3_SECRET_KEY,
+    s3_region: process.env.S3_REGION,
   },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.

@@ -26,7 +26,11 @@ export default function AppsTabContributeContent() {
             </h3>
         </div>
 
-        <HydroShareToolResourceForm/>
+        <HydroShareToolResourceForm 
+          resourceType="CompositeResource" 
+          makePublic={true} 
+          keywordToAdd = "nwm_portal_app"
+        />
 
         <hr className={Appstyles.sectionDivider} />
         <div className={Appstyles.headerContainer}>

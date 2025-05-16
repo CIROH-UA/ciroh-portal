@@ -1,0 +1,50 @@
+.container {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  padding: 1rem;
+  border-radius: var(--ifm-global-radius);
+  background-color: var(--ifm-background-surface-color);
+  margin-bottom: 1rem;
+}
+
+.Card {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  padding: 1rem;
+  border-radius: var(--ifm-global-radius);
+  background-color: var(--ifm-background-surface-color);
+  margin-top: 1rem;
+  position: relative;
+}
+
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-font-color-base);
+}
+
+.input {
+  padding: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  background-color: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+:root[data-theme="dark"] .container {
+  background-color: var(--ifm-background-surface-color-dark);
+  border-color: var(--ifm-color-emphasis-600);
+}
+
+:root[data-theme="dark"] .input {
+  background-color: var(--ifm-background-surface-color-dark);
+  border-color: var(--ifm-color-emphasis-600);
+  color: var(--ifm-font-color-base);
+}
+
+
+:root[data-theme="dark"] .label {
+  color: var(--ifm-heading-color);
+}

@@ -2,212 +2,223 @@ import React, { useState, useCallback } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 import CoveragesInput from './CoveragesInput';
 import FundingAgenciesInput from './FundingAgenciesInput';
+import UploadDataS3 from './UploadDataS3';
 import styles from './HydroShareResourceCreator.module.css';
 import clsx from 'clsx';
 
+import { uploadFileToS3Cucket } from './utils';   // ⬅ corrected import
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+
 export default function HydroShareResourceCreator({
-  resourceType = "ToolResource",
-  makePublic = false,
-  keywordToAdd = "nwm_portal_app",
+  resourceType = 'ToolResource',
+  makePublic   = false,
+  keywordToAdd = 'nwm_portal_app',
 }) {
-  // Credentials
+  /* ───────────── state ───────────── */
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  // Resource Info
-  const [title, setTitle] = useState('');
+  const [title,    setTitle]    = useState('');
   const [abstract, setAbstract] = useState('');
   const [keywords, setKeywords] = useState('');
+  const [inputUrl, setInputUrl] = useState('');      // optional related URL
 
-  // Funding Agencies state from FundingAgenciesInput component
   const [fundingAgencies, setFundingAgencies] = useState([]);
+  const [coverages,       setCoverages]       = useState([]);
 
-  // Coverages state from CoveragesInput
-  const [coverages, setCoverages] = useState([]);
+  const [files,     setFiles]     = useState([]);    // HydroShare-bound files
+  const [iconFile,  setIconFile]  = useState(null); // single file from UploadDataS3
 
-  // Files state for uploaded files
-  const [files, setFiles] = useState([]);
-
-  // UI Feedback
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  // Instead of a list of progress messages, we keep a single message.
+  const [loading,         setLoading]         = useState(false);
+  const [error,           setError]           = useState('');
   const [progressMessage, setProgressMessage] = useState('');
-  // Once complete, store the final resource URL.
-  const [resourceUrl, setResourceUrl] = useState('');
+  const [resourceUrl,     setResourceUrl]     = useState('');
 
+  /* S3 credentials from docusaurus.config.js */
+  const {
+    siteConfig: { customFields },
+  } = useDocusaurusContext();
+  const S3_BUCKET     = customFields.s3_bucket;
+  const REGION        = customFields.s3_region;
+  const S3_ACCESS_KEY = customFields.s3_access_key;
+  const S3_SECRET_KEY = customFields.s3_secret_key;
+  
   const urlBase = 'https://www.hydroshare.org/hsapi';
 
-  // Utility: Count words in abstract
-  const countWords = (str) =>
-    str.trim().split(/\s+/).filter(Boolean).length;
+  /* ─────────── helpers ─────────── */
+  const countWords = (str) => str.trim().split(/\s+/).filter(Boolean).length;
 
-  // Memoize callbacks to avoid recreating them on every render.
-  const handleCoveragesChange = useCallback((covs) => {
-    setCoverages(covs || []);
-  }, []);
+  const handleCoveragesChange       = useCallback((covs)    => setCoverages(covs || []), []);
+  const handleFundingAgenciesChange = useCallback((agencies)=> setFundingAgencies(agencies), []);
 
-  const handleFundingAgenciesChange = useCallback((agencies) => {
-    setFundingAgencies(agencies);
-  }, []);
-
+  /* ─────────── submit ─────────── */
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setProgressMessage('');
     setResourceUrl('');
 
-    // Basic Validation
-    if (!username || !password) {
-      setError('Username and password are required.');
-      return;
-    }
-    if (!title.trim()) {
-      setError('Title is required.');
-      return;
-    }
-    if (countWords(abstract) < 150) {
-      setError('Abstract must be at least 150 words.');
-      return;
-    }
-    if (!keywords.trim()) {
-      setError('At least one keyword is required.');
-      return;
-    }
-    // Validate funding agencies
+    /* ⚠ validation */
+    if (!username || !password)     { setError('Username and password are required.'); return; }
+    if (!title.trim())              { setError('Title is required.');               return; }
+    if (countWords(abstract) < 150) { setError('Abstract must be at least 150 words.'); return; }
+    if (!keywords.trim())           { setError('At least one keyword is required.');  return; }
+
     const validAgencies = fundingAgencies.filter(
       (fa) =>
         fa.agency_name.trim() &&
         fa.award_title.trim() &&
         fa.award_number.trim() &&
-        fa.agency_url.trim()
+        fa.agency_url.trim(),
     );
-    if (validAgencies.length === 0) {
+    if (!validAgencies.length) {
       setError('At least one complete funding agency entry is required.');
       return;
     }
 
-    // Prepare Keywords
+    /* 0️⃣ — if an icon file was supplied, upload to S3 first */
+    let imageUrl = null;
+    if (iconFile) {
+      try {
+        const ext      = iconFile.name.split('.').pop();        // crude extension
+        const uuidName = `${crypto.randomUUID()}.${ext}`;       // e.g. f81d4fae-7dec-11d0-a765-00a0c91e6bf6.png
+        const renamed  = new File([iconFile], uuidName, { type: iconFile.type });
+
+        await uploadFileToS3Cucket(
+          S3_BUCKET,
+          REGION,
+          S3_ACCESS_KEY,
+          S3_SECRET_KEY,
+          renamed,
+        );
+
+        imageUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${uuidName}`;
+      } catch (err) {
+        setError(`S3 upload failed: ${err.message}`);
+        return;
+      }
+    }
+
+    /* 1️⃣  keywords array */
     const keywordArr = keywords
       .split(/[,\s]+/)
       .map((k) => k.trim())
-      .filter((k) => k);
-    if (!keywordArr.includes(keywordToAdd)) {
-      keywordArr.push(keywordToAdd);
-    }
+      .filter(Boolean);
+    if (!keywordArr.includes(keywordToAdd)) keywordArr.push(keywordToAdd);
 
-    // Prepare Metadata for Resource Creation (coverages)
-    const metadataArray = [...coverages];
-    const metadataJson = JSON.stringify(metadataArray);
+    /* 2️⃣  coverages & extra_metadata */
+    const metadataJson = JSON.stringify([...coverages]);
 
-    // Build the FormData for the POST Request to create the resource.
+    const extraMetaObj = {};
+    if (inputUrl.trim()) extraMetaObj.resource_url = inputUrl.trim();
+    if (imageUrl)        extraMetaObj.image_url    = imageUrl;
+
+    const extraMetaJson = Object.keys(extraMetaObj).length
+      ? JSON.stringify(extraMetaObj)
+      : '{}';
+
+    /* 3️⃣  build multipart form */
     const formData = new FormData();
     formData.append('resource_type', resourceType);
-    formData.append('title', title.trim());
-    formData.append('abstract', abstract.trim());
-    keywordArr.forEach((kw, i) => {
-      formData.append(`keywords[${i}]`, kw);
-    });
-    formData.append('metadata', metadataJson);
-    formData.append('extra_metadata', '{}');
+    formData.append('title',         title.trim());
+    formData.append('abstract',      abstract.trim());
+    keywordArr.forEach((kw, i) => formData.append(`keywords[${i}]`, kw));
+    formData.append('metadata',       metadataJson);
+    formData.append('extra_metadata', extraMetaJson);
 
-    // Prepare Basic Auth Header
     const authString = btoa(`${username}:${password}`);
 
+    /* ─── HydroShare request chain ─── */
     setLoading(true);
     try {
-      // POST: Create the resource
+      /* 4️⃣  create resource */
       const postResp = await fetch(`${urlBase}/resource/`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${authString}`,
-        },
-        body: formData,
+        method:  'POST',
+        headers: { Authorization: `Basic ${authString}` },
+        body:    formData,
       });
-      if (!postResp.ok) {
-        const text = await postResp.text();
-        throw new Error(text || `Server error ${postResp.status}`);
-      }
-      const postResult = await postResp.json();
-      const resourceId = postResult.resource_id;
-      if (!resourceId) {
-        throw new Error('No resource ID returned');
-      }
+      if (!postResp.ok)
+        throw new Error(await postResp.text() || `Server error ${postResp.status}`);
+
+      const { resource_id: resourceId } = await postResp.json();
+      if (!resourceId) throw new Error('No resource ID returned');
       setProgressMessage(`Resource created (ID: ${resourceId})`);
 
-      // PUT: Update Science Metadata with Funding Agencies
-      const scienceMetadata = {
-        funding_agencies: validAgencies,
-      };
-      const putMetaResp = await fetch(
+      /* 5️⃣  funding agencies */
+      const sciResp = await fetch(
         `${urlBase}/resource/${resourceId}/scimeta/elements/`,
         {
-          method: 'PUT',
+          method:  'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${authString}`,
+            Authorization:  `Basic ${authString}`,
           },
-          body: JSON.stringify(scienceMetadata),
-        }
+          body: JSON.stringify({ funding_agencies: validAgencies }),
+        },
       );
-      if (putMetaResp.status !== 202) {
-        const errText = await putMetaResp.text();
-        throw new Error(
-          `Updating science metadata failed: HTTP ${putMetaResp.status} - ${errText}`
-        );
-      }
+      if (sciResp.status !== 202)
+        throw new Error(`Updating science metadata failed (HTTP ${sciResp.status})`);
       setProgressMessage('Funding agencies updated');
 
-      // Upload files one at a time using the endpoint POST /resource/{id}/files/
-      if (files.length > 0) {
-        for (const file of files) {
-          const fileFormData = new FormData();
-          fileFormData.append('file', file);
-          const fileResp = await fetch(
-            `${urlBase}/resource/${resourceId}/files/`,
-            {
-              method: 'POST',
-              headers: {
-                Authorization: `Basic ${authString}`,
-              },
-              body: fileFormData,
-            }
-          );
-          if (!fileResp.ok) {
-            const errText = await fileResp.text();
-            throw new Error(
-              `Uploading file ${file.name} failed: HTTP ${fileResp.status} - ${errText}`
-            );
-          }
-          setProgressMessage(`Uploaded file: ${file.name}`);
-        }
+      /* 6️⃣  files (always metadata.json + optional user files) */
+      const metadataBlob = new Blob(
+        [JSON.stringify({ name: title.trim() })],
+        { type: 'application/json' },
+      );
+      const allFiles = [
+        ...files,
+        new File([metadataBlob], 'metadata.json', { type: 'application/json' }),
+      ];
+
+      for (const f of allFiles) {
+        const fd = new FormData(); fd.append('file', f);
+        const fResp = await fetch(
+          `${urlBase}/resource/${resourceId}/files/`,
+          { method: 'POST', headers: { Authorization: `Basic ${authString}` }, body: fd },
+        );
+        if (!fResp.ok)
+          throw new Error(`Uploading file ${f.name} failed (HTTP ${fResp.status})`);
+        setProgressMessage(`Uploaded file: ${f.name}`);
       }
 
-      // If the makePublic prop is true, call the access rules endpoint.
+      /* 7️⃣  make public (optional) */
       if (makePublic) {
-        const putAccessResp = await fetch(
+        const pubResp = await fetch(
           `${urlBase}/resource/accessRules/${resourceId}/`,
           {
-            method: 'PUT',
+            method:  'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${authString}`,
+              Authorization:  `Basic ${authString}`,
             },
             body: JSON.stringify({ public: true }),
-          }
+          },
         );
-        if (putAccessResp.status !== 200) {
-          const errText = await putAccessResp.text();
-          throw new Error(
-            `Setting access rules failed: HTTP ${putAccessResp.status} - ${errText}`
-          );
-        }
+        if (pubResp.status !== 200)
+          throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
         setProgressMessage('Resource made public');
       }
 
-      // Final success message with resource URL
-      const resourceUrl = `https://www.hydroshare.org/resource/${resourceId}`;
-      setResourceUrl(resourceUrl);
+      /* 8️⃣  custom scimeta only if no related URL was supplied */
+      const hsUrl = `https://www.hydroshare.org/resource/${resourceId}`;
+      setResourceUrl(hsUrl);
+
+      if (!inputUrl.trim()) {
+        const customResp = await fetch(
+          `${urlBase}/resource/${resourceId}/scimeta/custom/`,
+          {
+            method:  'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Basic ${authString}`,
+            },
+            body: JSON.stringify({ url: hsUrl }),
+          },
+        );
+        if (!customResp.ok)
+          throw new Error(`Custom metadata failed (HTTP ${customResp.status})`);
+      }
+
       setProgressMessage('Resource created successfully! Visit your resource ');
     } catch (err) {
       setError(err.message);
@@ -216,9 +227,11 @@ export default function HydroShareResourceCreator({
     }
   }
 
+  /* ───────── UI ───────── */
   return (
     <div className={styles.container}>
       {error && <div className={styles.errorMessage}>{error}</div>}
+
       <form className={styles.form} onSubmit={handleSubmit}>
         {/* Credentials */}
         <label className={styles.label}>
@@ -240,6 +253,7 @@ export default function HydroShareResourceCreator({
             placeholder="HydroShare password"
           />
         </label>
+
         {/* Resource Info */}
         <label className={styles.label}>
           Title (required):
@@ -250,6 +264,7 @@ export default function HydroShareResourceCreator({
             placeholder="Resource title"
           />
         </label>
+
         <label className={styles.label}>
           Abstract (≥150 words):
           <textarea
@@ -259,6 +274,7 @@ export default function HydroShareResourceCreator({
             onChange={(e) => setAbstract(e.target.value)}
           />
         </label>
+
         <label className={styles.label}>
           Keywords (comma or space separated):
           <input
@@ -267,54 +283,55 @@ export default function HydroShareResourceCreator({
             onChange={(e) => setKeywords(e.target.value)}
             placeholder="e.g. model HPC weather"
           />
-          {/* <small className={styles.hint}>
-            "nwm_data_ciroh" is auto-added if missing
-          </small> */}
         </label>
 
-        {/* File Upload */}
-        { resourceType != "ToolResource" &&
-          <label className={styles.label}>
-          Attach Files:
+        {/* Optional related URL */}
+        <label className={styles.label}>
+          Related URL (optional):
           <input
             className={styles.input}
-            type="file"
-            multiple
-            onChange={(e) => setFiles(Array.from(e.target.files))}
+            type="url"
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+            placeholder="https://example.com/my-dataset"
           />
         </label>
-        }
 
+        {/* File upload for HydroShare */}
+        {resourceType !== 'ToolResource' && (
+          <label className={styles.label}>
+            Attach Files:
+            <input
+              className={styles.input}
+              type="file"
+              multiple
+              onChange={(e) => setFiles(Array.from(e.target.files))}
+            />
+          </label>
+        )}
 
-        {/* Coverages Section */}
-        <CoveragesInput onChange={handleCoveragesChange} />
-
-        {/* Funding Agencies Section */}
-        <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
+        {/* Nested metadata & icon uploader */}
+        {/* <CoveragesInput       onChange={handleCoveragesChange} /> */}
+        {/* <FundingAgenciesInput onChange={handleFundingAgenciesChange} /> */}
+        <UploadDataS3         onChange={setIconFile} />
 
         <button
           type="submit"
           className={clsx(styles.button, styles.buttonPrimary)}
           disabled={loading}
         >
-          {loading ? 'Processing...' : 'Create Resource'}
+          {loading ? 'Processing…' : 'Create Resource'}
         </button>
       </form>
 
       {progressMessage && (
         <div className={styles.progressMessage}>
-          {loading && (
-            <FaSpinner className={styles.spinner} />
-          )}
+          {loading && <FaSpinner className={styles.spinner} />}
           <span>
             {progressMessage}
             {!loading && resourceUrl && (
               <>
-                <a
-                  href={resourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={resourceUrl} target="_blank" rel="noopener noreferrer">
                   here
                 </a>
               </>

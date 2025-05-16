@@ -4,59 +4,76 @@ import { FaTrash, FaPlus } from 'react-icons/fa';
 import styles from './CoveragesInput.module.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
+
+const TODAY = new Date();
+const DEFAULT_TEMPORAL_COVERAGE = Object.freeze({
+  type: 'temporal',
+  startDate: TODAY,
+  endDate: TODAY,
+});
+
 export default function CoveragesInput({ onChange }) {
-  // Each coverage entry is an object with:
-  // { type: "temporal" or "spatial", startDate: Date|null, endDate: Date|null }
+  /* User-editable coverages only — start with an empty form. */
   const [coverages, setCoverages] = useState([]);
 
-  // When coverages change, call onChange prop with the array in metadata format.
+
   useEffect(() => {
-    // For each coverage entry with type "temporal" and both dates set,
-    // we create an object in the form:
-    // { coverage: { type: 'period', value: { start: "MM/DD/YYYY", end: "MM/DD/YYYY" } } }
-    const metadataCoverages = coverages
-      .filter(cov => cov.type === 'temporal' && cov.startDate && cov.endDate)
-      .map(cov => ({
-        coverage: {
-          type: 'period',
-          value: { start: formatDate(cov.startDate), end: formatDate(cov.endDate) },
+    const toMetadata = (cov) => ({
+      coverage: {
+        type: 'period',
+        value: {
+          start: formatDate(cov.startDate),
+          end: formatDate(cov.endDate),
         },
-      }));
-    onChange(metadataCoverages);
+      },
+    });
+
+    const all = [DEFAULT_TEMPORAL_COVERAGE, ...coverages]
+      .filter(
+        (c) => c.type === 'temporal' && c.startDate && c.endDate,
+      )
+      .map(toMetadata);
+
+    onChange(all);
   }, [coverages, onChange]);
 
-  // Helper: Format date as MM/DD/YYYY
+  /* Helpers ─────────────────────────────────────────────── */
   const formatDate = (date) => {
     const d = new Date(date);
-    const month = '' + (d.getMonth() + 1);
-    const day = '' + d.getDate();
-    const year = d.getFullYear();
-    return [month.padStart(2, '0'), day.padStart(2, '0'), year].join('/');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${mm}/${dd}/${yyyy}`; // MM/DD/YYYY
   };
 
-  const addCoverage = () => {
-    setCoverages([...coverages, { type: 'temporal', startDate: null, endDate: null }]);
-  };
+  const addCoverage = () =>
+    setCoverages((prev) => [
+      ...prev,
+      { type: 'temporal', startDate: null, endDate: null },
+    ]);
 
-  const updateCoverage = (index, field, value) => {
-    const newCoverages = [...coverages];
-    newCoverages[index][field] = value;
-    setCoverages(newCoverages);
-  };
+  const updateCoverage = (index, field, value) =>
+    setCoverages((prev) =>
+      prev.map((c, i) => (i === index ? { ...c, [field]: value } : c)),
+    );
 
-  const removeCoverage = (index) => {
-    const newCoverages = coverages.filter((_, i) => i !== index);
-    setCoverages(newCoverages);
-  };
+  const removeCoverage = (index) =>
+    setCoverages((prev) => prev.filter((_, i) => i !== index));
 
+  /* Render ──────────────────────────────────────────────── */
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
         <h3 className={styles.header}>Coverages</h3>
-        <button type="button" className={styles.addButton} onClick={addCoverage}>
+        <button
+          type="button"
+          className={styles.addButton}
+          onClick={addCoverage}
+        >
           <FaPlus className={styles.addIcon} />
         </button>
       </div>
+
       {coverages.map((cov, index) => (
         <div key={index} className={styles.coverageCard}>
           <div className={styles.cardHeader}>
@@ -69,6 +86,7 @@ export default function CoveragesInput({ onChange }) {
               <FaTrash />
             </button>
           </div>
+
           <label className={styles.label}>
             Type:
             <select
@@ -80,13 +98,16 @@ export default function CoveragesInput({ onChange }) {
               {/* <option value="spatial">spatial</option> */}
             </select>
           </label>
+
           {cov.type === 'temporal' && (
             <div className={styles.datePickers}>
               <label className={styles.label}>
                 Start Date:
                 <DatePicker
                   selected={cov.startDate}
-                  onChange={(date) => updateCoverage(index, 'startDate', date)}
+                  onChange={(date) =>
+                    updateCoverage(index, 'startDate', date)
+                  }
                   dateFormat="MM/dd/yyyy"
                   placeholderText="MM/DD/YYYY"
                   className={styles.input}
@@ -104,8 +125,11 @@ export default function CoveragesInput({ onChange }) {
               </label>
             </div>
           )}
+
           {cov.type === 'spatial' && (
-            <p className={styles.note}>No additional input required for spatial coverage.</p>
+            <p className={styles.note}>
+              No additional input required for spatial coverage.
+            </p>
           )}
         </div>
       ))}
