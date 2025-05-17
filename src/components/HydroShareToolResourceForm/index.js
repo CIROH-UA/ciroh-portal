@@ -9,10 +9,23 @@ import clsx from 'clsx';
 import { uploadFileToS3Cucket } from './utils';   // ⬅ corrected import
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
+const getTypeString = (type) => {
+  switch (type) {
+    case 'app':
+      return 'Application';
+    case 'dataset':
+      return 'Dataset';
+    case 'course':
+      return 'Course';
+  }
+}
+
+
 export default function HydroShareResourceCreator({
   resourceType = 'ToolResource',
   makePublic   = false,
   keywordToAdd = 'nwm_portal_app',
+  typeContribution = 'app',
 }) {
   /* ───────────── state ───────────── */
   const [username, setUsername] = useState('');
@@ -51,7 +64,7 @@ export default function HydroShareResourceCreator({
   const handleCoveragesChange       = useCallback((covs)    => setCoverages(covs || []), []);
   const handleFundingAgenciesChange = useCallback((agencies)=> setFundingAgencies(agencies), []);
 
-  /* ─────────── submit ─────────── */
+  
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
@@ -227,7 +240,6 @@ export default function HydroShareResourceCreator({
     }
   }
 
-  /* ───────── UI ───────── */
   return (
     <div className={styles.container}>
       {error && <div className={styles.errorMessage}>{error}</div>}
@@ -235,38 +247,51 @@ export default function HydroShareResourceCreator({
       <form className={styles.form} onSubmit={handleSubmit}>
         {/* Credentials */}
         <label className={styles.label}>
-          Username:
+          HydroShare Username:
           <input
             className={styles.input}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="HydroShare username"
           />
         </label>
         <label className={styles.label}>
-          Password:
+          HydroShare Password:
           <input
             className={styles.input}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="HydroShare password"
+            
           />
         </label>
 
-        {/* Resource Info */}
+        
         <label className={styles.label}>
-          Title (required):
+          {getTypeString(typeContribution)} Title (required):
           <input
             className={styles.input}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Resource title"
+            
           />
         </label>
 
         <label className={styles.label}>
-          Abstract (≥150 words):
+          {getTypeString(typeContribution)} URL (optional):
+          <input
+            className={styles.input}
+            type="url"
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+          />
+        </label>
+
+        <UploadDataS3 
+          onChange={setIconFile} 
+        />
+
+        <label className={styles.label}>
+          {getTypeString(typeContribution)} Description (≥150 words):
           <textarea
             className={styles.textarea}
             rows={5}
@@ -282,18 +307,6 @@ export default function HydroShareResourceCreator({
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
             placeholder="e.g. model HPC weather"
-          />
-        </label>
-
-        {/* Optional related URL */}
-        <label className={styles.label}>
-          Related URL (optional):
-          <input
-            className={styles.input}
-            type="url"
-            value={inputUrl}
-            onChange={(e) => setInputUrl(e.target.value)}
-            placeholder="https://example.com/my-dataset"
           />
         </label>
 
@@ -313,7 +326,6 @@ export default function HydroShareResourceCreator({
         {/* Nested metadata & icon uploader */}
         {/* <CoveragesInput       onChange={handleCoveragesChange} /> */}
         {/* <FundingAgenciesInput onChange={handleFundingAgenciesChange} /> */}
-        <UploadDataS3         onChange={setIconFile} />
 
         <button
           type="submit"

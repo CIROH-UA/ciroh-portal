@@ -17,14 +17,13 @@ export default function UploadDataS3({onChange}) {
    <div className={styles.container}>
         <div className={styles.Card}>
           <label className={styles.label}>
-            Image/Icon:
+            Thumbnail:
             <input
               className={styles.input}
               type="file"
               onChange={
                 handleFileChange
               }
-              placeholder="Upload a Image file"
             />
           </label>
         </div>
