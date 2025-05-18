@@ -75,7 +75,7 @@ export default function HydroShareResourceCreator({
     if (!username || !password)     { setError('Username and password are required.'); return; }
     if (!title.trim())              { setError('Title is required.');               return; }
     if (countWords(abstract) < 150) { setError('Abstract must be at least 150 words.'); return; }
-    if (!keywords.trim())           { setError('At least one keyword is required.');  return; }
+    // if (!keywords.trim())           { setError('At least one keyword is required.');  return; }
 
     const validAgencies = fundingAgencies.filter(
       (fa) =>
@@ -123,8 +123,8 @@ export default function HydroShareResourceCreator({
     const metadataJson = JSON.stringify([...coverages]);
 
     const extraMetaObj = {};
-    if (inputUrl.trim()) extraMetaObj.resource_url = inputUrl.trim();
-    if (imageUrl)        extraMetaObj.image_url    = imageUrl;
+    if (inputUrl.trim()) extraMetaObj.page_url = inputUrl.trim();
+    if (imageUrl)        extraMetaObj.thumbnail_url    = imageUrl;
 
     const extraMetaJson = Object.keys(extraMetaObj).length
       ? JSON.stringify(extraMetaObj)
@@ -242,20 +242,19 @@ export default function HydroShareResourceCreator({
 
   return (
     <div className={styles.container}>
-      {error && <div className={styles.errorMessage}>{error}</div>}
 
       <form className={styles.form} onSubmit={handleSubmit}>
         {/* Credentials */}
-        <label className={styles.label}>
-          HydroShare Username:
+        <label className={`${styles.label} required`}>
+          HydroShare Username
           <input
             className={styles.input}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </label>
-        <label className={styles.label}>
-          HydroShare Password:
+        <label className={`${styles.label} required`}>
+          HydroShare Password
           <input
             className={styles.input}
             type="password"
@@ -266,8 +265,8 @@ export default function HydroShareResourceCreator({
         </label>
 
         
-        <label className={styles.label}>
-          {getTypeString(typeContribution)} Title (required):
+        <label className={`${styles.label} required`}>
+          {getTypeString(typeContribution)} Title
           <input
             className={styles.input}
             value={title}
@@ -276,8 +275,8 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        <label className={styles.label}>
-          {getTypeString(typeContribution)} URL (optional):
+        <label className={`${styles.label}`}>
+          {getTypeString(typeContribution)} URL
           <input
             className={styles.input}
             type="url"
@@ -290,7 +289,7 @@ export default function HydroShareResourceCreator({
           onChange={setIconFile} 
         />
 
-        <label className={styles.label}>
+        <label className={`${styles.label} required`}>
           {getTypeString(typeContribution)} Description (≥150 words):
           <textarea
             className={styles.textarea}
@@ -300,7 +299,7 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        <label className={styles.label}>
+        <label className={`${styles.label}`}>
           Keywords (comma or space separated):
           <input
             className={styles.input}
@@ -311,22 +310,29 @@ export default function HydroShareResourceCreator({
         </label>
 
         {/* File upload for HydroShare */}
-        {resourceType !== 'ToolResource' && (
-          <label className={styles.label}>
-            Attach Files:
-            <input
-              className={styles.input}
-              type="file"
-              multiple
-              onChange={(e) => setFiles(Array.from(e.target.files))}
-            />
-          </label>
+        {typeContribution !== 'app' && (
+
+          <div className= {styles.inputFileDiv}>
+            <p className={styles.label}>Attach Files</p>
+            <label className={styles.label}>
+              Upload file
+              <input
+                className={styles.inputFile}
+                type="file"
+                multiple
+                onChange={(e) => setFiles(Array.from(e.target.files))}
+              />
+            </label>
+          </div>
         )}
+        
+        <div style={{display: 'none'}}>
+          <CoveragesInput onChange={handleCoveragesChange} />        
+          <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
+        </div>
 
-        {/* Nested metadata & icon uploader */}
-        {/* <CoveragesInput       onChange={handleCoveragesChange} /> */}
-        {/* <FundingAgenciesInput onChange={handleFundingAgenciesChange} /> */}
 
+        <br className={styles.sectionDivider} />
         <button
           type="submit"
           className={clsx(styles.button, styles.buttonPrimary)}
@@ -335,7 +341,9 @@ export default function HydroShareResourceCreator({
           {loading ? 'Processing…' : 'Create Resource'}
         </button>
       </form>
-
+      
+      <br className={styles.sectionDivider} />
+      
       {progressMessage && (
         <div className={styles.progressMessage}>
           {loading && <FaSpinner className={styles.spinner} />}
@@ -351,6 +359,9 @@ export default function HydroShareResourceCreator({
           </span>
         </div>
       )}
+      
+      {error && <div className={styles.errorMessage}>{error}</div>}
+
     </div>
   );
 }

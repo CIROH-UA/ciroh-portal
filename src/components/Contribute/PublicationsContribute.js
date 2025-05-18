@@ -21,17 +21,11 @@ export default function CitationImporter({ description }) {
           </h3>
         </div>
 
-        <CardsHeader header="Add your Publications on 5 Easy Steps" />
-
-        <StepsCards
-            steps={contributePublicationsCards}
-            containerId="add-publication-steps"
-        />
-        <hr className={Appstyles.sectionDivider} />
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                   Next Add your <strong>Publication </strong>
+                    📝 <strong>Add Your Publications </strong> 
+                
                 </div>
             </h3>
         </div>
@@ -39,7 +33,7 @@ export default function CitationImporter({ description }) {
             groupId={customFields.zotero_group_id}
             zoteroApiKey={customFields.zotero_api_key}
         />
-        <hr className={Appstyles.sectionDivider} />
+        {/* <hr className={Appstyles.sectionDivider} /> */}
 
         <ActionButtons
             buttons={[
@@ -47,6 +41,15 @@ export default function CitationImporter({ description }) {
                 { label: "Visit Our Library", href: "https://www.zotero.org/groups/5261687/ciroh/library" }
               ]}
         />
+        {/* <hr className={Appstyles.sectionDivider} /> */}
+
+        {/* <CardsHeader header="Add your Publications on 5 Easy Steps" /> */}
+
+        {/* <StepsCards
+            steps={contributePublicationsCards}
+            containerId="add-publication-steps"
+        /> */}
+
       </div>
     
   );

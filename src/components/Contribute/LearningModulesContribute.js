@@ -23,7 +23,7 @@ export default function LearningModulesContribute({ description }) {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                  🚀 <strong> </strong> Create a HydroShare Resource
+                    📚 <strong>Add Your Coruses </strong> 
                 </div>
             </h3>
         </div>

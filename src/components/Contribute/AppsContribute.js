@@ -21,7 +21,7 @@ export default function AppsTabContributeContent() {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                🚀  <strong> </strong> Create a HydroShare App Resource
+                🕹️ <strong>Add Your App </strong> 
                 </div>
             </h3>
         </div>
@@ -32,19 +32,6 @@ export default function AppsTabContributeContent() {
           keywordToAdd = "nwm_portal_app"
         />
 
-        <hr className={Appstyles.sectionDivider} />
-        <div className={Appstyles.headerContainer}>
-            <h3 className={Appstyles.description2}>
-                <div>
-                   Next follow These <strong>Steps </strong> 👣
-                </div>
-            </h3>
-        </div>
-
-        <StepsCards
-            steps={contributeAppCards}
-            containerId="add-apps-steps"
-        />
       </div>
       <ActionButtons
             buttons={[

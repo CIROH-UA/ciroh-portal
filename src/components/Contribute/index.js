@@ -23,7 +23,7 @@ export default function Contribute({ title }) {
             </h2>
           </div>
           
-          <Tabs className={tabStyles.contributeTabs}>
+          <Tabs queryString="current-contribution" className={tabStyles.contributeTabs}>
             <TabItem 
               value="apps" 
               label={
@@ -78,7 +78,7 @@ export default function Contribute({ title }) {
                 value="learning_modules" 
                 label={
                   <span className={tabStyles.tabLabel}>
-                    <IoSchool className={tabStyles.tabIcon} /> Learning Modules
+                    <IoSchool className={tabStyles.tabIcon} /> Courses
                   </span>
                 }
               >

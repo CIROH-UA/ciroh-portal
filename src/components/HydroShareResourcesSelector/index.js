@@ -4,9 +4,14 @@ import { FaThLarge, FaBars } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { fetchResourcesByKeyword, fetchResourceMetadata } from "./utils";
+import { fetchResourcesByKeyword, fetchResourceMetadata, fetchResourceCustomMetadata } from "./utils";
+import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
+import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
+import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
+
 
 export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app", defaultImage }) {
+  const { colorMode } = useColorMode(); // Get the current theme
   const PLACEHOLDER_ITEMS = 10;
 
   // Initialize with placeholder objects so that the component renders immediately.
@@ -16,12 +21,12 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
     resource_type: "",
     resource_url: "",
     description: "",
-    app_icon: "",
-    home_page_url: "",
-    source_code_url: "",
-    help_page_url: "",
+    thumbnail_url: "",
+    page_url: "",
   }));
 
+  const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
+  
   const [resources, setResources] = useState(initialPlaceholders);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,10 +42,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
           resource_type: res.resource_type,
           resource_url: res.resource_url,
           description: res.abstract || "No description available.",
-          app_icon: "",
-          home_page_url: "",
-          source_code_url: "",
-          help_page_url: "",
+          thumbnail_url: "",
+          page_url: "",
+
         }));
 
         // Replace placeholders with fetched data
@@ -50,13 +54,12 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         // Fetch metadata for each resource and update them individually
         for (let res of mappedList) {
           try {
-            const metadata = await fetchResourceMetadata(res.resource_id);
+            // const metadata = await fetchResourceMetadata(res.resource_id);
+            const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
             const updatedResource = {
               ...res,
-              app_icon: metadata?.app_icon?.data_url || "",
-              home_page_url: metadata?.app_home_page_url?.value || "",
-              source_code_url: metadata?.source_code_url?.value || "",
-              help_page_url: metadata?.help_page_url?.value || "",
+              thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
+              page_url: customMetadata?.page_url || ""
             };
 
             setResources((current) =>
@@ -103,9 +106,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         </div>
 
         {view === "grid" ? (
-          <HydroShareResourcesTiles resources={resources}/>
+          <HydroShareResourcesTiles resources={resources} />
         ) : (
-          <HydroShareResourcesRows resources={resources} defaultImage={defaultImage} />
+          <HydroShareResourcesRows resources={resources} />
         )}
       </div>
     </div>

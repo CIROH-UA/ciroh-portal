@@ -36,4 +36,16 @@ async function fetchResourceMetadata(resourceId) {
   return data;
 }
 
-export { fetchResourcesByKeyword, fetchResourceMetadata };
+async function fetchResourceCustomMetadata(resourceId) {
+  const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/custom/`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(
+      `Error fetching metadata for resource ${resourceId} (status: ${response.status})`
+    );
+  }
+  const data = await response.json();
+  return data;
+}
+
+export { fetchResourcesByKeyword, fetchResourceMetadata, fetchResourceCustomMetadata };

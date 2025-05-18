@@ -1,32 +1,25 @@
 import React, { useState } from 'react';
 
-import styles from './FundingAgenciesInput.module.css';
-
-
-
+import styles from './HydroShareResourceCreator.module.css';
 
 export default function UploadDataS3({onChange}) {
-  // Function to handle file and store it to file state
   const handleFileChange = (e) => {
-    // Uploaded file
     const file = e.target.files[0];
-    // Changing file state
     onChange(file);
   };
   return (
-   <div className={styles.container}>
-        <div className={styles.Card}>
+        <div className= {styles.inputFileDiv}>
+          <p className={styles.label}>Thumbnail</p>
           <label className={styles.label}>
-            Thumbnail:
+            Upload file
             <input
-              className={styles.input}
+              className={styles.inputFile}
               type="file"
               onChange={
                 handleFileChange
               }
             />
           </label>
-        </div>
-    </div>
+        </div>  
   );
 }
