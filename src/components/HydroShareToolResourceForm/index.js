@@ -315,7 +315,7 @@ export default function HydroShareResourceCreator({
           <div className= {styles.inputFileDiv}>
             <p className={styles.label}>Attach Files</p>
             <label className={styles.label}>
-              Upload file
+              Upload files
               <input
                 className={styles.inputFile}
                 type="file"

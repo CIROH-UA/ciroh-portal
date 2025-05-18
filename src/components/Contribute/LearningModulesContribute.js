@@ -29,7 +29,7 @@ export default function LearningModulesContribute({ description }) {
         </div>
 
         <HydroShareToolResourceForm resourceType="CompositeResource" makePublic={true} keywordToAdd = "nwm_portal_module"/>
-
+{/* 
         <hr className={Appstyles.sectionDivider} />
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
@@ -43,7 +43,7 @@ export default function LearningModulesContribute({ description }) {
             steps={contributeLearningModulesCards}
             containerId="add-learning-steps"
             customCardContainerClass={styles.cardContainerLearningModules}
-        />
+        /> */}
       </div>
     
   );
