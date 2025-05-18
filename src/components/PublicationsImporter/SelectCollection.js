@@ -23,6 +23,8 @@ const groupedOptions = [
 /* ---------- custom group label ---------- */
 const groupStyles  = { display:'flex', alignItems:'center', justifyContent:'space-between' };
 const badgeStyles  = { background:'#EBECF0', borderRadius:'2em', fontSize:12, padding:'0 8px' };
+
+
 const formatGroupLabel = g => (
   <div style={groupStyles}>
     <span>{g.label}</span>
@@ -42,13 +44,13 @@ export default function SelectCollection({ onChange }) {
     colors: {
       ...base.colors,
       primary:   varVal('--ifm-color-primary'),
-    //   primary25: varVal('--ifm-color-primary-lightest'), // hover
-    //   primary50: varVal('--ifm-color-primary-lighter'),  // focus
+      primary25: varVal('--ifm-color-primary-lightest'), // hover
+      primary50: varVal('--ifm-color-primary-lighter'),  // focus
       neutral0:  varVal('--ifm-background-surface-color'),     // control bg
       neutral10: varVal('--ifm-color-emphasis-200'),           // multi chip bg
       neutral20: varVal('--ifm-color-emphasis-300'),           // border
       neutral30: varVal('--ifm-color-emphasis-400'),
-    //   neutral80: varVal('--ifm-font-color-base'),              // text
+      neutral80: varVal('--ifm-font-color-base'),              // text
     },
     spacing: { ...base.spacing, controlHeight: 46 },           // matches .input
     borderRadius: 4,
@@ -73,6 +75,25 @@ export default function SelectCollection({ onChange }) {
         // color:'#fff',
       },
     }),
+    option: (base, state) => ({
+        ...base,
+        // background while mouse is over the option
+        backgroundColor: state.isFocused
+        ? 'var(--ifm-color-primary-lightest)'  // ← “hover” bg
+        : base.backgroundColor,
+
+        // text colour while mouse is over the option
+        color: state.isFocused
+        ? 'var(--ifm-color-primary-dark)'      // ← “hover” text
+        : base.color,
+
+        // keep selected colour when the user arrows through the list
+        background:
+        state.isSelected
+            ? 'var(--ifm-color-primary-lighter)'
+            : undefined,
+    }),
+
   }), [colorMode]);
 
   return (
