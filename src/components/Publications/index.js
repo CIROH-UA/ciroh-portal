@@ -10,7 +10,8 @@ import { HiOutlineSortDescending, HiOutlineSortAscending } from "react-icons/hi"
 
 const PAGE_SIZE = 50;
 const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
-
+let timer = 1000;
+let timeoutVal = 1000;
 export default function Publications({ apiKey, groupId }) {
   // State for the list of publications and pagination
   const [displayedItems, setDisplayedItems] = useState([]);
@@ -119,34 +120,61 @@ export default function Publications({ apiKey, groupId }) {
 
 
   // Handle filter form submission
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    // Reset state for new filter settings
+    setDisplayedItems([]);
+    setCurrentPage(0);
+    setHasMore(true);
+    loadPublications(0);
+  };
+
   // const handleFilterSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Reset state for new filter settings
-  //   setDisplayedItems([]);
+  //   e.preventDefault();          
+  //   setDisplayedItems([]);       
   //   setCurrentPage(0);
-  //   setHasMore(true);
-  //   loadPublications(0);
-  // };
+  // }
 
   const onBlurHandler = (e) => {
     // https://www.peterbe.com/plog/onchange-in-reactjs
     setFilterSearch(e.target.value);
   }
 
+
+  const onKeyUpHandler = (e) => {
+    // https://dev.to/eaich/how-to-detect-when-the-user-stops-typing-3cm1
+    window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
+    timer = window.setTimeout(() => {
+      setFilterSearch(e.target.value);
+    }, timeoutVal);
+  }
+
+  const  onKeyPressHandler = (e) => {
+    //https://dev.to/eaich/how-to-detect-when-the-user-stops-typing-3cm1
+    window.clearTimeout(timer);
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
+
+        <div className={styles.counterRow}>
+          Total publications:&nbsp;
+          <strong>
+            {displayedItems.filter(i => !i.placeholder).length}
+          </strong>
+        </div>
+
+
         {/* Filter and sort form */}
-        {/* <form onSubmit={handleFilterSubmit} className={styles.filterForm}> */}
-        
-
-
-          <form className={styles.filterForm}>
+          <form className={styles.filterForm} onSubmit={handleFilterSubmit}>
           <input
             type="text"
             placeholder="Search title, author, etc."
             // value={filterSearch}
             onBlur={onBlurHandler}
+            onKeyUp={onKeyUpHandler}
+            onKeyPress={onKeyPressHandler}
             className={styles.searchInput}
 
           />
@@ -216,6 +244,9 @@ export default function Publications({ apiKey, groupId }) {
               />
             )
           )}
+
+
+
           {/* {!hasMore && !loading && (
             <div className={styles.endMessage}>
               All publications loaded (
@@ -223,6 +254,10 @@ export default function Publications({ apiKey, groupId }) {
             </div>
           )} */}
         </div>
+          {!loading &&
+            displayedItems.filter(i => !i.placeholder).length === 0 && (
+            <p className={styles.emptyMessage}>No Publications Found</p>
+          )}
       </div>
     </div>
   );
