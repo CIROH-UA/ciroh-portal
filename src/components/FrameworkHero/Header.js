@@ -64,7 +64,7 @@ export default function Header({ title,image,  tagline, buttons }) {
               'Datasets',
               'Docs',
               'Publications',
-              'Learning Modules',
+              'Courses',
               'and More...',
             ]}
             typingSpeed={80}   // Adjust typing speed in ms
