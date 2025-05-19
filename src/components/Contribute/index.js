@@ -75,7 +75,7 @@ export default function Contribute({ title }) {
             </TabItem>
 
             <TabItem 
-                value="learning_modules" 
+                value="courses" 
                 label={
                   <span className={tabStyles.tabLabel}>
                     <IoSchool className={tabStyles.tabIcon} /> Courses
