@@ -4,7 +4,7 @@ import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { getCommunityResources, getCuratedIds } from "./utils";
+import { getCommunityResources, getCuratedIds,fetchResourceCustomMetadata } from "./utils";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
@@ -24,7 +24,7 @@ export default function Datasets({ community_id = 4 }) {
     resource_type: "",
     resource_url: "",
     description: "",
-    app_icon: ""
+    thumbnail_url: ""
   }));
 
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
@@ -38,7 +38,7 @@ export default function Datasets({ community_id = 4 }) {
     const fetchCurated = async () => {
       try {
         const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-        console.log("Curated IDs:", curatedIds);
+        
         return curatedIds;
       } catch (err) {
         console.error("Error fetching curated IDs:", err);
@@ -61,15 +61,38 @@ export default function Datasets({ community_id = 4 }) {
           resource_type: res.resource_type,
           resource_url: res.resource_url,
           description: res.abstract || "No description available.",
-          app_icon: hs_icon,
+          thumbnail_url: hs_icon,
         }));
-        console.log("Mapped resources:", mappedList);
+        
+        setResources(mappedList);
+        
+        for (let res of mappedList) {
+          try {
+            // const metadata = await fetchResourceMetadata(res.resource_id);
+            const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
+            
+            const updatedResource = {
+              ...res,
+              thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
+              page_url: customMetadata?.page_url || ""
+            };
+
+            setResources((current) =>
+              current.map((item) =>
+                item.resource_id === updatedResource.resource_id ? updatedResource : item
+              )
+            );
+          } catch (metadataErr) {
+            console.error(`Error fetching metadata: ${metadataErr.message}`);
+          }
+        }
+
         // Filter to get only curated subset
         const curatedSubset = mappedList.filter(item =>
           curatedIds.includes(item.resource_id)
         );
 
-        setResources(mappedList);
+        // setResources(mappedList);
         setCuratedResources(curatedSubset);
         setLoading(false);
       } catch (err) {

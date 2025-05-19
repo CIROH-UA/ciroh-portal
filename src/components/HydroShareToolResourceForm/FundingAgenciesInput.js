@@ -1,44 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import styles from './FundingAgenciesInput.module.css';
 
+
+const DEFAULT_AGENCY = Object.freeze({
+  agency_name:
+    'National Oceanic and Atmospheric Administration (NOAA), University of Alabama',
+  award_title:
+    'CIROH: Enabling collaboration through data and model sharing with CUAHSI HydroShare',
+  award_number:
+    'NA22NWS4320003 to University of Alabama, subaward A23-0266-S001 to Utah State University',
+  agency_url:
+    'https://ciroh.ua.edu/research-projects/enabling-collaboration-through-data-and-model-sharing-with-cuahsi-hydroshare/',
+});
+
 export default function FundingAgenciesInput({ onChange }) {
+  /** The array below is ONLY the user-editable agencies */
   const [agencies, setAgencies] = useState([]);
 
-  // Pass the current agencies to the parent component when they change
   useEffect(() => {
-    onChange(agencies);
+    onChange([DEFAULT_AGENCY, ...agencies]);
   }, [agencies, onChange]);
 
-  const addAgency = () => {
-    setAgencies([
-      ...agencies,
+  /* Helpers ────────────────────────────────────────────── */
+  const addAgency = () =>
+    setAgencies((prev) => [
+      ...prev,
       { agency_name: '', award_title: '', award_number: '', agency_url: '' },
     ]);
-  };
 
-  const updateAgency = (index, field, value) => {
-    const newAgencies = [...agencies];
-    newAgencies[index][field] = value;
-    setAgencies(newAgencies);
-  };
+  const updateAgency = (index, field, value) =>
+    setAgencies((prev) =>
+      prev.map((a, i) => (i === index ? { ...a, [field]: value } : a)),
+    );
 
-  const removeAgency = (index) => {
-    const newAgencies = agencies.filter((_, i) => i !== index);
-    setAgencies(newAgencies);
-  };
+  const removeAgency = (index) =>
+    setAgencies((prev) => prev.filter((_, i) => i !== index));
 
-
+  /* Render ─────────────────────────────────────────────── */
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
         <h3 className={styles.header}>Funding Agencies</h3>
         <div className={styles.buttonGroup}>
-          <button type="button" className={styles.addButton} onClick={addAgency}>
+          <button
+            type="button"
+            className={styles.addButton}
+            onClick={addAgency}
+          >
             <FaPlus className={styles.addIcon} />
           </button>
         </div>
       </div>
+
       {agencies.map((agency, index) => (
         <div key={index} className={styles.agencyCard}>
           <button
@@ -48,6 +62,7 @@ export default function FundingAgenciesInput({ onChange }) {
           >
             <FaTrash />
           </button>
+
           <label className={styles.label}>
             Agency Name:
             <input
@@ -59,6 +74,7 @@ export default function FundingAgenciesInput({ onChange }) {
               placeholder="e.g. National Science Foundation"
             />
           </label>
+
           <label className={styles.label}>
             Award Title:
             <input
@@ -70,6 +86,7 @@ export default function FundingAgenciesInput({ onChange }) {
               placeholder="e.g. Model Execution Cyberinfrastructure"
             />
           </label>
+
           <label className={styles.label}>
             Award Number:
             <input
@@ -81,6 +98,7 @@ export default function FundingAgenciesInput({ onChange }) {
               placeholder="e.g. NSF_9087658_2017"
             />
           </label>
+
           <label className={styles.label}>
             Agency URL:
             <input

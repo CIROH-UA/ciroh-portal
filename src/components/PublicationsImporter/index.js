@@ -7,12 +7,16 @@ import useRecaptcha from '@site/src/components/Captcha/useRecaptcha';
 import ReCAPTCHA from "react-google-recaptcha";
 import { useColorMode } from '@docusaurus/theme-common';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import SelectCollection from './SelectCollection';
+
+
 
 export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   const { capchaToken, recaptchaRef, handleRecaptcha } = useRecaptcha();
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [progressMessage, setProgressMessage] = useState('');
+  const [selectedCollections, setSelectedCollections] = useState([]);
   const [citationUrl, setCitationUrl] = useState('');
   const [error, setError] = useState('');
   const { colorMode } = useColorMode();
@@ -89,7 +93,12 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       setProgressMessage('Citation data fetched. Importing citation...');
       
       // Call the Zotero API client to import the citation.
-      const importedUrl = await importCitation(citationData, zoteroApiKey, groupId);
+      const importedUrl = await importCitation(
+        citationData, 
+        zoteroApiKey, 
+        groupId,
+        selectedCollections.map(o => o.value)
+      );
       
       setCitationUrl(importedUrl);
       setProgressMessage('Citation imported successfully! Visit your citation ');
@@ -102,17 +111,19 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   }
 
   // Import the citation using the Zotero API client.
-  async function importCitation(citationData, apiKey, groupId) {
+  async function importCitation(citationData, apiKey, groupId,  collectionKeys = []) {
     try {
       // Initialize the client with your API key and configure for the group library.
       const zotero = api(apiKey).library('group', groupId);
 
       // Use the post() execution function to create the new item.
       // The API expects an array of entities.
+      const newItem = { ...citationData[0], collections: collectionKeys };
       let response;
 
       try {
-        response = await zotero.items().post(citationData);
+        response = await zotero.items().post([newItem]);
+        // response = await zotero.items().post(citationData);
       }
       catch (err) {
         // Check for errors in the response
@@ -158,8 +169,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       {error && <div className={styles.errorMessage}>{error}</div>}
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label}>
-          
-          Article Identifier:
+          Article Identifier
           <input
             type="text"
             className={styles.input}
@@ -184,7 +194,12 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
             placeholder="Enter DOI following the format 10.1234/abcd.efgh"
           />
         </label>
-
+        
+        <label className={styles.label}>Select Collection to Add</label>
+        <SelectCollection
+           onChange={(opts) => setSelectedCollections(opts || [])}
+        />
+        
         <div className={styles.captchaContainer}>
           <ReCAPTCHA
             key={colorMode}

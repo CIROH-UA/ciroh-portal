@@ -4,13 +4,13 @@ import styles from "./styles.module.css";
 import HydroShareResourceCard from "./HydroShareResourceCard";
 
 
-export default function HydroShareResourcesTiles({ resources }) {
+export default function HydroShareResourcesTiles({ resources, defaultImage }) {
 
   return (
       <div className={clsx("container", "margin-bottom--lg")}>
         <div className={styles.gridContainer}>
           {resources.map((res) => (
-            <HydroShareResourceCard key={res.resource_id} resource={res} />
+            <HydroShareResourceCard key={res.resource_id} resource={res} defaultImage={defaultImage} />
           ))}
         </div>
       </div>

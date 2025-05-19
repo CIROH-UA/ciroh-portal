@@ -19,12 +19,17 @@ export default function DatasetsTabContributeContent() {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                  🚀 <strong> </strong> Create a HydroShare Resource
+                💾 <strong>  Add your Dataset </strong>
                 </div>
             </h3>
         </div>
 
-        <HydroShareToolResourceForm resourceType="CompositeResource" makePublic={true} />
+        <HydroShareToolResourceForm 
+          resourceType="CompositeResource"
+          typeContribution='dataset'
+          keywordToAdd = "nwm_portal_dataset"
+          makePublic={true} 
+        />
 
         <hr className={Appstyles.sectionDivider} />
         <div className={Appstyles.headerContainer}>

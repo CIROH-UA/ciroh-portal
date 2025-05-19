@@ -93,6 +93,7 @@ async function joinGroupResources(groupIds) {
     try {
       const resources = await fetchResourcesByGroup(groupId);
       
+
       // Filter and collect unique resources
       for (const resource of resources) {
         const resourceId = resource.resource_id;
@@ -110,12 +111,32 @@ async function joinGroupResources(groupIds) {
   return uniqueResources;
 }
 
+async function joinExtraResources(group_resources, extra_resources) {
+  const seenResourceIds = new Set();
+  const allResources = [...group_resources, ...extra_resources];
+  const uniqueResources = [];
+
+  // Filter and collect unique resources
+  for (const resource of allResources) {
+    const resourceId = resource.resource_id;
+    if (!seenResourceIds.has(resourceId)) {
+      seenResourceIds.add(resourceId);
+      uniqueResources.push(resource);
+    }
+  }
+
+  return uniqueResources;
+
+}
+
 // Usage example:
 async function getCommunityResources(communityId="4") {
   try {
     const groupIds = await getGroupIds(communityId);
-    return await joinGroupResources(groupIds);
-    
+    const group_resources =  await joinGroupResources(groupIds);
+    const extra_resources = await fetchResourcesByKeyword();
+    return await joinExtraResources(group_resources, extra_resources);
+    // return await joinGroupResources(groupIds);
   } catch (error) {
     console.error('Community resource fetch failed:', error);
     return [];
@@ -124,4 +145,34 @@ async function getCommunityResources(communityId="4") {
 
 
 
-export {getCuratedIds, fetchResourcesByGroup,getCommunityResources };
+async function fetchResourcesByKeyword(keyword="nwm_portal_dataset") {
+  const url = `https://www.hydroshare.org/hsapi/resource/?subject=${encodeURIComponent(
+    keyword
+  )}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Error fetching resources (status: ${response.status})`);
+  }
+  const data = await response.json();
+  // data.results is typically where the list of resources is stored.
+  // If your actual structure differs, adjust accordingly.
+  return data.results;
+}
+
+
+async function fetchResourceCustomMetadata(resourceId) {
+  const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/custom/`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(
+      `Error fetching metadata for resource ${resourceId} (status: ${response.status})`
+    );
+  }
+  const data = await response.json();
+  return data;
+}
+
+
+
+
+export {getCuratedIds, fetchResourcesByGroup,getCommunityResources,fetchResourceCustomMetadata };

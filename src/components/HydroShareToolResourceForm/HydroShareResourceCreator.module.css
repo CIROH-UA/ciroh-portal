@@ -1,3 +1,43 @@
+.inputFile {
+  opacity: 0;
+  width: 0.1px;
+  height: 0.1px;
+  position: absolute;
+}
+.fileName {
+  position: absolute;
+  bottom: -35px;
+  left: 10px;
+  font-size: 0.85rem;
+  color: #555;
+}
+.inputFileDiv label {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border-color:var(--ifm-color-emphasis-600);
+  box-shadow: 0 4px 7px rgba(36, 26, 26, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ifm-color-primary-dark);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .2s ease-out;
+}
+
+.inputFileDiv label:hover {
+  transform: scale(1.05);
+}
+
+.sectionDivider {
+    margin: 2rem 0;
+    border: none;
+    border-top: 1px solid var(--ifm-color-emphasis-200);
+  }
+
 /* Container for the form */
 .container {
   max-width: 800px;
@@ -171,6 +211,7 @@
 .errorMessage {
   color: var(--ifm-color-danger);
   font-weight: 600;
+  font-weight: bold;
   text-align: center;
 }
 
