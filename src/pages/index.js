@@ -28,7 +28,7 @@ export default function Home() {
   return (
     <Layout
       title="CIROH Research Portal: Advancing Hydrological Science with NOAA"
-      description="A central portal for exploring collaborative web apps, datasets, publications, and learning modules in hydrological research from CIROH and NOAA."
+      description="A central portal for exploring collaborative web apps, datasets, publications, and courses in hydrological research from CIROH and NOAA."
     >
       {/* Hero / Banner Section */}
       <FrameworkHero />
@@ -84,9 +84,9 @@ export default function Home() {
           darkImage={PublicationsExampleDark}
         />
 
-        {/* Learning Modules Section */}
+        {/* Courses Section */}
         <GeneralHomeSection
-          title="Enhance Your Expertise with Learning Modules"
+          title="Enhance Your Expertise with Courses"
           description="Explore open courses and self-paced modules designed to foster deeper understanding of critical hydrological concepts. Created by CIROH in collaboration with NOAA, these resources cater to both novice learners and seasoned professionals."
           lightImage={PortalLearningExampleLight}
           darkImage={PortalLearningExampleDark}

@@ -21,11 +21,11 @@ export default function LearningModulesPage() {
   const contributeUrl = useBaseUrl('/contribute');
 
   return (
-    <Layout title="Learning Modules" description="CIROH Learning Modules">
+    <Layout title="Courses" description="CIROH Courses">
     
       <div className="margin-top--lg">
         <Header 
-            title="Learning Modules" 
+            title="Courses" 
             tagline="Access a range of open courses and modules in hydrology, enriched with CIROH and NOAA research, designed for learners at all levels seeking to deepen their understanding of water science."
             buttons={[
               { label: "Add your Module", href: contributeUrl, primary: true },

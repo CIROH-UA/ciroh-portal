@@ -29,6 +29,10 @@ jobs:
           ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
           ZOTERO_CIROH_GROUP_ID: ${{ secrets.ZOTERO_CIROH_GROUP_ID }}
           CAPTCHA_KEY: ${{ secrets.CAPTCHA_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+          S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+          S3_REGION: ${{ secrets.S3_REGION }}
           
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
