@@ -7,7 +7,7 @@ import CardsHeader from './CardsHeader';
 import PublicationsImporter from '@site/src/components/PublicationsImporter';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Appstyles from './AppsStyles.module.css';
-import ZoteroAuth from "@site/src/components/ZoteroAuth";
+
 
 export default function CitationImporter({ description }) {
     const {
