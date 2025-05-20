@@ -232,7 +232,7 @@ export default function HydroShareResourceCreator({
           throw new Error(`Custom metadata failed (HTTP ${customResp.status})`);
       }
 
-      setProgressMessage('Resource created successfully! Visit your resource ');
+      setProgressMessage(`Resource created successfully! Visit your ${typeContribution} `);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -351,7 +351,7 @@ export default function HydroShareResourceCreator({
             {progressMessage}
             {!loading && resourceUrl && (
               <>
-                <a href={resourceUrl} target="_blank" rel="noopener noreferrer">
+                <a href={`/${typeContribution}s#${resourceUrl.split('/')[4]}`} target="_blank" rel="noopener noreferrer">
                   here
                 </a>
               </>
