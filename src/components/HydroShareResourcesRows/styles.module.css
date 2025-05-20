@@ -4,6 +4,14 @@
   gap: 1rem;
 }
 
+.titleLink {
+  color: inherit;          /* keep the same colour */
+  text-decoration: none;   /* hide the underline */
+}
+.titleLink:hover {
+  text-decoration: underline;
+}
+
 /* --------------------------------------
  * INDIVIDUAL ROW ITEM
  * --------------------------------------

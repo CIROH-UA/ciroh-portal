@@ -1,58 +1,50 @@
-import React from "react";
-import { FaGithub } from "react-icons/fa";
-import { MdInfo, MdDriveFileMove } from "react-icons/md";
-import { LiaExternalLinkSquareAltSolid } from "react-icons/lia";
-import { LuLayers3 } from "react-icons/lu";
+import React from 'react';
+import Link from '@docusaurus/Link';
+import { MdDriveFileMove } from 'react-icons/md';
+import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
+import { LuLayers3 } from 'react-icons/lu';
 
-import styles from "./styles.module.css";
 import clsx from 'clsx';
+import styles from './styles.module.css';
 
+/**
+ * Small square/rectangular “tile” card.
+ *  • Outer div gets id={resource_id}        → target for #hash
+ *  • Overlay title is a <Link to={`#id`}>   → clicking updates URL & scrolls
+ */
 export default function HydroShareResourceCard({ resource, defaultImage }) {
   const {
-    title = "Untitled",
+    resource_id,
+    title        = 'Untitled',
     thumbnail_url,
     page_url,
     resource_url,
   } = resource;
 
   return (
-    <div className={styles.gridItem}>
+    <div id={resource_id} className={styles.gridItem}>
       <div className={styles.imageWrapper}>
-        {/* If no app_icon yet, you might render a fallback image or a placeholder */}
-        {/* {thumbnail_url ? (
-          <img src={thumbnail_url} alt={title} className={styles.image} />
-        ) : (
-          // <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
-          <div className={clsx(styles.imagePlaceholder)}>
-            <div className={styles.iconPlaceholder}>
-              <LuLayers3 size={50}/>
-            </div>
-          </div>
-        )} */}
-
-
         {thumbnail_url ? (
           <img src={thumbnail_url} alt={title} className={styles.image} />
         ) : defaultImage ? (
           <img src={defaultImage} alt={title} className={styles.image} />
-        ) :(
-          <div className={clsx(styles.imagePlaceholder)}>
+        ) : (
+          <div className={styles.imagePlaceholder}>
             <div className={styles.iconPlaceholder}>
-              <LuLayers3 size={50}/>
+              <LuLayers3 size={50} />
             </div>
           </div>
+        )}
 
-        // <div className={clsx(styles.imagePlaceholder, styles.placeholder)}>
-        //   </div>
-        )
-        }
-
+        {/* ───── hover overlay ───── */}
         <div className={styles.hoverOverlay}>
-          {/* Title */}
-          <h5 className={styles.overlayTitle}>{title}</h5>
+          <h5 className={styles.overlayTitle}>
+            <Link to={`#${resource_id}`} className={styles.titleLink}>
+              {title}
+            </Link>
+          </h5>
 
           <div className={styles.overlayIcons}>
-
             {page_url && (
               <a
                 href={page_url}
