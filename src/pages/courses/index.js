@@ -1,6 +1,6 @@
 import React from "react";
 // import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
-import LearningModules from "@site/src/components/LearningModules";
+import Courses from "@site/src/components/Courses";
 import Header from "@site/src/components/Header";
 import Layout from '@theme/Layout';
 import TechBox from "@site/src/components/TechBox";
@@ -22,7 +22,7 @@ const items = [
 ];
 
 
-export default function LearningModulesPage() {
+export default function CoursesPage() {
   const contributeUrl = useBaseUrl('/contribute');
 
   return (
@@ -39,7 +39,7 @@ export default function LearningModulesPage() {
       </div>
 
       <main>
-      <LearningModules keyword="nwm_portal_module"/>
+      <Courses keyword="nwm_portal_module"/>
         
         <TechBox items={items} type={"Courses"}  />
       </main>

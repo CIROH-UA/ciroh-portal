@@ -27,6 +27,12 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   // Wikimedia REST API base (using the official REST endpoint)
   const wikimediaBaseUrl = 'https://en.wikipedia.org/api/rest_v1';
 
+  const zoteroClient = React.useMemo(
+    () => api(zoteroApiKey).library('group', groupId),
+    [zoteroApiKey, groupId],
+  );
+
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
@@ -57,11 +63,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       }
       return;
     }
-    // if (capchaToken && query) {
-    //   // Send login request with captcha token, username, and password
-    //   console.log("great!")
-      
-    // }
+
     setLoading(true);
     try {
       setProgressMessage('Fetching citation data...');
@@ -95,8 +97,8 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       // Call the Zotero API client to import the citation.
       const importedUrl = await importCitation(
         citationData, 
-        zoteroApiKey, 
-        groupId,
+        // zoteroApiKey, 
+        // groupId,
         selectedCollections.map(o => o.value)
       );
       
@@ -111,11 +113,16 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
   }
 
   // Import the citation using the Zotero API client.
-  async function importCitation(citationData, apiKey, groupId,  collectionKeys = []) {
+  async function importCitation(
+    citationData, 
+    // apiKey, 
+    // groupId,  
+    collectionKeys = []
+  ) {
     try {
       // Initialize the client with your API key and configure for the group library.
-      const zotero = api(apiKey).library('group', groupId);
-
+      // const zotero = api(apiKey).library('group', groupId);
+      const zotero = zoteroClient; 
       // Use the post() execution function to create the new item.
       // The API expects an array of entities.
       const newItem = { ...citationData[0], collections: collectionKeys };
@@ -123,7 +130,6 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
 
       try {
         response = await zotero.items().post([newItem]);
-        // response = await zotero.items().post(citationData);
       }
       catch (err) {
         // Check for errors in the response
@@ -170,6 +176,7 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.label}>
           Article Identifier
+        </label>
           <input
             type="text"
             className={styles.input}
@@ -193,10 +200,10 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
             }}
             placeholder="Enter DOI following the format 10.1234/abcd.efgh"
           />
-        </label>
-        
-        <label className={styles.label}>Select Collection to Add</label>
+          <p><strong>* Do not use</strong><span>{" "}a <strong>url</strong> but the format </span> <strong>10.1234/abcd.efgh </strong></p>
+        <label className={styles.label}>Select Collection</label>
         <SelectCollection
+            zotero={zoteroClient}
            onChange={(opts) => setSelectedCollections(opts || [])}
         />
         

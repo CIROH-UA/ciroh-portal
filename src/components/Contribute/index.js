@@ -5,7 +5,7 @@ import AppsTabContributeContent from './AppsContribute';
 import DatasetsTabContributeContent from './DatasetsContribute';
 import PublicationsTabContributeContent from './PublicationsContribute';
 import DocsContribute from './DocsContribute';
-import LearningModulesContribute from './LearningModulesContribute';
+import CoursesContribute from './CoursesContribute';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { IoLayers, IoAppsSharp,IoBookmarks,IoSchool,IoFileTrayFull   } from "react-icons/io5";
@@ -82,7 +82,7 @@ export default function Contribute({ title }) {
                   </span>
                 }
               >
-                <LearningModulesContribute/>
+                <CoursesContribute/>
             </TabItem>
           </Tabs>
           </div>

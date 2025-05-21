@@ -210,7 +210,7 @@ export const contributeBlogsDocsCards = [
 ];
 
 
-export const contributeLearningModulesCards = [
+export const contributeCoursesCards = [
   {
     imgSrcLight: Hydrolearn101Light,
     imgSrcDark: Hydrolearn101Dark,
