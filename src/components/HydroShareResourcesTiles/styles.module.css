@@ -9,11 +9,12 @@
 }
 
 .titleLink {
+  pointer-events: auto;
   color: inherit;
   text-decoration: none;
 }
 .titleLink:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 /*************************************************************
  * Responsive Grid: max 3 columns within a container
