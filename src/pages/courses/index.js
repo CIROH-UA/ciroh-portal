@@ -6,7 +6,7 @@ import Layout from '@theme/Layout';
 import TechBox from "@site/src/components/TechBox";
 import HydroLearnLogo from '@site/static/img/hydrolearn_logo.png';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-
+import HydroShareLogo from '@site/static/img/hydroshare_white.png';
 
 const items = [
   {
@@ -14,6 +14,11 @@ const items = [
     darkIcon: HydroLearnLogo,
     alt: 'HydroLearn',
   },
+    {
+      lightIcon: HydroShareLogo,
+      darkIcon: HydroShareLogo,
+      alt: 'HydroShare',
+    },
 ];
 
 
@@ -26,18 +31,17 @@ export default function LearningModulesPage() {
       <div className="margin-top--lg">
         <Header 
             title="Courses" 
-            tagline="Access a range of open courses and modules in hydrology, enriched with CIROH and NOAA research, designed for learners at all levels seeking to deepen their understanding of water science."
+            tagline="Access a range of open courses in hydrology, enriched with CIROH and NOAA research, designed for learners at all levels seeking to deepen their understanding of water science."
             buttons={[
-              { label: "Add your Module", href: contributeUrl, primary: true },
-              { label: "Visit the modules", href: "https://edx.hydrolearn.org/courses" }
+              { label: "Add your Course", href: contributeUrl, primary: true },
             ]}
         />
       </div>
 
       <main>
       <LearningModules keyword="nwm_portal_module"/>
-        {/* <HydroShareResourcesSelector keyword="nwm_portal_module"/> */}
-        <TechBox items={items} type={"Learning Modules"}  />
+        
+        <TechBox items={items} type={"Courses"}  />
       </main>
     
     </Layout>

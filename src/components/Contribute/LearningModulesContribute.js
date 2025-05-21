@@ -23,7 +23,7 @@ export default function LearningModulesContribute({ description }) {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                    📚 <strong>Add Your Coruses </strong> 
+                    📚 <strong>Add Your Courses </strong> 
                 </div>
             </h3>
         </div>
