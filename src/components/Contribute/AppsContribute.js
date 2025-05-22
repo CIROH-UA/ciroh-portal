@@ -35,8 +35,7 @@ export default function AppsTabContributeContent() {
       </div>
       <ActionButtons
             buttons={[
-                { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#applications", primary: true },
-                { label: "Quick Start", href: hydroshareUrl }
+                { label: "Add your App", href: "https://docs.ciroh.org/docs/products/Portal/#applications", primary: true },
               ]}
         />
 

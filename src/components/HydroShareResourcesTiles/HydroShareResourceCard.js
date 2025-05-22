@@ -1,10 +1,8 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
 import { MdDriveFileMove } from 'react-icons/md';
 import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
 import { LuLayers3 } from 'react-icons/lu';
 
-import clsx from 'clsx';
 import styles from './styles.module.css';
 
 /**
@@ -38,10 +36,22 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
 
         {/* ───── hover overlay ───── */}
         <div className={styles.hoverOverlay}>
+
+
           <h5 className={styles.overlayTitle}>
-            <Link to={`#${resource_id}`} className={styles.titleLink}>
-              {title}
-            </Link>
+            {/* Title now links to the external page */}
+            {page_url ? (
+              <a
+                href={page_url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.titleLink}
+              >
+                {title}
+              </a>
+            ) : (
+              title
+            )}
           </h5>
 
           <div className={styles.overlayIcons}>
@@ -53,7 +63,7 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
                 className={styles.iconLink}
                 title="Website"
               >
-                <LiaExternalLinkSquareAltSolid size={30} />
+                <LiaExternalLinkSquareAltSolid size={40} />
               </a>
             )}
             {resource_url && (
@@ -64,7 +74,7 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
                 className={styles.iconLink}
                 title="Resource Page"
               >
-                <MdDriveFileMove size={30} />
+                <MdDriveFileMove size={40} />
               </a>
             )}
           </div>

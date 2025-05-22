@@ -4,7 +4,7 @@ import LMDarkIcon from '@site/static/img/modules_dark.png';
 import { useColorMode } from "@docusaurus/theme-common";
 import HydroShareResourcesSelector from "@site/src/components/HydroShareResourcesSelector";
 
-export default function LearningModules({ keyword = "nwm_portal_course" }) {
+export default function Courses({ keyword = "nwm_portal_course" }) {
     const { colorMode } = useColorMode();
     const lm_icon = colorMode === 'dark' ? LMDarkIcon : LMLightIcon;
   

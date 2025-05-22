@@ -35,7 +35,7 @@ export default function DatasetsTabContributeContent() {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                   Next follow These <strong>Steps </strong> 👣
+                   Share your <strong>Dataset</strong> 👣
                 </div>
             </h3>
         </div>
@@ -47,8 +47,7 @@ export default function DatasetsTabContributeContent() {
         />
         <ActionButtons
             buttons={[
-                { label: "Add your Data", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#data", primary: true },
-                { label: "Quick Start", href: hydroshareUrl },
+                { label: "Add your Data", href: "https://docs.ciroh.org/docs/products/Portal/#data", primary: true }
               ]}
         />
 

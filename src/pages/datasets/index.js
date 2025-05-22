@@ -18,7 +18,7 @@ const items = [
 
 
 export default function DatasetsPage() {
-  const contributeUrl = useBaseUrl('/contribute');
+  const contributeUrl = useBaseUrl('/contribute?current-contribution=datasets');
 
   return (
     <Layout title="Datasets" description="CIROH Datasets">

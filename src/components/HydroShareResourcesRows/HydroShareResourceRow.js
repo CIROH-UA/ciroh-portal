@@ -2,19 +2,13 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import { MdDriveFileMove } from 'react-icons/md';
 import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
-
 import clsx from 'clsx';
 import styles from './styles.module.css';
 
-/**
- * A single HydroShare resource “card”.
- *  • Wrapper <div> gets id={resource_id}  →  target for “#hash” links
- *  • Title rendered as <Link to={`#id`}>   →  updates the URL & scrolls
- */
 export default function HydroShareResourceRow({ resource, defaultImage }) {
   const {
     resource_id,
-    title        = 'Untitled',
+    title = 'Untitled',
     description,
     thumbnail_url,
     page_url,
@@ -22,8 +16,18 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
   } = resource;
 
   return (
+    /* Make the card itself the scroll target */
     <div id={resource_id} className={clsx(styles.rowItem, 'card')}>
-      {/* ───── thumbnail & overlay ───── */}
+      {/* ─── FULL-CARD OVERLAY ─── */}
+      {/* Covers the whole card so any click that isn't on a "real" link            */}
+      {/* triggers the hash–scroll. Not nested: it's a sibling in the DOM.          */}
+      <Link
+        to={`#${resource_id}`}
+        className={styles.fullCardLink}
+        title="Scroll to this resource"
+      />
+
+      {/* ─── THUMBNAIL ─── */}
       <div className={styles.imageWrapper}>
         {thumbnail_url ? (
           <img src={thumbnail_url} alt={title} className={styles.image} />
@@ -44,7 +48,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
                 className={styles.iconLink}
                 title="Website"
               >
-                <LiaExternalLinkSquareAltSolid size={24} />
+                <LiaExternalLinkSquareAltSolid size={30} />
               </a>
             )}
             {resource_url && (
@@ -55,21 +59,26 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
                 className={styles.iconLink}
                 title="Resource Page"
               >
-                <MdDriveFileMove size={24} />
+                <MdDriveFileMove size={30} />
               </a>
             )}
           </div>
         </div>
       </div>
 
-      {/* ───── text block ───── */}
+      {/* ─── TEXT BLOCK ─── */}
       <div className={styles.textWrapper}>
         {title ? (
           <h1 className={styles.title}>
-            {/* router-aware hash link */}
-            <Link to={`#${resource_id}`} className={styles.titleLink}>
+            {/* External link → page_url */}
+            <a
+              href={page_url}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.pageLink}
+            >
               {title}
-            </Link>
+            </a>
           </h1>
         ) : (
           <h1 className={styles.titlePlaceholder} />

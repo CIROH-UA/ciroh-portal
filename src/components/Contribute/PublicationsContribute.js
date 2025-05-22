@@ -24,7 +24,7 @@ export default function CitationImporter({ description }) {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                    📝 <strong>Add Your Publications </strong> 
+                    🔖 <strong>Add Your Publications </strong> 
                 
                 </div>
             </h3>
@@ -35,21 +35,21 @@ export default function CitationImporter({ description }) {
         />
         {/* <hr className={Appstyles.sectionDivider} /> */}
 
+
+        <hr className={Appstyles.sectionDivider} />
+
+        <CardsHeader header="Join us CIROH on Zotero!" />
+
+        <StepsCards
+            steps={contributePublicationsCards}
+            containerId="add-publication-steps"
+        />
         <ActionButtons
             buttons={[
-                { label: "Add your Publication", href: "https://docs.ciroh.org/docs/products/Portal/research-portal/#publications", primary: true },
+                { label: "Add your Publication", href: "https://docs.ciroh.org/docs/products/Portal/#publications", primary: true },
                 { label: "Visit Our Library", href: "https://www.zotero.org/groups/5261687/ciroh/library" }
               ]}
         />
-        {/* <hr className={Appstyles.sectionDivider} /> */}
-
-        {/* <CardsHeader header="Add your Publications on 5 Easy Steps" /> */}
-
-        {/* <StepsCards
-            steps={contributePublicationsCards}
-            containerId="add-publication-steps"
-        /> */}
-
       </div>
     
   );
