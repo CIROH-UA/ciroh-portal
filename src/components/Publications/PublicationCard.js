@@ -3,18 +3,7 @@ import clsx from 'clsx';
 import styles from './PublicationCard.module.css';
 import { useColorMode } from '@docusaurus/theme-common';
 
-// Helper function to handle "MM/YYYY" dates
-function parseDateForDisplay(dateStr) {
-  if (!dateStr) return null;
-  // Check for "M/YYYY" or "MM/YYYY"
-  const match = dateStr.match(/^(\d{1,2})\/(\d{4})$/);
-  if (match) {
-    const month = parseInt(match[1], 10);
-    const year = parseInt(match[2], 10);
-    return new Date(year, month - 1, 1);
-  }
-  return new Date(dateStr);
-}
+
 
 function addSpacesOnCaseTransition(str) {
   return str
@@ -54,12 +43,6 @@ export default function PublicationCard({ publication, index }) {
 
   // Format the date
   const pubDate = date
-    ? parseDateForDisplay(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      })
-    : null;
 
   // Card content component
   const CardContent = () => (

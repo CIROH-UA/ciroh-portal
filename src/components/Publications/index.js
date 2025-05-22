@@ -6,10 +6,10 @@ import React, {
   startTransition,
 } from 'react';
 import Zotero from 'zotero-api-client';
-import PublicationCard from './PublicationCard';
-import SkeletonCard from './SkeletonCard';
-import styles from './Publications.module.css';
-import clsx from 'clsx';
+import PublicationCard   from './PublicationCard';
+import SkeletonCard      from './SkeletonCard';
+import styles            from './Publications.module.css';
+import clsx              from 'clsx';
 import {
   HiOutlineSortDescending,
   HiOutlineSortAscending,
@@ -20,28 +20,21 @@ const SCROLL_THRESHOLD = 200;
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
-/* ------------------------------------------------------------------ */
-/* utility: one-off HEAD/GET to obtain the Total-Results header        */
-/* ------------------------------------------------------------------ */
+/* ───────────────── helper: read “Total-Results” header ───────────────── */
 async function fetchTotal(groupId, apiKey, params) {
-  const url = new URL(
-    `https://api.zotero.org/groups/${groupId}/items/top`
+  const url = new URL(`https://api.zotero.org/groups/${groupId}/items/top`);
+  Object.entries({ ...params, limit: 1 }).forEach(([k, v]) =>
+    url.searchParams.append(k, v),
   );
-  Object.entries({
-    ...params,
-    limit: 1,          // only need the header
-  }).forEach(([k, v]) => url.searchParams.append(k, v));
-
-  const resp = await fetch(url.href, {
-    headers: { 'Zotero-API-Key': apiKey },
-  });
+  const resp = await fetch(url.href, { headers: { 'Zotero-API-Key': apiKey } });
   if (!resp.ok) return null;
   const hdr = resp.headers.get('Total-Results');
   return hdr ? Number(hdr) : null;
 }
 
+/* ──────────────────────────────────────────────────────────────────────── */
 export default function Publications({ apiKey, groupId }) {
-  /* ------------------------- state -------------------------------- */
+  /* ---------------- state ---------------- */
   const [displayedItems, setDisplayedItems] = useState([]);
   const [currentPage,    setCurrentPage]    = useState(0);
   const [hasMore,        setHasMore]        = useState(true);
@@ -51,31 +44,29 @@ export default function Publications({ apiKey, groupId }) {
 
   const [totalItems, setTotalItems] = useState(null);
 
-  const [filterSearch,   setFilterSearch]   = useState('');
+  const [searchInput,   setSearchInput]   = useState(''); // text in box
+  const [filterSearch,  setFilterSearch]  = useState(''); // committed query
   const [filterItemType, setFilterItemType] = useState('all');
   const [sortType,       setSortType]       = useState('date');
   const [sortDirection,  setSortDirection]  = useState('desc');
 
-  /* ------------------- fetch total results ------------------------ */
-  const refreshTotalResults = useCallback(async () => {
+  /* ------------- read header once per filter change ------------- */
+  const refreshTotal = useCallback(async () => {
     const params = {
-      sort:      sortType,
+      sort: sortType,
       direction: sortDirection,
-      ...(filterSearch   ? { q: filterSearch }      : {}),
-      ...(filterItemType !== 'all'
-          ? { itemType: filterItemType }
-          : {}),
+      ...(filterSearch     ? { q: filterSearch }      : {}),
+      ...(filterItemType !== 'all' ? { itemType: filterItemType } : {}),
     };
     try {
-      const total = await fetchTotal(groupId, apiKey, params);
-      setTotalItems(total);
+      setTotalItems(await fetchTotal(groupId, apiKey, params));
     } catch (e) {
-      console.error('Could not read Total-Results header:', e);
+      console.error('Total-Results header error:', e);
       setTotalItems(null);
     }
   }, [groupId, apiKey, filterSearch, filterItemType, sortType, sortDirection]);
 
-  /* ------------------- main paginator loader ---------------------- */
+  /* ---------------- paginator loader ---------------- */
   const loadPublications = useCallback(
     async (page) => {
       if (fetching.current) return;
@@ -85,6 +76,7 @@ export default function Publications({ apiKey, groupId }) {
         setLoading(true);
         setError(null);
 
+        // skeletons
         setDisplayedItems((prev) => [
           ...prev,
           ...Array.from({ length: PAGE_SIZE }, () => ({ placeholder: true })),
@@ -96,36 +88,30 @@ export default function Publications({ apiKey, groupId }) {
           sort:  sortType,
           direction: sortDirection,
           include: 'data',
-          ...(filterSearch   ? { q: filterSearch }      : {}),
-          ...(filterItemType !== 'all'
-              ? { itemType: filterItemType }
-              : {}),
+          qmode: 'titleCreatorYear',
+          ...(filterSearch     ? { q: filterSearch }      : {}),
+          ...(filterItemType !== 'all' ? { itemType: filterItemType } : {}),
         };
 
-        const client        = new Zotero(apiKey);
-        const itemsResponse = await client
+        const client  = new Zotero(apiKey);
+        const result  = await client
           .library('group', groupId)
           .items()
           .top()
           .get(query);
 
-        const newItems = itemsResponse.getData();
-
+        const newItems = result.getData();
+        console.log('Fetched items:', newItems);
         setHasMore(newItems.length === PAGE_SIZE);
 
         setDisplayedItems((prev) => {
-          const updated = [...prev];
-          const firstPh = updated.findIndex((i) => i.placeholder);
-          newItems.forEach((item, i) => {
-            updated[firstPh + i] = item;
-          });
+          const upd   = [...prev];
+          const first = upd.findIndex((i) => i.placeholder);
+          newItems.forEach((item, i) => (upd[first + i] = item));
           if (newItems.length < PAGE_SIZE) {
-            updated.splice(
-              firstPh + newItems.length,
-              PAGE_SIZE - newItems.length
-            );
+            upd.splice(first + newItems.length, PAGE_SIZE - newItems.length);
           }
-          return updated;
+          return upd;
         });
       } catch {
         setError('Error retrieving the publications.');
@@ -141,71 +127,96 @@ export default function Publications({ apiKey, groupId }) {
       filterItemType,
       sortType,
       sortDirection,
-    ]
+    ],
   );
 
-  /* ------------- refetch list + header on filter change ----------- */
-  useEffect(() => {
+  /* ------------- (re)fetch when filters change ------------- */
+  const resetAndLoad = useCallback(() => {
     setDisplayedItems([]);
     setCurrentPage(0);
     setHasMore(true);
     loadPublications(0);
-    refreshTotalResults();
-  }, [loadPublications, refreshTotalResults]);
+    refreshTotal();
+  }, [loadPublications, refreshTotal]);
 
-  /* --------------------- infinite scroll -------------------------- */
+  useEffect(resetAndLoad, [resetAndLoad]);
+
+  /* ---------------- infinite scroll ---------------- */
   useEffect(() => {
     const onScroll = () => {
       if (fetching.current || !hasMore) return;
-      const { scrollTop, clientHeight, scrollHeight } =
-        document.documentElement;
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
-        const nxt = currentPage + 1;
-        setCurrentPage(nxt);
-        loadPublications(nxt);
+        const next = currentPage + 1;
+        setCurrentPage(next);
+        loadPublications(next);
       }
     };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, [currentPage, hasMore, loadPublications]);
 
-  /* ------------------- search-box debounce ------------------------ */
-  const handleSearchKeyUp   = (e) => {
+  /* ---------------- search helpers ---------------- */
+  const commitSearch = (query) => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(
-      () => setFilterSearch(e.target.value),
-      DEBOUNCE_MS
-    );
+    setFilterSearch(query.trim());
   };
-  const handleSearchKeyPress = () => clearTimeout(debounceTimer);
-  const handleSearchBlur     = (e) => setFilterSearch(e.target.value);
 
-  /* -------------------------- render ------------------------------ */
+  /* key-by-key debounce */
+  const handleKeyUp   = () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => commitSearch(searchInput), DEBOUNCE_MS);
+  };
+
+  /* clear timer while key is held */
+  const handleKeyPress = () => clearTimeout(debounceTimer);
+
+  /* run search immediately on Enter */
+  const handleKeyDown  = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();          // stop form submission scroll jump
+      commitSearch(searchInput);
+    }
+  };
+
+  /* lose focus → commit */
+  const handleBlur = () => commitSearch(searchInput);
+
+  /* -------------------- render -------------------- */
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
+        {/* counter row ------------------------------------------------ */}
         <div className={styles.counterRow}>
-          Loaded &nbsp;
-          <strong>{displayedItems.filter((i) => !i.placeholder).length}</strong><span>{" "}Publications</span>
+          Loaded&nbsp;
+          <strong>{displayedItems.filter((i) => !i.placeholder).length}</strong>
+          &nbsp;publications
           {totalItems !== null && (
-            <>
-              &nbsp;from&nbsp;<strong>{totalItems}</strong>
-            </>
+            <> of <strong>{totalItems}</strong></>
           )}
         </div>
 
+        {/* filter + sort toolbar ------------------------------------- */}
         <form
           className={styles.filterForm}
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {
+            e.preventDefault();
+            commitSearch(searchInput);
+          }}
         >
           <input
+            name="search"
             type="text"
-            placeholder="Search title, author, …"
-            onBlur={handleSearchBlur}
-            onKeyUp={handleSearchKeyUp}
-            onKeyPress={handleSearchKeyPress}
+            placeholder="Search by Title, Author, and Year"
             className={styles.searchInput}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyUp={handleKeyUp}
+            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
           />
+
           <select
             value={filterItemType}
             onChange={(e) => setFilterItemType(e.target.value)}
@@ -219,6 +230,7 @@ export default function Publications({ apiKey, groupId }) {
             <option value="document">Document</option>
             <option value="bookSection">Book Section</option>
           </select>
+
           <select
             value={sortType}
             onChange={(e) => setSortType(e.target.value)}
@@ -231,11 +243,12 @@ export default function Publications({ apiKey, groupId }) {
             <option value="itemType">Item Type</option>
             <option value="publisher">Publisher</option>
           </select>
+
           <button
             type="button"
             onClick={() =>
               startTransition(() =>
-                setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
+                setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc')),
               )
             }
             className={clsx('button', styles.button, styles.buttonPrimary)}
@@ -249,29 +262,31 @@ export default function Publications({ apiKey, groupId }) {
           </button>
         </form>
 
+        {/* error banner ---------------------------------------------- */}
         {error && (
           <div className={styles.errorContainer}>
             <div className={styles.error}>{error}</div>
           </div>
         )}
 
+        {/* grid ------------------------------------------------------- */}
         <div className={styles.publicationsContainer}>
           {!error &&
-            displayedItems.map((item, idx) =>
+            displayedItems.map((item, i) =>
               item.placeholder ? (
-                <SkeletonCard key={`ph-${idx}`} />
+                <SkeletonCard key={`ph-${i}`} />
               ) : (
-                <PublicationCard
-                  key={item.key || `pub-${idx}`}
-                  publication={item}
-                />
-              )
+                <PublicationCard key={item.key || `pub-${i}`} publication={item} />
+              ),
             )}
         </div>
 
+        {/* empty state ----------------------------------------------- */}
         {!loading &&
           displayedItems.filter((i) => !i.placeholder).length === 0 && (
-            <p className={styles.emptyMessage}>No&nbsp;Publications&nbsp;Found</p>
+            <p className={styles.emptyMessage}>
+              No&nbsp;Publications&nbsp;Found
+            </p>
           )}
       </div>
     </div>
