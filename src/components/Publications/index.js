@@ -1,182 +1,210 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  startTransition,
+} from 'react';
 import Zotero from 'zotero-api-client';
 import PublicationCard from './PublicationCard';
 import SkeletonCard from './SkeletonCard';
 import styles from './Publications.module.css';
 import clsx from 'clsx';
+import {
+  HiOutlineSortDescending,
+  HiOutlineSortAscending,
+} from 'react-icons/hi';
 
-import { HiOutlineSortDescending, HiOutlineSortAscending } from "react-icons/hi";
+const PAGE_SIZE        = 50;
+const SCROLL_THRESHOLD = 200;
+let   debounceTimer    = null;
+const DEBOUNCE_MS      = 1_000;
 
+/* ------------------------------------------------------------------ */
+/* utility: one-off HEAD/GET to obtain the Total-Results header        */
+/* ------------------------------------------------------------------ */
+async function fetchTotal(groupId, apiKey, params) {
+  const url = new URL(
+    `https://api.zotero.org/groups/${groupId}/items/top`
+  );
+  Object.entries({
+    ...params,
+    limit: 1,          // only need the header
+  }).forEach(([k, v]) => url.searchParams.append(k, v));
 
-const PAGE_SIZE = 50;
-const SCROLL_THRESHOLD = 200; // pixels from bottom to trigger load
-let timer = 1000;
-let timeoutVal = 1000;
+  const resp = await fetch(url.href, {
+    headers: { 'Zotero-API-Key': apiKey },
+  });
+  if (!resp.ok) return null;
+  const hdr = resp.headers.get('Total-Results');
+  return hdr ? Number(hdr) : null;
+}
+
 export default function Publications({ apiKey, groupId }) {
-  // State for the list of publications and pagination
+  /* ------------------------- state -------------------------------- */
   const [displayedItems, setDisplayedItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [currentPage,    setCurrentPage]    = useState(0);
+  const [hasMore,        setHasMore]        = useState(true);
+  const [loading,        setLoading]        = useState(false);
+  const [error,          setError]          = useState(null);
   const fetching = useRef(false);
 
-  // States for filters
-  const [filterSearch, setFilterSearch] = useState("");
-  const [filterItemType, setFilterItemType] = useState("all");
+  const [totalItems, setTotalItems] = useState(null);
 
-  // New states for sorting options
-  const [sortType, setSortType] = useState("date"); // default sort field
-  const [sortDirection, setSortDirection] = useState("desc"); // default sort direction
+  const [filterSearch,   setFilterSearch]   = useState('');
+  const [filterItemType, setFilterItemType] = useState('all');
+  const [sortType,       setSortType]       = useState('date');
+  const [sortDirection,  setSortDirection]  = useState('desc');
 
-  // Fetch a page of items with the current filter and sort settings
-  const loadPublications = useCallback(async (page) => {
-    if (fetching.current) return;
-    fetching.current = true;
+  /* ------------------- fetch total results ------------------------ */
+  const refreshTotalResults = useCallback(async () => {
+    const params = {
+      sort:      sortType,
+      direction: sortDirection,
+      ...(filterSearch   ? { q: filterSearch }      : {}),
+      ...(filterItemType !== 'all'
+          ? { itemType: filterItemType }
+          : {}),
+    };
     try {
-      setLoading(true);
-      setError(null);
-
-      // Add placeholders for smooth UX
-      const placeholderBatch = Array.from({ length: PAGE_SIZE }).map(() => ({
-        placeholder: true,
-      }));
-      setDisplayedItems((prev) => [...prev, ...placeholderBatch]);
-
-      // Build query options using filters and sorting values
-      const queryOptions = {
-        start: page * PAGE_SIZE,
-        limit: PAGE_SIZE,
-        sort: sortType,
-        direction: sortDirection,
-        include: 'data',
-      };
-
-      if (filterSearch) {
-        console.log("filterSearch", filterSearch);
-        queryOptions.q = filterSearch;
-      }
-      if (filterItemType && filterItemType !== 'all') {
-        queryOptions.itemType = filterItemType;
-      }
-
-      const client = new Zotero(apiKey);
-      const itemsResponse = await client
-        .library('group', groupId)
-        .items()
-        .top()
-        .get(queryOptions);
-      const newItems = itemsResponse.getData();
-      // If fewer than PAGE_SIZE were returned, no more pages remain
-      setHasMore(newItems.length === PAGE_SIZE);
-
-      // Replace placeholders with real items
-      setDisplayedItems((prev) => {
-        const updated = [...prev];
-        const firstPlaceholderIndex = updated.findIndex((item) => item.placeholder);
-        newItems.forEach((item, i) => {
-          updated[firstPlaceholderIndex + i] = item;
-        });
-        if (newItems.length < PAGE_SIZE) {
-          updated.splice(firstPlaceholderIndex + newItems.length, PAGE_SIZE - newItems.length);
-        }
-        return updated;
-      });
-    } catch (err) {
-      setError('Error retrieving the publications');
-    } finally {
-      fetching.current = false;
-      setLoading(false);
+      const total = await fetchTotal(groupId, apiKey, params);
+      setTotalItems(total);
+    } catch (e) {
+      console.error('Could not read Total-Results header:', e);
+      setTotalItems(null);
     }
-  }, [apiKey, groupId, filterSearch, filterItemType, sortType, sortDirection]);
+  }, [groupId, apiKey, filterSearch, filterItemType, sortType, sortDirection]);
 
+  /* ------------------- main paginator loader ---------------------- */
+  const loadPublications = useCallback(
+    async (page) => {
+      if (fetching.current) return;
+      fetching.current = true;
 
+      try {
+        setLoading(true);
+        setError(null);
 
-  // Reset and load first page whenever filters or sorting change
+        setDisplayedItems((prev) => [
+          ...prev,
+          ...Array.from({ length: PAGE_SIZE }, () => ({ placeholder: true })),
+        ]);
+
+        const query = {
+          start: page * PAGE_SIZE,
+          limit: PAGE_SIZE,
+          sort:  sortType,
+          direction: sortDirection,
+          include: 'data',
+          ...(filterSearch   ? { q: filterSearch }      : {}),
+          ...(filterItemType !== 'all'
+              ? { itemType: filterItemType }
+              : {}),
+        };
+
+        const client        = new Zotero(apiKey);
+        const itemsResponse = await client
+          .library('group', groupId)
+          .items()
+          .top()
+          .get(query);
+
+        const newItems = itemsResponse.getData();
+
+        setHasMore(newItems.length === PAGE_SIZE);
+
+        setDisplayedItems((prev) => {
+          const updated = [...prev];
+          const firstPh = updated.findIndex((i) => i.placeholder);
+          newItems.forEach((item, i) => {
+            updated[firstPh + i] = item;
+          });
+          if (newItems.length < PAGE_SIZE) {
+            updated.splice(
+              firstPh + newItems.length,
+              PAGE_SIZE - newItems.length
+            );
+          }
+          return updated;
+        });
+      } catch {
+        setError('Error retrieving the publications.');
+      } finally {
+        fetching.current = false;
+        setLoading(false);
+      }
+    },
+    [
+      apiKey,
+      groupId,
+      filterSearch,
+      filterItemType,
+      sortType,
+      sortDirection,
+    ]
+  );
+
+  /* ------------- refetch list + header on filter change ----------- */
   useEffect(() => {
     setDisplayedItems([]);
     setCurrentPage(0);
     setHasMore(true);
     loadPublications(0);
-  }, [loadPublications]);
+    refreshTotalResults();
+  }, [loadPublications, refreshTotalResults]);
 
-  // Infinite scroll
+  /* --------------------- infinite scroll -------------------------- */
   useEffect(() => {
-    const handleScroll = () => {
+    const onScroll = () => {
       if (fetching.current || !hasMore) return;
-      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
       if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
-        const nextPage = currentPage + 1;
-        setCurrentPage(nextPage);
-        loadPublications(nextPage);
+        const nxt = currentPage + 1;
+        setCurrentPage(nxt);
+        loadPublications(nxt);
       }
     };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, [currentPage, hasMore, loadPublications]);
 
-
-
-
-  // Handle filter form submission
-  const handleFilterSubmit = (e) => {
-    e.preventDefault();
-    // Reset state for new filter settings
-    setDisplayedItems([]);
-    setCurrentPage(0);
-    setHasMore(true);
-    loadPublications(0);
+  /* ------------------- search-box debounce ------------------------ */
+  const handleSearchKeyUp   = (e) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(
+      () => setFilterSearch(e.target.value),
+      DEBOUNCE_MS
+    );
   };
+  const handleSearchKeyPress = () => clearTimeout(debounceTimer);
+  const handleSearchBlur     = (e) => setFilterSearch(e.target.value);
 
-  // const handleFilterSubmit = (e) => {
-  //   e.preventDefault();          
-  //   setDisplayedItems([]);       
-  //   setCurrentPage(0);
-  // }
-
-  const onBlurHandler = (e) => {
-    // https://www.peterbe.com/plog/onchange-in-reactjs
-    setFilterSearch(e.target.value);
-  }
-
-
-  const onKeyUpHandler = (e) => {
-    // https://dev.to/eaich/how-to-detect-when-the-user-stops-typing-3cm1
-    window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
-    timer = window.setTimeout(() => {
-      setFilterSearch(e.target.value);
-    }, timeoutVal);
-  }
-
-  const  onKeyPressHandler = (e) => {
-    //https://dev.to/eaich/how-to-detect-when-the-user-stops-typing-3cm1
-    window.clearTimeout(timer);
-  }
-
+  /* -------------------------- render ------------------------------ */
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-
         <div className={styles.counterRow}>
-          Total publications:&nbsp;
-          <strong>
-            {displayedItems.filter(i => !i.placeholder).length}
-          </strong>
+          Loaded &nbsp;
+          <strong>{displayedItems.filter((i) => !i.placeholder).length}</strong><span>{" "}Publications</span>
+          {totalItems !== null && (
+            <>
+              &nbsp;from&nbsp;<strong>{totalItems}</strong>
+            </>
+          )}
         </div>
 
-
-        {/* Filter and sort form */}
-          <form className={styles.filterForm} onSubmit={handleFilterSubmit}>
+        <form
+          className={styles.filterForm}
+          onSubmit={(e) => e.preventDefault()}
+        >
           <input
             type="text"
-            placeholder="Search title, author, etc."
-            // value={filterSearch}
-            onBlur={onBlurHandler}
-            onKeyUp={onKeyUpHandler}
-            onKeyPress={onKeyPressHandler}
+            placeholder="Search title, author, …"
+            onBlur={handleSearchBlur}
+            onKeyUp={handleSearchKeyUp}
+            onKeyPress={handleSearchKeyPress}
             className={styles.searchInput}
-
           />
           <select
             value={filterItemType}
@@ -187,7 +215,7 @@ export default function Publications({ apiKey, groupId }) {
             <option value="book">Book</option>
             <option value="journalArticle">Journal Article</option>
             <option value="conferencePaper">Conference Paper</option>
-            <option value="prePrint">Pre Print</option>
+            <option value="prePrint">Pre-print</option>
             <option value="document">Document</option>
             <option value="bookSection">Book Section</option>
           </select>
@@ -197,7 +225,7 @@ export default function Publications({ apiKey, groupId }) {
             className={styles.sortSelect}
           >
             <option value="date">Published Date</option>
-            <option value="dateAdded">Date added to the library</option>
+            <option value="dateAdded">Date Added</option>
             <option value="title">Title</option>
             <option value="creator">Creator</option>
             <option value="itemType">Item Type</option>
@@ -205,58 +233,45 @@ export default function Publications({ apiKey, groupId }) {
           </select>
           <button
             type="button"
-            onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-              className={clsx(
-                'button',
-                styles.button,
-                styles.buttonPrimary
-              )}
+            onClick={() =>
+              startTransition(() =>
+                setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
+              )
+            }
+            className={clsx('button', styles.button, styles.buttonPrimary)}
             aria-label={`Sort direction ${sortDirection}`}
           >
             {sortDirection === 'asc' ? (
               <HiOutlineSortAscending size={25} className={styles.sortIcon} />
             ) : (
-              <HiOutlineSortDescending  size={25} className={styles.sortIcon} />
+              <HiOutlineSortDescending size={25} className={styles.sortIcon} />
             )}
           </button>
-
-
-          {/* <button type="submit">Apply Filters</button> */}
         </form>
+
         {error && (
-            <div className={styles.errorContainer}>
-              <div className={styles.error}>{error}</div>
-            </div>
-          )}
+          <div className={styles.errorContainer}>
+            <div className={styles.error}>{error}</div>
+          </div>
+        )}
 
         <div className={styles.publicationsContainer}>
-
-          {!error && 
-          
-          displayedItems.map((item, index) =>
-            item.placeholder ? (
-              <SkeletonCard key={`placeholder-${index}`} />
-            ) : (
-              <PublicationCard
-                key={item.key || `publication-${index}`}
-                publication={item}
-                index={index}
-              />
-            )
-          )}
-
-
-
-          {/* {!hasMore && !loading && (
-            <div className={styles.endMessage}>
-              All publications loaded (
-              {displayedItems.filter((item) => !item.placeholder).length} items)
-            </div>
-          )} */}
+          {!error &&
+            displayedItems.map((item, idx) =>
+              item.placeholder ? (
+                <SkeletonCard key={`ph-${idx}`} />
+              ) : (
+                <PublicationCard
+                  key={item.key || `pub-${idx}`}
+                  publication={item}
+                />
+              )
+            )}
         </div>
-          {!loading &&
-            displayedItems.filter(i => !i.placeholder).length === 0 && (
-            <p className={styles.emptyMessage}>No Publications Found</p>
+
+        {!loading &&
+          displayedItems.filter((i) => !i.placeholder).length === 0 && (
+            <p className={styles.emptyMessage}>No&nbsp;Publications&nbsp;Found</p>
           )}
       </div>
     </div>
