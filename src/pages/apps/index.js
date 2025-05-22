@@ -23,7 +23,7 @@ const items = [
 
 export default function AppsPage() {
   const developUrl = useBaseUrl('/develop');
-  const contributeUrl = useBaseUrl('/contribute');
+  const contributeUrl = useBaseUrl('/contribute?current-contribution=apps');
   const defaultImage = 'https://ciroh-portal-static-data.s3.us-east-1.amazonaws.com/app_placeholder.png'
   return (
     <Layout title="Applications" description="CIROH Applications">

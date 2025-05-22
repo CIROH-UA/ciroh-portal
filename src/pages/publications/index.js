@@ -21,7 +21,7 @@ export default function PublicationsPage() {
     const {
         siteConfig: {customFields},
       } = useDocusaurusContext();
-  const contributeUrl = useBaseUrl('/contribute');
+  const contributeUrl = useBaseUrl('/contribute?current-contribution=publications');
 
   return (
     <Layout title="Publications" description="Ciroh pubs">

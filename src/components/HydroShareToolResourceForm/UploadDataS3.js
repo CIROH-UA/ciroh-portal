@@ -16,7 +16,7 @@ export default function UploadDataS3({onChange}) {
 
       {/* clickable “button” */}
       <label className={styles.label}>
-        Upload file
+        🗃️ Upload file
         <input
           className={styles.inputFile}
           type="file"

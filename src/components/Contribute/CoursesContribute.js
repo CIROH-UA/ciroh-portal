@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
 import Appstyles from './AppsStyles.module.css';
-
+import ActionButtons from './ActionButtons';
 
 export default function CoursesContribute({ description }) {
   const hydroshareUrl = useBaseUrl('/hydroshare');
@@ -25,6 +25,12 @@ export default function CoursesContribute({ description }) {
         </div>
 
         <HydroShareToolResourceForm typeContribution = 'course' resourceType="CompositeResource" makePublic={true} keywordToAdd = "nwm_portal_module"/>
+          <ActionButtons
+            buttons={[
+                { label: "Add your Course", href: "https://docs.ciroh.org/docs/products/Portal", primary: true },
+                
+              ]}
+        />
       </div>
     
   );

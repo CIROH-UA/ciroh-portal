@@ -99,7 +99,7 @@ const config = {
           {to: '/contribute', label: 'Contribute', position: 'right'},
           
           {to: '/develop', label: 'Develop', position: 'right'},
-          {to: '/hydroshare', label: 'HydroShare', position: 'right'},
+          // {to: '/hydroshare', label: 'HydroShare', position: 'right'},
           {
             href: "https://docs.ciroh.org/",
             label: "Docs",

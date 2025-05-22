@@ -315,7 +315,7 @@ export default function HydroShareResourceCreator({
           <div className= {styles.inputFileDiv}>
             <p className={styles.label}>Attach Files</p>
             <label className={styles.label}>
-              Upload files
+              🗃️ Upload files
               <input
                 className={styles.inputFile}
                 type="file"
@@ -338,7 +338,7 @@ export default function HydroShareResourceCreator({
           className={clsx(styles.button, styles.buttonPrimary)}
           disabled={loading}
         >
-          {loading ? 'Processing…' : 'Create Resource'}
+          {loading ? 'Processing…' : `Create ${getTypeString(typeContribution)}`}
         </button>
       </form>
       

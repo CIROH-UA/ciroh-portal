@@ -23,7 +23,7 @@ const items = [
 
 
 export default function CoursesPage() {
-  const contributeUrl = useBaseUrl('/contribute');
+  const contributeUrl = useBaseUrl('/contribute?current-contribution=courses');
 
   return (
     <Layout title="Courses" description="CIROH Courses">

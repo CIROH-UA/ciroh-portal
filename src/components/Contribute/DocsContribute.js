@@ -36,7 +36,7 @@ export default function DocsContribute({ description }) {
         />
         <ActionButtons
             buttons={[
-                { label: "Add a Blog", href: "https://docs.ciroh.org/contribute/#adding-posts", primary: true },
+                { label: "Add a Blog", href: "https://docs.ciroh.org/docs/contribute#submitting-a-blog-post-to-docuhub", primary: true },
                 { label: "Visit Blogs", href: "https://docs.ciroh.org/blog" }
               ]}
         />

@@ -152,13 +152,13 @@ export const contributePublicationsCards = [
     cardTitle: '4. Sync your Zotero account to see your group folder',
     cardDescription: 'If using the Zotero desktop app, sync your account to see the CIROH Library Group',
   },
-  // {
-  //   imgSrcLight: ZoteroAddLight,
-  //   imgSrcDark: ZoteroAddDark,
-  //   imgAlt: 'Add your Publications',
-  //   cardTitle: '5. Add your Publications',
-  //   cardDescription: 'Add new citations using the Zotero icon in the URL bar or drag and drop items from other folders into your group folders',
-  // },
+  {
+    imgSrcLight: ZoteroAddLight,
+    imgSrcDark: ZoteroAddDark,
+    imgAlt: 'Add your Publications',
+    cardTitle: '5. Add your Publications',
+    cardDescription: 'Add new citations using the Zotero icon by dragging and dropping items from other folders into your group folders',
+  },
 ];
 
 export const contributeSimpleDocsCards = [
