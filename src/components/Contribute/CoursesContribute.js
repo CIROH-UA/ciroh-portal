@@ -19,7 +19,7 @@ export default function CoursesContribute({ description }) {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                    📚 <strong>Add Your Courses </strong> 
+                    🎓 <strong>Add Your Courses </strong> 
                 </div>
             </h3>
         </div>

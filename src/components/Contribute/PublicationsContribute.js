@@ -24,7 +24,7 @@ export default function CitationImporter({ description }) {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                    📝 <strong>Add Your Publications </strong> 
+                    🔖 <strong>Add Your Publications </strong> 
                 
                 </div>
             </h3>
