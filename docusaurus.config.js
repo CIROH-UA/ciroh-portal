@@ -217,7 +217,7 @@ const config = {
             necessarily reflect the opinions of NOAA.
           </div>
           <div class="footer__bottom">
-            Copyright © ${new Date().getFullYear()} CIROH - Brigham Young University
+            Copyright © ${new Date().getFullYear()} CIROH - Aquaveo - Brigham Young University
           </div>
           `,
       },
