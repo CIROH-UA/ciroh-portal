@@ -196,7 +196,7 @@ export default function Publications({ apiKey, groupId }) {
           )}
         </div>
 
-        {/* filter + sort toolbar ------------------------------------- */}
+        
         <form
           className={styles.filterForm}
           onSubmit={(e) => {
@@ -216,7 +216,7 @@ export default function Publications({ apiKey, groupId }) {
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
           />
-
+         
           <select
             value={filterItemType}
             onChange={(e) => setFilterItemType(e.target.value)}
@@ -261,7 +261,11 @@ export default function Publications({ apiKey, groupId }) {
             )}
           </button>
         </form>
-
+          <p>
+            <strong>🧪&nbsp;</strong>
+            A result is returned only if the exact text you type occurs {" "} <em>anywhere</em>
+             {" "} inside a citation’s <em>title</em>, <em>author</em>, or <em>year</em>
+          </p>
         {/* error banner ---------------------------------------------- */}
         {error && (
           <div className={styles.errorContainer}>
