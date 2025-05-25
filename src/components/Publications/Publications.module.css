@@ -32,6 +32,12 @@
     align-items: center;
   }
 
+.collectionSelect {
+  min-width: 200px;
+  padding: 0.4rem 0.6rem;
+  margin-right: 0.5rem;
+}
+
 .publicationsContainer {
     display: grid;
     gap: 2rem;

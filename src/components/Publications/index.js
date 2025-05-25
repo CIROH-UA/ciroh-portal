@@ -1,15 +1,18 @@
+/* Publications.jsx – Zotero list with search, sort **and 1-collection filter** */
 import React, {
   useState,
   useEffect,
   useCallback,
   useRef,
   startTransition,
+  useMemo,
 } from 'react';
-import Zotero from 'zotero-api-client';
-import PublicationCard   from './PublicationCard';
-import SkeletonCard      from './SkeletonCard';
-import styles            from './Publications.module.css';
-import clsx              from 'clsx';
+import Zotero           from 'zotero-api-client';
+import SelectCollection from './SelectCollection';
+import PublicationCard  from './PublicationCard';
+import SkeletonCard     from './SkeletonCard';
+import styles           from './Publications.module.css';
+import clsx             from 'clsx';
 import {
   HiOutlineSortDescending,
   HiOutlineSortAscending,
@@ -20,20 +23,29 @@ const SCROLL_THRESHOLD = 200;
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
-/* ───────────────── helper: read “Total-Results” header ───────────────── */
-async function fetchTotal(groupId, apiKey, params) {
-  const url = new URL(`https://api.zotero.org/groups/${groupId}/items/top`);
+/* ----- helper: read “Total-Results” header -------------------------------- */
+async function fetchTotal(groupId, apiKey, params, keyStr = '') {
+  const path = keyStr ? `/collections/${keyStr}/items/top` : '/items/top';
+
+  const url = new URL(`https://api.zotero.org/groups/${groupId}${path}`);
   Object.entries({ ...params, limit: 1 }).forEach(([k, v]) =>
     url.searchParams.append(k, v),
   );
+
   const resp = await fetch(url.href, { headers: { 'Zotero-API-Key': apiKey } });
   if (!resp.ok) return null;
   const hdr = resp.headers.get('Total-Results');
   return hdr ? Number(hdr) : null;
 }
 
-/* ──────────────────────────────────────────────────────────────────────── */
+/* ------------------------------------------------------------------------- */
 export default function Publications({ apiKey, groupId }) {
+  /* memoised Zotero client (doesn’t re-create on every render) */
+  const zotero = useMemo(
+    () => new Zotero(apiKey).library('group', groupId),
+    [apiKey, groupId],
+  );
+
   /* ---------------- state ---------------- */
   const [displayedItems, setDisplayedItems] = useState([]);
   const [currentPage,    setCurrentPage]    = useState(0);
@@ -42,31 +54,47 @@ export default function Publications({ apiKey, groupId }) {
   const [error,          setError]          = useState(null);
   const fetching = useRef(false);
 
-  const [totalItems, setTotalItems] = useState(null);
+  const [totalItems,     setTotalItems]     = useState(null);
 
-  const [searchInput,   setSearchInput]   = useState(''); // text in box
-  const [filterSearch,  setFilterSearch]  = useState(''); // committed query
+  const [searchInput,    setSearchInput]    = useState('');
+  const [filterSearch,   setFilterSearch]   = useState('');
   const [filterItemType, setFilterItemType] = useState('all');
   const [sortType,       setSortType]       = useState('date');
   const [sortDirection,  setSortDirection]  = useState('desc');
 
-  /* ------------- read header once per filter change ------------- */
+  /* 💡 single selected collection (object | null) */
+  const [selectedCollection, setSelectedCollection] = useState(null);
+
+  /* stable key string for API paths & dependency arrays */
+  const collectionKeyStr = selectedCollection?.value ?? '';  // '' ⇒ no filter
+
+  /* -------- total-count header ----------------------------------- */
   const refreshTotal = useCallback(async () => {
     const params = {
       sort: sortType,
       direction: sortDirection,
-      ...(filterSearch     ? { q: filterSearch }      : {}),
+      ...(filterSearch ? { q: filterSearch } : {}),
       ...(filterItemType !== 'all' ? { itemType: filterItemType } : {}),
     };
     try {
-      setTotalItems(await fetchTotal(groupId, apiKey, params));
+      setTotalItems(
+        await fetchTotal(groupId, apiKey, params, collectionKeyStr),
+      );
     } catch (e) {
       console.error('Total-Results header error:', e);
       setTotalItems(null);
     }
-  }, [groupId, apiKey, filterSearch, filterItemType, sortType, sortDirection]);
+  }, [
+    groupId,
+    apiKey,
+    filterSearch,
+    filterItemType,
+    sortType,
+    sortDirection,
+    collectionKeyStr,
+  ]);
 
-  /* ---------------- paginator loader ---------------- */
+  /* -------- loader ----------------------------------------------- */
   const loadPublications = useCallback(
     async (page) => {
       if (fetching.current) return;
@@ -76,8 +104,8 @@ export default function Publications({ apiKey, groupId }) {
         setLoading(true);
         setError(null);
 
-        // skeletons
-        setDisplayedItems((prev) => [
+        /* placeholders */
+        setDisplayedItems(prev => [
           ...prev,
           ...Array.from({ length: PAGE_SIZE }, () => ({ placeholder: true })),
         ]);
@@ -89,25 +117,23 @@ export default function Publications({ apiKey, groupId }) {
           direction: sortDirection,
           include: 'data',
           qmode: 'titleCreatorYear',
-          ...(filterSearch     ? { q: filterSearch }      : {}),
+          ...(filterSearch ? { q: filterSearch } : {}),
           ...(filterItemType !== 'all' ? { itemType: filterItemType } : {}),
         };
 
-        const client  = new Zotero(apiKey);
-        const result  = await client
-          .library('group', groupId)
-          .items()
-          .top()
-          .get(query);
+        /* build request chain */
+        let api = zotero;
+        api = collectionKeyStr ? api.collections(collectionKeyStr).items()
+                               : api.items();
 
-        const newItems = result.getData();
-        console.log('Fetched items:', newItems);
+        const newItems = (await api.top().get(query)).getData();
         setHasMore(newItems.length === PAGE_SIZE);
 
-        setDisplayedItems((prev) => {
+        /* swap placeholders */
+        setDisplayedItems(prev => {
           const upd   = [...prev];
-          const first = upd.findIndex((i) => i.placeholder);
-          newItems.forEach((item, i) => (upd[first + i] = item));
+          const first = upd.findIndex(i => i.placeholder);
+          newItems.forEach((it, i) => (upd[first + i] = it));
           if (newItems.length < PAGE_SIZE) {
             upd.splice(first + newItems.length, PAGE_SIZE - newItems.length);
           }
@@ -121,8 +147,8 @@ export default function Publications({ apiKey, groupId }) {
       }
     },
     [
-      apiKey,
-      groupId,
+      zotero,
+      collectionKeyStr,
       filterSearch,
       filterItemType,
       sortType,
@@ -130,18 +156,23 @@ export default function Publications({ apiKey, groupId }) {
     ],
   );
 
-  /* ------------- (re)fetch when filters change ------------- */
-  const resetAndLoad = useCallback(() => {
+  /* -- reload whenever filters OR selected collection change -------- */
+  useEffect(() => {
     setDisplayedItems([]);
     setCurrentPage(0);
     setHasMore(true);
     loadPublications(0);
     refreshTotal();
-  }, [loadPublications, refreshTotal]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    filterSearch,
+    filterItemType,
+    sortType,
+    sortDirection,
+    collectionKeyStr,
+  ]);
 
-  useEffect(resetAndLoad, [resetAndLoad]);
-
-  /* ---------------- infinite scroll ---------------- */
+  /* infinite scroll */
   useEffect(() => {
     const onScroll = () => {
       if (fetching.current || !hasMore) return;
@@ -156,70 +187,56 @@ export default function Publications({ apiKey, groupId }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, [currentPage, hasMore, loadPublications]);
 
-  /* ---------------- search helpers ---------------- */
-  const commitSearch = (query) => {
+  /* search helpers */
+  const commitSearch = q => {
     clearTimeout(debounceTimer);
-    setFilterSearch(query.trim());
+    setFilterSearch(q.trim());
   };
-
-  /* key-by-key debounce */
   const handleKeyUp   = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => commitSearch(searchInput), DEBOUNCE_MS);
   };
-
-  /* clear timer while key is held */
   const handleKeyPress = () => clearTimeout(debounceTimer);
-
-  /* run search immediately on Enter */
-  const handleKeyDown  = (e) => {
+  const handleKeyDown  = e => {
     if (e.key === 'Enter') {
-      e.preventDefault();          // stop form submission scroll jump
+      e.preventDefault();
       commitSearch(searchInput);
     }
   };
-
-  /* lose focus → commit */
   const handleBlur = () => commitSearch(searchInput);
 
-  /* -------------------- render -------------------- */
+  /* ---------------- render ---------------- */
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        {/* counter row ------------------------------------------------ */}
+        {/* counter */}
         <div className={styles.counterRow}>
           Loaded&nbsp;
-          <strong>{displayedItems.filter((i) => !i.placeholder).length}</strong>
+          <strong>{displayedItems.filter(i => !i.placeholder).length}</strong>
           &nbsp;publications
-          {totalItems !== null && (
-            <> of <strong>{totalItems}</strong></>
-          )}
+          {totalItems !== null && <> of <strong>{totalItems}</strong></>}
         </div>
 
-        
+        {/* form */}
         <form
           className={styles.filterForm}
-          onSubmit={(e) => {
-            e.preventDefault();
-            commitSearch(searchInput);
-          }}
+          onSubmit={e => { e.preventDefault(); commitSearch(searchInput); }}
         >
           <input
-            name="search"
             type="text"
-            placeholder="Search by Title, Author, and Year"
+            placeholder="Search by Title, Author, Year"
             className={styles.searchInput}
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={e => setSearchInput(e.target.value)}
             onKeyUp={handleKeyUp}
             onKeyPress={handleKeyPress}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
           />
-         
+
           <select
             value={filterItemType}
-            onChange={(e) => setFilterItemType(e.target.value)}
+            onChange={e => setFilterItemType(e.target.value)}
             className={styles.typeSelect}
           >
             <option value="all">All types</option>
@@ -233,7 +250,7 @@ export default function Publications({ apiKey, groupId }) {
 
           <select
             value={sortType}
-            onChange={(e) => setSortType(e.target.value)}
+            onChange={e => setSortType(e.target.value)}
             className={styles.sortSelect}
           >
             <option value="date">Published Date</option>
@@ -246,51 +263,55 @@ export default function Publications({ apiKey, groupId }) {
 
           <button
             type="button"
-            onClick={() =>
-              startTransition(() =>
-                setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc')),
-              )
-            }
             className={clsx('button', styles.button, styles.buttonPrimary)}
             aria-label={`Sort direction ${sortDirection}`}
+            onClick={() =>
+              startTransition(() =>
+                setSortDirection(d => (d === 'asc' ? 'desc' : 'asc')),
+              )
+            }
           >
-            {sortDirection === 'asc' ? (
-              <HiOutlineSortAscending size={25} className={styles.sortIcon} />
-            ) : (
-              <HiOutlineSortDescending size={25} className={styles.sortIcon} />
-            )}
+            {sortDirection === 'asc'
+              ? <HiOutlineSortAscending size={25} className={styles.sortIcon} />
+              : <HiOutlineSortDescending size={25} className={styles.sortIcon} />}
           </button>
         </form>
-          <p>
-            <strong>🧪&nbsp;</strong>
-            A result is returned only if the exact text you type occurs {" "} <em>anywhere</em>
-             {" "} inside a citation’s <em>title</em>, <em>author</em>, or <em>year</em>
-          </p>
-        {/* error banner ---------------------------------------------- */}
+
+        {/* collection select (single) */}
+        <div className={styles.collectionRow}>
+          <SelectCollection
+            zotero={zotero}
+            onChange={opt => setSelectedCollection(opt || null)}
+          />
+        </div>
+        <p></p>
+        <p className={styles.hint}>
+          <strong>🧪&nbsp;</strong>
+          A result is returned only if the exact text you type occurs <em>anywhere</em> in the
+          citation’s <em>title</em>, <em>author</em>, or <em>year</em>.
+        </p>
+
+        {/* error */}
         {error && (
           <div className={styles.errorContainer}>
             <div className={styles.error}>{error}</div>
           </div>
         )}
 
-        {/* grid ------------------------------------------------------- */}
+        {/* grid */}
         <div className={styles.publicationsContainer}>
           {!error &&
             displayedItems.map((item, i) =>
-              item.placeholder ? (
-                <SkeletonCard key={`ph-${i}`} />
-              ) : (
-                <PublicationCard key={item.key || `pub-${i}`} publication={item} />
-              ),
+              item.placeholder
+                ? <SkeletonCard key={`ph-${i}`} />
+                : <PublicationCard key={item.key || `pub-${i}`} publication={item} />,
             )}
         </div>
 
-        {/* empty state ----------------------------------------------- */}
+        {/* empty */}
         {!loading &&
-          displayedItems.filter((i) => !i.placeholder).length === 0 && (
-            <p className={styles.emptyMessage}>
-              No&nbsp;Publications&nbsp;Found
-            </p>
+          displayedItems.filter(i => !i.placeholder).length === 0 && (
+            <p className={styles.emptyMessage}>No&nbsp;Publications&nbsp;Found</p>
           )}
       </div>
     </div>
