@@ -1,53 +1,52 @@
+/* HydroShareResourceCreator.jsx */
 import React, { useState, useCallback } from 'react';
 import { FaSpinner } from 'react-icons/fa';
-import CoveragesInput from './CoveragesInput';
-import FundingAgenciesInput from './FundingAgenciesInput';
-import UploadDataS3 from './UploadDataS3';
-import styles from './HydroShareResourceCreator.module.css';
-import clsx from 'clsx';
+import CoveragesInput        from './CoveragesInput';
+import FundingAgenciesInput  from './FundingAgenciesInput';
+import UploadDataS3          from './UploadDataS3';
+import styles                from './HydroShareResourceCreator.module.css';
+import clsx                  from 'clsx';
 
-import { uploadFileToS3Cucket } from './utils';   // ⬅ corrected import
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { uploadFileToS3Cucket } from './utils';
+import useDocusaurusContext     from '@docusaurus/useDocusaurusContext';
 
 const getTypeString = (type) => {
   switch (type) {
-    case 'app':
-      return 'Application';
-    case 'dataset':
-      return 'Dataset';
-    case 'course':
-      return 'Course';
+    case 'app':     return 'Application';
+    case 'dataset': return 'Dataset';
+    case 'course':  return 'Course';
+    default:        return 'Contribution';
   }
-}
-
+};
 
 export default function HydroShareResourceCreator({
-  resourceType = 'ToolResource',
-  makePublic   = false,
-  keywordToAdd = 'nwm_portal_app',
-  typeContribution = 'app',
+  resourceType      = 'ToolResource',
+  makePublic        = false,
+  keywordToAdd      = 'nwm_portal_app',
+  typeContribution  = 'app',
 }) {
-  /* ───────────── state ───────────── */
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  /* ───────────────────────── state ───────────────────────── */
+  const [username, setUsername]     = useState('');
+  const [password, setPassword]     = useState('');
 
-  const [title,    setTitle]    = useState('');
-  const [abstract, setAbstract] = useState('');
-  const [keywords, setKeywords] = useState('');
-  const [inputUrl, setInputUrl] = useState('');      // optional related URL
+  const [title,    setTitle]        = useState('');
+  const [abstract, setAbstract]     = useState('');
+  const [keywords, setKeywords]     = useState('');
+  const [inputUrl, setInputUrl]     = useState('');   // page / landing-page URL
+  const [docsUrl,  setDocsUrl]      = useState('');   // NEW – documentation URL
 
   const [fundingAgencies, setFundingAgencies] = useState([]);
   const [coverages,       setCoverages]       = useState([]);
 
-  const [files,     setFiles]     = useState([]);    // HydroShare-bound files
-  const [iconFile,  setIconFile]  = useState(null); // single file from UploadDataS3
+  const [files,     setFiles]     = useState([]);     // HydroShare files
+  const [iconFile,  setIconFile]  = useState(null);   // icon uploaded to S3
 
   const [loading,         setLoading]         = useState(false);
   const [error,           setError]           = useState('');
   const [progressMessage, setProgressMessage] = useState('');
   const [resourceUrl,     setResourceUrl]     = useState('');
 
-  /* S3 credentials from docusaurus.config.js */
+  /* S3 credentials from docusaurus.config.js ----------------------- */
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
@@ -55,27 +54,26 @@ export default function HydroShareResourceCreator({
   const REGION        = customFields.s3_region;
   const S3_ACCESS_KEY = customFields.s3_access_key;
   const S3_SECRET_KEY = customFields.s3_secret_key;
-  
+
   const urlBase = 'https://www.hydroshare.org/hsapi';
 
-  /* ─────────── helpers ─────────── */
+  /* ───────────────────────── helpers ───────────────────────── */
   const countWords = (str) => str.trim().split(/\s+/).filter(Boolean).length;
 
-  const handleCoveragesChange       = useCallback((covs)    => setCoverages(covs || []), []);
-  const handleFundingAgenciesChange = useCallback((agencies)=> setFundingAgencies(agencies), []);
+  const handleCoveragesChange       = useCallback((covs)     => setCoverages(covs || []), []);
+  const handleFundingAgenciesChange = useCallback((agencies) => setFundingAgencies(agencies), []);
 
-  
+  /* ──────────────────────── submit handler ─────────────────────── */
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setProgressMessage('');
     setResourceUrl('');
 
-    /* ⚠ validation */
+    /* validation --------------------------------------------------- */
     if (!username || !password)     { setError('Username and password are required.'); return; }
-    if (!title.trim())              { setError('Title is required.');               return; }
+    if (!title.trim())              { setError('Title is required.');                 return; }
     if (countWords(abstract) < 150) { setError('Abstract must be at least 150 words.'); return; }
-    // if (!keywords.trim())           { setError('At least one keyword is required.');  return; }
 
     const validAgencies = fundingAgencies.filter(
       (fa) =>
@@ -89,12 +87,12 @@ export default function HydroShareResourceCreator({
       return;
     }
 
-    /* 0️⃣ — if an icon file was supplied, upload to S3 first */
+    /* 0️⃣ — upload icon to S3 (if any) ---------------------------- */
     let imageUrl = null;
     if (iconFile) {
       try {
-        const ext      = iconFile.name.split('.').pop();        // crude extension
-        const uuidName = `${crypto.randomUUID()}.${ext}`;       // e.g. f81d4fae-7dec-11d0-a765-00a0c91e6bf6.png
+        const ext      = iconFile.name.split('.').pop();
+        const uuidName = `${crypto.randomUUID()}.${ext}`;
         const renamed  = new File([iconFile], uuidName, { type: iconFile.type });
 
         await uploadFileToS3Cucket(
@@ -104,7 +102,6 @@ export default function HydroShareResourceCreator({
           S3_SECRET_KEY,
           renamed,
         );
-
         imageUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${uuidName}`;
       } catch (err) {
         setError(`S3 upload failed: ${err.message}`);
@@ -112,29 +109,30 @@ export default function HydroShareResourceCreator({
       }
     }
 
-    /* 1️⃣  keywords array */
+    /* 1️⃣ — keywords --------------------------------------------- */
     const keywordArr = keywords
       .split(/[,\s]+/)
       .map((k) => k.trim())
       .filter(Boolean);
     if (!keywordArr.includes(keywordToAdd)) keywordArr.push(keywordToAdd);
 
-    /* 2️⃣  coverages & extra_metadata */
+    /* 2️⃣ — coverages & extra_metadata ---------------------------- */
     const metadataJson = JSON.stringify([...coverages]);
 
     const extraMetaObj = {};
     if (inputUrl.trim()) extraMetaObj.page_url = inputUrl.trim();
-    if (imageUrl)        extraMetaObj.thumbnail_url    = imageUrl;
+    if (imageUrl)        extraMetaObj.thumbnail_url = imageUrl;
+    if (docsUrl.trim())  extraMetaObj.docs_url      = docsUrl.trim();  // NEW
 
     const extraMetaJson = Object.keys(extraMetaObj).length
       ? JSON.stringify(extraMetaObj)
       : '{}';
 
-    /* 3️⃣  build multipart form */
+    /* 3️⃣ — multipart form ---------------------------------------- */
     const formData = new FormData();
-    formData.append('resource_type', resourceType);
-    formData.append('title',         title.trim());
-    formData.append('abstract',      abstract.trim());
+    formData.append('resource_type',  resourceType);
+    formData.append('title',          title.trim());
+    formData.append('abstract',       abstract.trim());
     keywordArr.forEach((kw, i) => formData.append(`keywords[${i}]`, kw));
     formData.append('metadata',       metadataJson);
     formData.append('extra_metadata', extraMetaJson);
@@ -144,7 +142,7 @@ export default function HydroShareResourceCreator({
     /* ─── HydroShare request chain ─── */
     setLoading(true);
     try {
-      /* 4️⃣  create resource */
+      /* create resource */
       const postResp = await fetch(`${urlBase}/resource/`, {
         method:  'POST',
         headers: { Authorization: `Basic ${authString}` },
@@ -157,7 +155,7 @@ export default function HydroShareResourceCreator({
       if (!resourceId) throw new Error('No resource ID returned');
       setProgressMessage(`Resource created (ID: ${resourceId})`);
 
-      /* 5️⃣  funding agencies */
+      /* funding agencies */
       const sciResp = await fetch(
         `${urlBase}/resource/${resourceId}/scimeta/elements/`,
         {
@@ -173,7 +171,7 @@ export default function HydroShareResourceCreator({
         throw new Error(`Updating science metadata failed (HTTP ${sciResp.status})`);
       setProgressMessage('Funding agencies updated');
 
-      /* 6️⃣  files (always metadata.json + optional user files) */
+      /* files ------------------------------------------------------ */
       const metadataBlob = new Blob(
         [JSON.stringify({ name: title.trim() })],
         { type: 'application/json' },
@@ -194,7 +192,7 @@ export default function HydroShareResourceCreator({
         setProgressMessage(`Uploaded file: ${f.name}`);
       }
 
-      /* 7️⃣  make public (optional) */
+      /* make public (optional) */
       if (makePublic) {
         const pubResp = await fetch(
           `${urlBase}/resource/accessRules/${resourceId}/`,
@@ -212,12 +210,13 @@ export default function HydroShareResourceCreator({
         setProgressMessage('Resource made public');
       }
 
-      /* 8️⃣  custom scimeta only if no related URL was supplied */
+      /* final link */
       const hsUrl = `https://www.hydroshare.org/resource/${resourceId}`;
       setResourceUrl(hsUrl);
 
+      /* add self URL as custom scimeta if user didn’t supply a link */
       if (!inputUrl.trim()) {
-        const customResp = await fetch(
+        await fetch(
           `${urlBase}/resource/${resourceId}/scimeta/custom/`,
           {
             method:  'POST',
@@ -228,8 +227,6 @@ export default function HydroShareResourceCreator({
             body: JSON.stringify({ url: hsUrl }),
           },
         );
-        if (!customResp.ok)
-          throw new Error(`Custom metadata failed (HTTP ${customResp.status})`);
       }
 
       setProgressMessage(`Resource created successfully! Visit your ${typeContribution} `);
@@ -240,11 +237,11 @@ export default function HydroShareResourceCreator({
     }
   }
 
+  /* ──────────────────────── UI  ─────────────────────── */
   return (
     <div className={styles.container}>
-
       <form className={styles.form} onSubmit={handleSubmit}>
-        {/* Credentials */}
+        {/* Credentials ------------------------------------------------ */}
         <label className={`${styles.label} required`}>
           HydroShare Username
           <input
@@ -260,37 +257,50 @@ export default function HydroShareResourceCreator({
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            
           />
         </label>
 
-        
+        {/* Title & URLs ---------------------------------------------- */}
         <label className={`${styles.label} required`}>
           {getTypeString(typeContribution)} Title
           <input
             className={styles.input}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            
           />
         </label>
 
-        <label className={`${styles.label}`}>
+        <label className={styles.label}>
           {getTypeString(typeContribution)} URL
           <input
             className={styles.input}
             type="url"
             value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
+            placeholder="https://example.org/landing-page"
           />
         </label>
 
-        <UploadDataS3 
-          onChange={setIconFile} 
-        />
+        {/* Documentation URL – only for app / dataset ----------------- */}
+        {(typeContribution === 'app' || typeContribution === 'dataset') && (
+          <label className={styles.label}>
+            Documentation URL
+            <input
+              className={styles.input}
+              type="url"
+              value={docsUrl}
+              onChange={(e) => setDocsUrl(e.target.value)}
+              placeholder="https://example.org/docs"
+            />
+          </label>
+        )}
 
+        {/* Icon (S3) -------------------------------------------------- */}
+        <UploadDataS3 onChange={setIconFile} />
+
+        {/* Abstract --------------------------------------------------- */}
         <label className={`${styles.label} required`}>
-          {getTypeString(typeContribution)} Description (≥150 words):
+          {getTypeString(typeContribution)} Description (≥150 words)
           <textarea
             className={styles.textarea}
             rows={5}
@@ -299,8 +309,9 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        <label className={`${styles.label}`}>
-          Keywords (comma or space separated):
+        {/* Keywords --------------------------------------------------- */}
+        <label className={styles.label}>
+          Keywords (comma or space separated)
           <input
             className={styles.input}
             value={keywords}
@@ -309,10 +320,9 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        {/* File upload for HydroShare */}
+        {/* File upload ------------------------------------------------ */}
         {typeContribution !== 'app' && (
-
-          <div className= {styles.inputFileDiv}>
+          <div className={styles.inputFileDiv}>
             <p className={styles.label}>Attach Files</p>
             <label className={styles.label}>
               🗃️ Upload files
@@ -325,13 +335,14 @@ export default function HydroShareResourceCreator({
             </label>
           </div>
         )}
-        
+
+        {/* hidden advanced editors ----------------------------------- */}
         <div style={{display: 'none'}}>
-          <CoveragesInput onChange={handleCoveragesChange} />        
+          <CoveragesInput       onChange={handleCoveragesChange} />
           <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
         </div>
 
-
+        {/* Submit ----------------------------------------------------- */}
         <br className={styles.sectionDivider} />
         <button
           type="submit"
@@ -341,9 +352,10 @@ export default function HydroShareResourceCreator({
           {loading ? 'Processing…' : `Create ${getTypeString(typeContribution)}`}
         </button>
       </form>
-      
+
+      {/* Feedback ---------------------------------------------------- */}
       <br className={styles.sectionDivider} />
-      
+
       {progressMessage && (
         <div className={styles.progressMessage}>
           {loading && <FaSpinner className={styles.spinner} />}
@@ -351,7 +363,11 @@ export default function HydroShareResourceCreator({
             {progressMessage}
             {!loading && resourceUrl && (
               <>
-                <a href={`/${typeContribution}s#${resourceUrl.split('/')[4]}`} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={`/${typeContribution}s#${resourceUrl.split('/')[4]}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   here
                 </a>
               </>
@@ -359,9 +375,8 @@ export default function HydroShareResourceCreator({
           </span>
         </div>
       )}
-      
-      {error && <div className={styles.errorMessage}>{error}</div>}
 
+      {error && <div className={styles.errorMessage}>{error}</div>}
     </div>
   );
 }

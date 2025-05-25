@@ -23,6 +23,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
     description: "",
     thumbnail_url: "",
     page_url: "",
+    docs_url: "",
   }));
 
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
@@ -44,6 +45,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
           description: res.abstract || "No description available.",
           thumbnail_url: "",
           page_url: "",
+          docs_url: ""
 
         }));
 
@@ -59,7 +61,8 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
             const updatedResource = {
               ...res,
               thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
-              page_url: customMetadata?.page_url || ""
+              page_url: customMetadata?.page_url || "",
+              docs_url: customMetadata?.docs_url || "",
             };
 
             setResources((current) =>

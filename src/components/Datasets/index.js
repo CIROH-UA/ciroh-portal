@@ -74,7 +74,9 @@ export default function Datasets({ community_id = 4 }) {
             const updatedResource = {
               ...res,
               thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
-              page_url: customMetadata?.page_url || ""
+              page_url: customMetadata?.page_url || "",
+              docs_url: customMetadata?.docs_url || "",
+
             };
 
             setResources((current) =>

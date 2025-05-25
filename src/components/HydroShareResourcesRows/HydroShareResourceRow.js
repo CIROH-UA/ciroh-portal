@@ -2,6 +2,7 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import { MdDriveFileMove } from 'react-icons/md';
 import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
+import { FaBookmark } from "react-icons/fa";
 import clsx from 'clsx';
 import styles from './styles.module.css';
 
@@ -12,6 +13,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
     description,
     thumbnail_url,
     page_url,
+    docs_url,
     resource_url,
   } = resource;
 
@@ -51,6 +53,17 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
                 <LiaExternalLinkSquareAltSolid size={30} />
               </a>
             )}
+            {docs_url && (
+              <a
+                href={docs_url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.iconLink}
+                title="Docs Page"
+              >
+                <FaBookmark  size={20} />
+              </a>
+            )}
             {resource_url && (
               <a
                 href={resource_url}
@@ -62,6 +75,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
                 <MdDriveFileMove size={30} />
               </a>
             )}
+
           </div>
         </div>
       </div>
