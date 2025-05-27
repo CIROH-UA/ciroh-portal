@@ -24,7 +24,9 @@ export default function Datasets({ community_id = 4 }) {
     resource_type: "",
     resource_url: "",
     description: "",
-    thumbnail_url: ""
+    thumbnail_url: "",
+    page_url: "",
+    docs_url: ""
   }));
 
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
@@ -62,6 +64,8 @@ export default function Datasets({ community_id = 4 }) {
           resource_url: res.resource_url,
           description: res.abstract || "No description available.",
           thumbnail_url: hs_icon,
+          page_url: "",
+          docs_url: ""
         }));
         
         setResources(mappedList);

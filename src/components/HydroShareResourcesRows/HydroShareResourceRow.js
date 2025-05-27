@@ -86,7 +86,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
           <h1 className={styles.title}>
             {/* External link → page_url */}
             <a
-              href={page_url}
+              href={page_url || resource_url || '#'}
               target="_blank"
               rel="noreferrer"
               className={styles.pageLink}
