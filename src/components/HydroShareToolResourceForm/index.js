@@ -14,6 +14,7 @@ const getTypeString = (type) => {
   switch (type) {
     case 'app':     return 'Application';
     case 'dataset': return 'Dataset';
+    case 'presentation': return 'Presentation';
     case 'course':  return 'Course';
     default:        return 'Contribution';
   }
