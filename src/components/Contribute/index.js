@@ -53,7 +53,7 @@ export default function Contribute({ title }) {
               <HydroShareContribute
                 name="Dataset"
                 type="dataset"
-                keyword="ciroh_portal_dataset"
+                keyword="ciroh_portal_data"
               />
             </TabItem>
 

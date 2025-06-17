@@ -39,8 +39,7 @@ export default function CoursesPage() {
       </div>
 
       <main>
-      <Courses keyword="nwm_portal_module"/>
-        
+        <Courses keyword="nwm_portal_module"/>
         <TechBox items={items} type={"Courses"}  />
       </main>
     

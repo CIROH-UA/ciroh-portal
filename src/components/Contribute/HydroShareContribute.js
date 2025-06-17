@@ -8,7 +8,7 @@ import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResou
 import Appstyles from './AppsStyles.module.css';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-export default function HydroShareContribute({ name="Dataset", icon="💾", type='dataset', keyword="ciroh_portal_dataset" }) {
+export default function HydroShareContribute({ name="Dataset", icon="💾", type='dataset', keyword="ciroh_portal_data" }) {
   const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
           

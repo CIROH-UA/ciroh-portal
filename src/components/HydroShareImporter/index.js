@@ -129,12 +129,11 @@ async function joinExtraResources(group_resources, extra_resources) {
 
 }
 
-// Usage example:
-async function getCommunityResources(communityId="4") {
+async function getCommunityResources(communityId="4", keyword="ciroh_portal_data") {
   try {
     const groupIds = await getGroupIds(communityId);
     const group_resources =  await joinGroupResources(groupIds);
-    const extra_resources = await fetchResourcesByKeyword();
+    const extra_resources = await fetchResourcesByKeyword(keyword);
     return await joinExtraResources(group_resources, extra_resources);
     // return await joinGroupResources(groupIds);
   } catch (error) {
@@ -143,9 +142,7 @@ async function getCommunityResources(communityId="4") {
   }
 }
 
-
-
-async function fetchResourcesByKeyword(keyword="nwm_portal_dataset") {
+async function fetchResourcesByKeyword(keyword) {
   const url = `https://www.hydroshare.org/hsapi/resource/?subject=${encodeURIComponent(
     keyword
   )}`;
@@ -159,7 +156,6 @@ async function fetchResourcesByKeyword(keyword="nwm_portal_dataset") {
   return data.results;
 }
 
-
 async function fetchResourceCustomMetadata(resourceId) {
   const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/custom/`;
   const response = await fetch(url);
@@ -172,7 +168,4 @@ async function fetchResourceCustomMetadata(resourceId) {
   return data;
 }
 
-
-
-
-export {getCuratedIds, fetchResourcesByGroup,getCommunityResources,fetchResourceCustomMetadata };
+export {getCuratedIds, fetchResourcesByGroup, fetchResourcesByKeyword, getCommunityResources, fetchResourceCustomMetadata};

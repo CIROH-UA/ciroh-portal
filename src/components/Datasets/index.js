@@ -53,7 +53,7 @@ export default function Datasets({ community_id = 4 }) {
       try {
         const [curatedIds, resourceList] = await Promise.all([
           fetchCurated(),                // get array of curated resource IDs
-          getCommunityResources() // get all resources for the group
+          getCommunityResources(keyword="ciroh_portal_data") // get all resources for the group
         ]);
 
         // Map the full resource list to your internal format
