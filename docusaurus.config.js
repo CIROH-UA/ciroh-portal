@@ -107,10 +107,20 @@ const config = {
             position: "left",
           },
           {
-            href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
+            type: 'dropdown',
             position: 'right',
             className: "header-github-link",
-            "aria-label": "GitHub repository",
+            "aria-label": "GitHub repositories",
+            items: [
+              {
+                label: 'ciroh-portal',
+                href: 'https://github.com/CIROH-UA/ciroh-portal',
+              },
+              {
+                label: 'tethysportal-ciroh',
+                href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
+              },
+            ]
           },
         ],
       },
