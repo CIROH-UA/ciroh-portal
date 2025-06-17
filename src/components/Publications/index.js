@@ -140,7 +140,8 @@ export default function Publications({ apiKey, groupId }) {
           return upd;
         });
       } catch {
-        setError('Error retrieving the publications.');
+        if (apiKey === 'dummy') setError('Site administrator: Please provide a Zotero API key in this website\'s environment file.');
+        else setError('Error retrieving the publications.');
       } finally {
         fetching.current = false;
         setLoading(false);

@@ -207,7 +207,6 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
            onChange={(opts) => setSelectedCollections(opts || [])}
         />
         
-        {/*
         <div className={styles.captchaContainer}>
           <ReCAPTCHA
             key={colorMode}
@@ -217,7 +216,6 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
             theme={colorMode === 'dark' ? 'dark' : 'light'}
           />
         </div>
-        */}
         
         <button 
           type="submit" 
