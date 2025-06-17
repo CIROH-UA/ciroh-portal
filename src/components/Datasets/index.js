@@ -37,10 +37,9 @@ export default function Datasets({ community_id = 4 }) {
 
   useEffect(() => {
     // Fetch the curated IDs first (from the "parent" resource).
-    const fetchCurated = async () => {
+    const fetchCuratedIds = async () => {
       try {
         const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-        
         return curatedIds;
       } catch (err) {
         console.error("Error fetching curated IDs:", err);
@@ -52,8 +51,8 @@ export default function Datasets({ community_id = 4 }) {
     const fetchAll = async () => {
       try {
         const [curatedIds, resourceList] = await Promise.all([
-          fetchCurated(),                // get array of curated resource IDs
-          getCommunityResources(keyword="ciroh_portal_data") // get all resources for the group
+          fetchCuratedIds(),                // get array of curated resource IDs
+          getCommunityResources("ciroh_portal_data") // get all resources for the group
         ]);
 
         // Map the full resource list to your internal format

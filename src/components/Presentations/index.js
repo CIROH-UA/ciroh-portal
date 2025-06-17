@@ -4,7 +4,7 @@ import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { getCommunityResources, getCuratedIds,fetchResourceCustomMetadata } from "../HydroShareImporter";
+import { fetchResource, fetchResourcesByKeyword, getCuratedIds,fetchResourceCustomMetadata, joinExtraResources } from "../HydroShareImporter";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
@@ -15,7 +15,7 @@ import { MdFilterList } from "react-icons/md";
 export default function Presentations({ community_id = 4 }) {
   const { colorMode } = useColorMode(); // Get the current theme
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
-  const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
+  const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c"; // TODO
 
   const PLACEHOLDER_ITEMS = 10;
   const initialPlaceholders = Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => ({
@@ -30,33 +30,39 @@ export default function Presentations({ community_id = 4 }) {
   }));
 
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
-  const [curatedResources, setCuratedResources] = useState([]);     // subset for the curated tab
+  const [curatedResources, setCuratedResources] = useState(initialPlaceholders);     // subset for the curated tab
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState("row");
 
   useEffect(() => {
-    // Fetch the curated IDs first (from the "parent" resource).
-    const fetchCurated = async () => {
+    // Fetch the curated resources first (from the "parent" resource).
+    const fetchCuratedResources = async () => {
       try {
         const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-        
-        return curatedIds;
+
+        const curatedResources = await Promise.all(curatedIds.map(async (id) => {
+          const resource = await fetchResource(id);
+          return resource;
+        }));
+
+        return curatedResources;
       } catch (err) {
-        console.error("Error fetching curated IDs:", err);
+        console.error("Error fetching curated resources:", err);
         return [];
       }
     };
 
-    // Fetch all resources by group, then filter them based on curated IDs
+    // Fetch all resources by keyword and/or curation
     const fetchAll = async () => {
       try {
-        const [curatedIds, resourceList] = await Promise.all([
-          fetchCurated(),                // get array of curated resource IDs
-          getCommunityResources(keyword="ciroh_portal_presentation") // get all resources for the group
+        const [curatedResources, keywordResources] = await Promise.all([
+          fetchCuratedResources(), // get array of curated resource IDs
+          fetchResourcesByKeyword("ciroh_portal_presentation"), // intermediate step
         ]);
+        const resourceList = joinExtraResources(curatedResources, keywordResources); // Merge ensures backwards compatibility for presentations predating the keyword
 
-        // Map the full resource list to your internal format
+        // Map the full resource lists to your internal format
         const mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
           title: res.resource_title,
@@ -67,39 +73,20 @@ export default function Presentations({ community_id = 4 }) {
           page_url: "",
           docs_url: ""
         }));
-        
         setResources(mappedList);
         
-        for (let res of mappedList) {
-          try {
-            // const metadata = await fetchResourceMetadata(res.resource_id);
-            const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
-            
-            const updatedResource = {
-              ...res,
-              thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
-              page_url: customMetadata?.page_url || "",
-              docs_url: customMetadata?.docs_url || "",
+        const mappedCurated = curatedResources.map((res) => ({
+          resource_id: res.resource_id,
+          title: res.resource_title,
+          resource_type: res.resource_type,
+          resource_url: res.resource_url,
+          description: res.abstract || "No description available.",
+          thumbnail_url: hs_icon,
+          page_url: "",
+          docs_url: ""
+        }));
+        setCuratedResources(mappedCurated);
 
-            };
-
-            setResources((current) =>
-              current.map((item) =>
-                item.resource_id === updatedResource.resource_id ? updatedResource : item
-              )
-            );
-          } catch (metadataErr) {
-            console.error(`Error fetching metadata: ${metadataErr.message}`);
-          }
-        }
-
-        // Filter to get only curated subset
-        const curatedSubset = mappedList.filter(item =>
-          curatedIds.includes(item.resource_id)
-        );
-
-        // setResources(mappedList);
-        setCuratedResources(curatedSubset);
         setLoading(false);
       } catch (err) {
         console.error(`Error fetching resources: ${err.message}`);
