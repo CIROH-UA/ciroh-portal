@@ -209,7 +209,7 @@ export async function createResource({
   }
 
 
-export const uploadFileToS3Cucket = async (
+export const uploadFileToS3Bucket = async (
         s3_bucket,
         region,
         s3_access_key,

@@ -73,6 +73,30 @@ export default function Presentations({ community_id = 4 }) {
           page_url: "",
           docs_url: ""
         }));
+
+        // From Gio: apply custom thumbnail metadata
+        for (let res of mappedList) {
+          try {
+            // const metadata = await fetchResourceMetadata(res.resource_id);
+            const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
+            
+            const updatedResource = {
+              ...res,
+              thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
+              page_url: customMetadata?.page_url || "",
+              docs_url: customMetadata?.docs_url || "",
+            };
+
+            setResources((current) =>
+              current.map((item) =>
+                item.resource_id === updatedResource.resource_id ? updatedResource : item
+              )
+            );
+          } catch (metadataErr) {
+            console.error(`Error fetching metadata: ${metadataErr.message}`);
+          }
+        }
+
         setResources(mappedList);
         
         const mappedCurated = curatedResources.map((res) => ({
