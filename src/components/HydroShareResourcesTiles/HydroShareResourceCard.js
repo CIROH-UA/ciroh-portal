@@ -3,6 +3,7 @@ import { MdDriveFileMove } from 'react-icons/md';
 import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
 import { LuLayers3 } from 'react-icons/lu';
 import { FaBookmark  } from "react-icons/fa";
+import { IoTvOutline } from "react-icons/io5";
 
 import styles from './styles.module.css';
 
@@ -92,7 +93,15 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
               </a>
             )}
             {embed_url && (
-              TODO
+              <a
+                href={embed_url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.iconLink}
+                title="Embed Link"
+              >
+                <IoTvOutline size={30} />
+              </a>
             )}
           </div>
         </div>

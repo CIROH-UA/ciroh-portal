@@ -45,8 +45,8 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
           description: res.abstract || "No description available.",
           thumbnail_url: "",
           page_url: "",
-          docs_url: ""
-
+          docs_url: "",
+          embed_url: "",
         }));
 
         // Replace placeholders with fetched data

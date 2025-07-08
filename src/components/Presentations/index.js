@@ -72,7 +72,8 @@ export default function Presentations({ community_id = 4 }) {
           thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
           page_url: customMetadata?.page_url || "",
           docs_url: customMetadata?.docs_url || "",
-          embed_url: customMetadata?.embed_url || "",
+          embed_url: "https://docs.ciroh.org/assets/files/DevCon25-PlenaryKeyNote-Arpita-Dan-67d90820666d6780a04b5512bc0572df.pdf", // TEMP
+          //embed_url: customMetadata?.embed_url || "",
         }
       }));
       return mapping;
