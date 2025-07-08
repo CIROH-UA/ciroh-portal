@@ -57,7 +57,7 @@ export default function Presentations({ community_id = 4 }) {
     // Maps a resource list to the internal format, including custom metadata
     const mapWithCustomMetadata = async (resourceList) => {
       const mapping = await Promise.all(resourceList.map(async (res) => {
-        let customMetadata = "";
+        let customMetadata = null;
         try {
           customMetadata = await fetchResourceCustomMetadata(res.resource_id);
         } catch (metadataErr) {
