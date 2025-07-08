@@ -63,6 +63,8 @@ export default function Presentations({ community_id = 4 }) {
         } catch (metadataErr) {
           console.error(`Error fetching metadata: ${metadataErr.message}`);
         }
+        let embedUrl = "";
+        if (customMetadata?.pres_path) embedUrl = `https://www.hydroshare.org/resource/${resource_id}/data/contents/${customMetadata.pres_path}`;
         return {
           resource_id: res.resource_id,
           title: res.resource_title,
@@ -72,8 +74,7 @@ export default function Presentations({ community_id = 4 }) {
           thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
           page_url: customMetadata?.page_url || "",
           docs_url: customMetadata?.docs_url || "",
-          embed_url: "https://docs.ciroh.org/assets/files/DevCon25-PlenaryKeyNote-Arpita-Dan-67d90820666d6780a04b5512bc0572df.pdf", // TEMP
-          //embed_url: customMetadata?.embed_url || "",
+          embed_url: embedUrl,
         }
       }));
       return mapping;

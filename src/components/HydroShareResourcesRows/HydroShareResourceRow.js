@@ -26,8 +26,8 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
   } = resource;
 
   return (
-    
     <div id={resource_id} className={styles.columnItem}>
+      {/* Unlike tiles, the overarching structure is wrapped in a column to support embeds */}
       <div id={resource_id+"_content"} className={clsx(styles.rowItem, 'card')}>
         {/* ─── FULL-CARD OVERLAY ─── */}
         {/* Covers the whole card so any click that isn't on a "real" link            */}

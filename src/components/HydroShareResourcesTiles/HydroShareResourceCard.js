@@ -15,7 +15,7 @@ import styles from './styles.module.css';
 export default function HydroShareResourceCard({ resource, defaultImage }) {
   const {
     resource_id,
-    title        = 'Untitled',
+    title = 'Untitled',
     thumbnail_url,
     page_url,
     docs_url,
