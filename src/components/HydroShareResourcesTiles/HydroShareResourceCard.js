@@ -19,6 +19,7 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
     page_url,
     docs_url,
     resource_url,
+    embed_url,
   } = resource;
 
   return (
@@ -89,6 +90,9 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
               >
                 <MdDriveFileMove size={40} />
               </a>
+            )}
+            {embed_url && (
+              TODO
             )}
           </div>
         </div>

@@ -15,6 +15,7 @@ export default function HydroShareResourceCard({ resource }) {
     source_code_url,
     help_page_url,
     resource_url,
+    embed_url,
   } = resource;
 
   return (

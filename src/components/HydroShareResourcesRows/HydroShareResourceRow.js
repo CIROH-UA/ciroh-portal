@@ -15,6 +15,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
     page_url,
     docs_url,
     resource_url,
+    embed_url,
   } = resource;
 
   return (

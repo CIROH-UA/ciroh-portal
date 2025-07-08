@@ -26,7 +26,8 @@ export default function Presentations({ community_id = 4 }) {
     description: "",
     thumbnail_url: "",
     page_url: "",
-    docs_url: ""
+    docs_url: "",
+    embed_url: "",
   }));
 
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
@@ -53,6 +54,30 @@ export default function Presentations({ community_id = 4 }) {
       }
     };
 
+    // Maps a resource list to the internal format, including custom metadata
+    const mapWithCustomMetadata = async (resourceList) => {
+      const mapping = await Promise.all(resourceList.map(async (res) => {
+        let customMetadata = "";
+        try {
+          customMetadata = await fetchResourceCustomMetadata(res.resource_id);
+        } catch (metadataErr) {
+          console.error(`Error fetching metadata: ${metadataErr.message}`);
+        }
+        return {
+          resource_id: res.resource_id,
+          title: res.resource_title,
+          resource_type: res.resource_type,
+          resource_url: res.resource_url,
+          description: res.abstract || "No description available.",
+          thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
+          page_url: customMetadata?.page_url || "",
+          docs_url: customMetadata?.docs_url || "",
+          embed_url: customMetadata?.embed_url || "",
+        }
+      }));
+      return mapping;
+    }
+
     // Fetch all resources by keyword and/or curation
     const fetchAll = async () => {
       try {
@@ -62,53 +87,12 @@ export default function Presentations({ community_id = 4 }) {
         ]);
         const resourceList = joinExtraResources(curatedResources, keywordResources); // Merge ensures backwards compatibility for presentations predating the keyword
 
-        // Map the full resource lists to your internal format
-        const mappedList = resourceList.map((res) => ({
-          resource_id: res.resource_id,
-          title: res.resource_title,
-          resource_type: res.resource_type,
-          resource_url: res.resource_url,
-          description: res.abstract || "No description available.",
-          thumbnail_url: hs_icon,
-          page_url: "",
-          docs_url: ""
-        }));
-
-        // From Gio: apply custom thumbnail metadata
-        for (let res of mappedList) {
-          try {
-            // const metadata = await fetchResourceMetadata(res.resource_id);
-            const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
-            
-            const updatedResource = {
-              ...res,
-              thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
-              page_url: customMetadata?.page_url || "",
-              docs_url: customMetadata?.docs_url || "",
-            };
-
-            setResources((current) =>
-              current.map((item) =>
-                item.resource_id === updatedResource.resource_id ? updatedResource : item
-              )
-            );
-          } catch (metadataErr) {
-            console.error(`Error fetching metadata: ${metadataErr.message}`);
-          }
-        }
-
+        // Map the full resource lists to your internal format (with custom metadata)
+        const [mappedList, mappedCurated] = await Promise.all([
+          mapWithCustomMetadata(resourceList),
+          mapWithCustomMetadata(curatedResources),
+        ]);
         setResources(mappedList);
-        
-        const mappedCurated = curatedResources.map((res) => ({
-          resource_id: res.resource_id,
-          title: res.resource_title,
-          resource_type: res.resource_type,
-          resource_url: res.resource_url,
-          description: res.abstract || "No description available.",
-          thumbnail_url: hs_icon,
-          page_url: "",
-          docs_url: ""
-        }));
         setCuratedResources(mappedCurated);
 
         setLoading(false);

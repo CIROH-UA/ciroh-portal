@@ -6,7 +6,7 @@ import Contribute from "@site/src/components/Contribute";
 
 export default function ContributePage() {
   return (
-    <Layout title="Applications" description="CIROH Applications">
+    <Layout title="Contribute" description="Contribute to CIROH Portal">
       <div className="margin-top--lg">
         <Header 
             title="Building the Whole Community Together" 
