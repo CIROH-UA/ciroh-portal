@@ -83,7 +83,7 @@ export default function HydroShareResourceCreator({
 
     if (!username || !password)     { setError('Username and password are required.'); return; }
     if (!title.trim())              { setError('Title is required.');                 return; }
-    if (countWords(abstract) < 150) { setError('Abstract must be at least 150 words.'); return; }
+    if (abstract.trim().length < 150) { setError('Abstract must be at least 150 characters.'); return; }
 
     const validAgencies = fundingAgencies.filter(
       (fa) =>
@@ -332,7 +332,7 @@ export default function HydroShareResourceCreator({
 
         {/* Abstract --------------------------------------------------- */}
         <label className={`${styles.label} required`}>
-          {getTypeString(typeContribution)} Description (≥150 words)
+          {getTypeString(typeContribution)} Description (≥150 characters)
           <textarea
             className={styles.textarea}
             rows={5}
