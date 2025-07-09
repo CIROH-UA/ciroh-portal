@@ -8,26 +8,26 @@ import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResou
 import Appstyles from './AppsStyles.module.css';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-export default function DatasetsTabContributeContent() {
+export default function PresentationsTabContributeContent() {
   const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
           
     <div className={styles.currentAppSection}>
 
-      {/* <CardsHeader header="Add your Dataset!" />
+      {/* <CardsHeader header="Add your Presentation!" />
        */}
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                💾 <strong>  Add your Dataset </strong>
+                💾 <strong>  Add your Presentation </strong>
                 </div>
             </h3>
         </div>
 
         <HydroShareToolResourceForm 
           resourceType="CompositeResource"
-          typeContribution='dataset'
-          keywordToAdd = "nwm_portal_dataset"
+          typeContribution='presentations'
+          keywordToAdd = "nwm_portal_presentation"
           makePublic={true} 
         />
 
@@ -35,7 +35,7 @@ export default function DatasetsTabContributeContent() {
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
-                   Share your <strong>Dataset</strong> 👣
+                   Share your <strong>Presentation</strong> 👣
                 </div>
             </h3>
         </div>
@@ -47,7 +47,7 @@ export default function DatasetsTabContributeContent() {
         />
         <ActionButtons
             buttons={[
-                { label: "Add your Data", href: "https://docs.ciroh.org/docs/products/Portal/#data", primary: true }
+                { label: "Add your Presentation", href: "https://docs.ciroh.org/docs/products/Portal/#data", primary: true }
               ]}
         />
 

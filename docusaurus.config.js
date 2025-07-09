@@ -21,10 +21,10 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-  customFields:{
-    zotero_api_key: process.env.ZOTERO_API_KEY,
+  customFields:{ // Default "dummy" values improve stability when environment variables are missing
+    zotero_api_key: process.env.ZOTERO_API_KEY || "dummy",
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
-    captcha_key: process.env.CAPTCHA_KEY,
+    captcha_key: process.env.CAPTCHA_KEY || "dummy",
     s3_bucket: process.env.S3_BUCKET_NAME,
     s3_access_key: process.env.S3_ACCESS_KEY,
     s3_secret_key: process.env.S3_SECRET_KEY,
@@ -95,6 +95,7 @@ const config = {
           {to: '/apps', label: 'Apps', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/publications', label: 'Publications', position: 'left'},
+          {to: '/presentations', label: 'Presentations', position: 'left'},
           {to: '/courses', label: 'Courses', position: 'left'},
           {to: '/contribute', label: 'Contribute', position: 'right'},
           
@@ -106,10 +107,20 @@ const config = {
             position: "left",
           },
           {
-            href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
+            type: 'dropdown',
             position: 'right',
             className: "header-github-link",
-            "aria-label": "GitHub repository",
+            "aria-label": "GitHub repositories",
+            items: [
+              {
+                label: 'ciroh-portal',
+                href: 'https://github.com/CIROH-UA/ciroh-portal',
+              },
+              {
+                label: 'tethysportal-ciroh',
+                href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
+              },
+            ]
           },
         ],
       },

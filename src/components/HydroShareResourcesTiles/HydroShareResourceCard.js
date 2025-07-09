@@ -3,6 +3,7 @@ import { MdDriveFileMove } from 'react-icons/md';
 import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
 import { LuLayers3 } from 'react-icons/lu';
 import { FaBookmark  } from "react-icons/fa";
+import { IoTvOutline } from "react-icons/io5";
 
 import styles from './styles.module.css';
 
@@ -14,11 +15,12 @@ import styles from './styles.module.css';
 export default function HydroShareResourceCard({ resource, defaultImage }) {
   const {
     resource_id,
-    title        = 'Untitled',
+    title = 'Untitled',
     thumbnail_url,
     page_url,
     docs_url,
     resource_url,
+    embed_url,
   } = resource;
 
   return (
@@ -88,6 +90,17 @@ export default function HydroShareResourceCard({ resource, defaultImage }) {
                 title="Resource Page"
               >
                 <MdDriveFileMove size={40} />
+              </a>
+            )}
+            {embed_url && (
+              <a
+                href={embed_url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.iconLink}
+                title="Embed Link"
+              >
+                <IoTvOutline size={30} />
               </a>
             )}
           </div>

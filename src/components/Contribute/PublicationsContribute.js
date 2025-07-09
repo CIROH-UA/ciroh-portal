@@ -9,7 +9,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Appstyles from './AppsStyles.module.css';
 
 
-export default function CitationImporter({ description }) {
+export default function PublicationsContribute({ description }) {
     const {
         siteConfig: {customFields},
       } = useDocusaurusContext();

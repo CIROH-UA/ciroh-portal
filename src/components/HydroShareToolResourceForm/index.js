@@ -7,13 +7,14 @@ import UploadDataS3          from './UploadDataS3';
 import styles                from './HydroShareResourceCreator.module.css';
 import clsx                  from 'clsx';
 
-import { uploadFileToS3Cucket } from './utils';
+import { uploadFileToS3Bucket } from './utils';
 import useDocusaurusContext     from '@docusaurus/useDocusaurusContext';
 
 const getTypeString = (type) => {
   switch (type) {
     case 'app':     return 'Application';
     case 'dataset': return 'Dataset';
+    case 'presentation': return 'Presentation';
     case 'course':  return 'Course';
     default:        return 'Contribution';
   }
@@ -40,6 +41,7 @@ export default function HydroShareResourceCreator({
 
   const [files,     setFiles]     = useState([]);     // HydroShare files
   const [iconFile,  setIconFile]  = useState(null);   // icon uploaded to S3
+  const [presPath,  setPresPath]  = useState('');     // Path for presentation embed on HydroShare
 
   const [loading,         setLoading]         = useState(false);
   const [error,           setError]           = useState('');
@@ -63,6 +65,13 @@ export default function HydroShareResourceCreator({
   const handleCoveragesChange       = useCallback((covs)     => setCoverages(covs || []), []);
   const handleFundingAgenciesChange = useCallback((agencies) => setFundingAgencies(agencies), []);
 
+  const FileNamesList = () => {
+    const list = files.map((file, index) => (
+      <p className={styles.label} key={index}>⬆️ {file.name}</p>
+    ));
+    return <div>{list}</div>;
+  }
+
   /* ──────────────────────── submit handler ─────────────────────── */
   async function handleSubmit(e) {
     e.preventDefault();
@@ -71,9 +80,10 @@ export default function HydroShareResourceCreator({
     setResourceUrl('');
 
     /* validation --------------------------------------------------- */
+
     if (!username || !password)     { setError('Username and password are required.'); return; }
     if (!title.trim())              { setError('Title is required.');                 return; }
-    if (countWords(abstract) < 150) { setError('Abstract must be at least 150 words.'); return; }
+    if (abstract.trim().length < 150) { setError('Abstract must be at least 150 characters.'); return; }
 
     const validAgencies = fundingAgencies.filter(
       (fa) =>
@@ -87,6 +97,27 @@ export default function HydroShareResourceCreator({
       return;
     }
 
+    if (presPath.trim()) { // If presentation path is present...
+      let trimmedPath = presPath.trim();
+      let pathLen = trimmedPath.length;
+
+      // Ensure path corresponds to a PDF
+      if (pathLen < 4 || trimmedPath.substring(pathLen-4) != ".pdf") {
+        setError("Presentation filename must be a PDF file for embedding.");
+        return;
+      }
+
+      // Ensure path corresponds to a real file
+      let presPathValid = false;
+      files.forEach(f => {
+        if (f.name === presPath.trim()) presPathValid = true;
+      })
+      if (!presPathValid) {
+        setError("Presentation filename must exist within the uploaded files.");
+        return;
+      }
+    }
+
     /* 0️⃣ — upload icon to S3 (if any) ---------------------------- */
     let imageUrl = null;
     if (iconFile) {
@@ -95,7 +126,7 @@ export default function HydroShareResourceCreator({
         const uuidName = `${crypto.randomUUID()}.${ext}`;
         const renamed  = new File([iconFile], uuidName, { type: iconFile.type });
 
-        await uploadFileToS3Cucket(
+        await uploadFileToS3Bucket(
           S3_BUCKET,
           REGION,
           S3_ACCESS_KEY,
@@ -122,7 +153,8 @@ export default function HydroShareResourceCreator({
     const extraMetaObj = {};
     if (inputUrl.trim()) extraMetaObj.page_url = inputUrl.trim();
     if (imageUrl)        extraMetaObj.thumbnail_url = imageUrl;
-    if (docsUrl.trim())  extraMetaObj.docs_url      = docsUrl.trim();  // NEW
+    if (docsUrl.trim())  extraMetaObj.docs_url      = docsUrl.trim();
+    if (presPath.trim()) extraMetaObj.pres_path     = presPath.trim();
 
     const extraMetaJson = Object.keys(extraMetaObj).length
       ? JSON.stringify(extraMetaObj)
@@ -296,11 +328,11 @@ export default function HydroShareResourceCreator({
         )}
 
         {/* Icon (S3) -------------------------------------------------- */}
-        <UploadDataS3 onChange={setIconFile} />
+        <UploadDataS3 title="Thumbnail" acceptType="image/*" onChange={setIconFile} />
 
         {/* Abstract --------------------------------------------------- */}
         <label className={`${styles.label} required`}>
-          {getTypeString(typeContribution)} Description (≥150 words)
+          {getTypeString(typeContribution)} Description (≥150 characters)
           <textarea
             className={styles.textarea}
             rows={5}
@@ -333,7 +365,21 @@ export default function HydroShareResourceCreator({
                 onChange={(e) => setFiles(Array.from(e.target.files))}
               />
             </label>
+            <FileNamesList />
           </div>
+        )}
+
+        {/* Embedded presentation ----------------- */}
+        {(typeContribution === 'presentation') && (
+          <label className={styles.label}>
+            Presentation Filename <i>(PDF only; used for embedding on Portal. Optional.)</i>
+            <input
+              className={styles.input}
+              value={presPath}
+              onChange={(e) => setPresPath(e.target.value)}
+              placeholder="presentation.pdf"
+            />
+          </label>
         )}
 
         {/* hidden advanced editors ----------------------------------- */}

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styles from './HydroShareResourceCreator.module.css';
 
-export default function UploadDataS3({onChange}) {
+export default function UploadDataS3({title, acceptType, onChange}) {
   const [fileName, setFileName] = useState('');
 
   const handleFileChange = e => {
@@ -12,7 +12,7 @@ export default function UploadDataS3({onChange}) {
 
   return (
     <div className={styles.inputFileDiv}>
-      <p className={styles.label}>Thumbnail</p>
+      <p className={styles.label}>{title}</p>
 
       {/* clickable “button” */}
       <label className={styles.label}>
@@ -20,7 +20,7 @@ export default function UploadDataS3({onChange}) {
         <input
           className={styles.inputFile}
           type="file"
-          accept="image/*"
+          accept={acceptType}
           onChange={handleFileChange}
         />
       </label>
