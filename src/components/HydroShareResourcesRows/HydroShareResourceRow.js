@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import Link from '@docusaurus/Link';
 import { MdDriveFileMove } from 'react-icons/md';
 import { LiaExternalLinkSquareAltSolid } from 'react-icons/lia';
@@ -10,9 +10,14 @@ import styles from './styles.module.css';
 export default function HydroShareResourceRow({ resource, defaultImage }) {
 
   const [showEmbed, setShowEmbed] = useState(false);
-  const toggleShowEmbed = () => {
+  const [embedSrc, setEmbedSrc] = useState(null);
+  const objectUrlRef = useRef(null);
+
+  const toggleShowEmbed = (e) => {
+    e.preventDefault();
     setShowEmbed(!showEmbed);
   }
+  const closeEmbed = () => setShowEmbed(false);
 
   const {
     resource_id,
@@ -24,7 +29,37 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
     resource_url,
     embed_url,
   } = resource;
+  useEffect(() => {
+    // 1. If the embed is requested, fetch the PDF and build a blob URL
+    if (showEmbed && embed_url) {
+      fetch(embed_url)
+        .then(r => r.blob())
+        .then(blob => {
+          // Revoke any previous URL before replacing it
+          if (objectUrlRef.current) {
+            URL.revokeObjectURL(objectUrlRef.current);
+          }
+          const url = URL.createObjectURL(blob);
+          objectUrlRef.current = url;
+          setEmbedSrc(url);
+        });
+    } else {
+      // 2. If the panel is being hidden, clear the URL immediately
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+      setEmbedSrc(null);
+    }
 
+    // 3. Component-unmount (or dependency-change) cleanup
+    return () => {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+    };
+  }, [showEmbed, embed_url]);
   return (
     <div id={resource_id} className={styles.columnItem}>
       {/* Unlike tiles, the overarching structure is wrapped in a column to support embeds */}
@@ -84,15 +119,23 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
                 </a>
               )}
               {embed_url && (
-                <a
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.iconLink}
-                  title="Display Embed"
-                  onClick={toggleShowEmbed}
-                >
+                  <a
+                    href="#"
+                    role="button"           
+                    tabIndex={0}
+                    onClick={toggleShowEmbed}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleShowEmbed(e);
+                      }
+                    }}
+                    className={styles.iconLink}
+                    title={showEmbed ? 'Hide PDF' : 'Display PDF'}
+                  >
                   <IoTvOutline size={30} />
-                </a>
+
+                  </a>
               )}
             </div>
           </div>
@@ -123,15 +166,29 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
           )}
         </div>
       </div>
-      {showEmbed && (<div id={resource_id+"_embed"} className={clsx(styles.rowItem, 'card')}>
-        {/* ─── EMBED ─── */}
-        {/* If shown, it appears vertically underneath the card. */}
-        <div className={styles.embedCentering}>
-          <div className={styles.embedWrapper}>
-            <embed src={embed_url} type="application/pdf" className={styles.embedContent}/>
+      {showEmbed && (
+        <div id={`${resource_id}_embed`} className={clsx(styles.rowItem, 'card')}>
+          <button
+            type="button"
+            onClick={closeEmbed}
+            aria-label="Close PDF"
+            className={styles.closeButton}
+          >
+            ×
+          </button>
+          <div className={styles.embedCentering}>
+            <div className={styles.embedWrapper}>
+              {embedSrc && (
+                <embed
+                  src={embedSrc}
+                  type="application/pdf"
+                  className={styles.embedContent}
+                />
+              )}
+            </div>
           </div>
         </div>
-      </div>)}
+      )}
     </div>
   );
 }

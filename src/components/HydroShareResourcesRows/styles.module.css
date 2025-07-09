@@ -264,6 +264,23 @@
   height: 100%;
 }
 
+.closeButton {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  color: var(--ifm-color-secondary);
+}
+
+.closeButton:hover,
+.closeButton:focus-visible {
+  color: var(--ifm-color-primary);
+}
+
 /* --------------------------------------
  * RESPONSIVE ADJUSTMENTS
  * --------------------------------------
