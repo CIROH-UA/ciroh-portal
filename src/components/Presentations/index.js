@@ -15,7 +15,9 @@ import { MdFilterList } from "react-icons/md";
 export default function Presentations({ community_id = 4 }) {
   const { colorMode } = useColorMode(); // Get the current theme
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
-  const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c"; // TODO
+  const CURATED_PARENT_ID = "200fa86bea61438aa862d437103485db";
+  // The name is a holdover from the "datasets" tab. This "curated" list actually serves as a
+  // backwards compatibility layer to ensure that older presentations can be included in this tab.
 
   const PLACEHOLDER_ITEMS = 10;
   const initialPlaceholders = Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => ({
@@ -31,29 +33,12 @@ export default function Presentations({ community_id = 4 }) {
   }));
 
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
-  const [curatedResources, setCuratedResources] = useState(initialPlaceholders);     // subset for the curated tab
+  //const [curatedResources, setCuratedResources] = useState(initialPlaceholders); // Deprecated
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState("row");
 
   useEffect(() => {
-    // Fetch the curated resources first (from the "parent" resource).
-    const fetchCuratedResources = async () => {
-      try {
-        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-
-        const curatedResources = await Promise.all(curatedIds.map(async (id) => {
-          const resource = await fetchResource(id);
-          return resource;
-        }));
-
-        return curatedResources;
-      } catch (err) {
-        console.error("Error fetching curated resources:", err);
-        return [];
-      }
-    };
-
     // Maps a resource list to the internal format, including custom metadata
     const mapWithCustomMetadata = async (resourceList) => {
       const mapping = await Promise.all(resourceList.map(async (res) => {
@@ -64,7 +49,7 @@ export default function Presentations({ community_id = 4 }) {
           console.error(`Error fetching metadata: ${metadataErr.message}`);
         }
         let embedUrl = "";
-        if (customMetadata?.pres_path) embedUrl = `https://www.hydroshare.org/resource/${resource_id}/data/contents/${customMetadata.pres_path}`;
+        if (customMetadata?.pres_path) embedUrl = `https://www.hydroshare.org/resource/${res.resource_id}/data/contents/${customMetadata.pres_path}`;
         return {
           resource_id: res.resource_id,
           title: res.resource_title,
@@ -80,22 +65,38 @@ export default function Presentations({ community_id = 4 }) {
       return mapping;
     }
 
+    // Fetch the curated resources first (from the "parent" resource).
+    const fetchRawCuratedResources = async () => {
+      try {
+        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+
+        const curatedList = await Promise.all(curatedIds.map(async (id) => {
+          const resource = await fetchResource(id);
+          return resource;
+        }));
+
+        return curatedList;
+      } catch (err) {
+        console.error("Error fetching curated resources:", err);
+        return [];
+      }
+    };
+
     // Fetch all resources by keyword and/or curation
     const fetchAll = async () => {
       try {
-        const [curatedResources, keywordResources] = await Promise.all([
-          fetchCuratedResources(), // get array of curated resource IDs
+        const [rawCuratedResources, rawKeywordResources] = await Promise.all([
+          fetchRawCuratedResources(), // get array of curated resource IDs
           fetchResourcesByKeyword("ciroh_portal_presentation"), // intermediate step
         ]);
-        const resourceList = joinExtraResources(curatedResources, keywordResources); // Merge ensures backwards compatibility for presentations predating the keyword
+        const rawResources = joinExtraResources(rawKeywordResources, rawCuratedResources); // Merge ensures backwards compatibility for presentations predating the keyword
 
         // Map the full resource lists to your internal format (with custom metadata)
-        const [mappedList, mappedCurated] = await Promise.all([
-          mapWithCustomMetadata(resourceList),
-          mapWithCustomMetadata(curatedResources),
-        ]);
-        setResources(mappedList);
-        setCuratedResources(mappedCurated);
+        const mappedResources = await mapWithCustomMetadata(rawResources);
+        //const mappedCurated = await mapWithCustomMetadata(rawCuratedResources); // If uncommenting, merge this and the above line into a Promise.all call
+        
+        setResources(mappedResources);
+        //setCuratedResources(mappedCurated);
 
         setLoading(false);
       } catch (err) {
@@ -136,39 +137,12 @@ export default function Presentations({ community_id = 4 }) {
           </div>
         </div>
 
-        {/* Tabs for "All" and "Curated" */}
-        <Tabs className={styles.contributeTabs}>
-          <TabItem
-            value="all"
-            label={
-              <span className={styles.tabLabel}>
-                <FaListUl className={styles.tabIcon} /> All
-              </span>
-            }
-            default
-          >
-            {view === "grid" ? (
-              <HydroShareResourcesTiles resources={resources} loading={loading} />
-            ) : (
-              <HydroShareResourcesRows resources={resources} loading={loading} />
-            )}
-          </TabItem>
-
-          <TabItem
-            value="curated"
-            label={
-              <span className={styles.tabLabel}>
-                <MdFilterList className={styles.tabIcon} /> Curated
-              </span>
-            }
-          >
-            {view === "grid" ? (
-              <HydroShareResourcesTiles resources={curatedResources} loading={loading} />
-            ) : (
-              <HydroShareResourcesRows resources={curatedResources} loading={loading} />
-            )}
-          </TabItem>
-        </Tabs>
+        {/* No active curation at this point. */}
+        {view === "grid" ? (
+          <HydroShareResourcesTiles resources={resources} loading={loading} />
+        ) : (
+          <HydroShareResourcesRows resources={resources} loading={loading} />
+        )}
       </div>
     </div>
   );
