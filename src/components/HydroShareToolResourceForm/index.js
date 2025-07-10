@@ -248,6 +248,7 @@ export default function HydroShareResourceCreator({
 
       /* add self URL as custom scimeta if user didn’t supply a link */
       if (!inputUrl.trim()) {
+        extraMetaObj.url = hsUrl;
         await fetch(
           `${urlBase}/resource/${resourceId}/scimeta/custom/`,
           {
@@ -256,7 +257,7 @@ export default function HydroShareResourceCreator({
               'Content-Type': 'application/json',
               Authorization:  `Basic ${authString}`,
             },
-            body: JSON.stringify({ url: hsUrl }),
+            body: JSON.stringify({ url: extraMetaObj }),
           },
         );
       }
