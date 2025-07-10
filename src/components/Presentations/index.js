@@ -33,6 +33,7 @@ export default function Presentations({ community_id = 4 }) {
   }));
 
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
+  const [collections, setCollections] = useState(initialPlaceholders);
   //const [curatedResources, setCuratedResources] = useState(initialPlaceholders); // Deprecated
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -85,17 +86,22 @@ export default function Presentations({ community_id = 4 }) {
     // Fetch all resources by keyword and/or curation
     const fetchAll = async () => {
       try {
-        const [rawCuratedResources, rawKeywordResources] = await Promise.all([
+        const [rawCuratedResources, invKeywordResources, invCollections] = await Promise.all([
           fetchRawCuratedResources(), // get array of curated resource IDs
-          fetchResourcesByKeyword("ciroh_portal_presentation"), // intermediate step
+          fetchResourcesByKeyword("ciroh_portal_presentation"), // Chronological order
+          fetchResourcesByKeyword("ciroh_portal_pres_collections"),
         ]);
+        const rawKeywordResources = invKeywordResources.reverse(); // Reverse chronological order
+        const rawCollections = invCollections.reverse();
         const rawResources = joinExtraResources(rawKeywordResources, rawCuratedResources); // Merge ensures backwards compatibility for presentations predating the keyword
 
         // Map the full resource lists to your internal format (with custom metadata)
         const mappedResources = await mapWithCustomMetadata(rawResources);
+        const mappedCollections = await mapWithCustomMetadata(rawCollections);
         //const mappedCurated = await mapWithCustomMetadata(rawCuratedResources); // If uncommenting, merge this and the above line into a Promise.all call
         
         setResources(mappedResources);
+        setCollections(mappedCollections);
         //setCuratedResources(mappedCurated);
 
         setLoading(false);
@@ -137,12 +143,39 @@ export default function Presentations({ community_id = 4 }) {
           </div>
         </div>
 
-        {/* No active curation at this point. */}
-        {view === "grid" ? (
-          <HydroShareResourcesTiles resources={resources} loading={loading} />
-        ) : (
-          <HydroShareResourcesRows resources={resources} loading={loading} />
-        )}
+        {/* Tabs for "Presentations" and "Collections" */}
+        <Tabs className={styles.contributeTabs}>
+          <TabItem
+            value="presentations"
+            label={
+              <span className={styles.tabLabel}>
+                <FaListUl className={styles.tabIcon} /> Presentations
+              </span>
+            }
+            default
+          >
+            {view === "grid" ? (
+              <HydroShareResourcesTiles resources={resources} loading={loading} />
+            ) : (
+              <HydroShareResourcesRows resources={resources} loading={loading} />
+            )}
+          </TabItem>
+
+          <TabItem
+            value="collections"
+            label={
+              <span className={styles.tabLabel}>
+                <MdFilterList className={styles.tabIcon} /> Collections
+              </span>
+            }
+          >
+            {view === "grid" ? (
+              <HydroShareResourcesTiles resources={collections} loading={loading} />
+            ) : (
+              <HydroShareResourcesRows resources={collections} loading={loading} />
+            )}
+          </TabItem>
+        </Tabs>
       </div>
     </div>
   );
