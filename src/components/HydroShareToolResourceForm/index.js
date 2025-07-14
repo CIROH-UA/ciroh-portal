@@ -242,20 +242,33 @@ export default function HydroShareResourceCreator({
           throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
         setProgressMessage(`Resource made ${visibility}`);
       }
-      else if (visibility === "discoverable") { // TODO: not yet working
-        const pubResp = await fetch(
-          `${urlBase}/resource/accessRules/${resourceId}/`,
+      else if (visibility === "discoverable") { // Needs to set two flags
+        const discResp = await fetch(
+          `${urlBase}/resource/${resourceId}/flag/`,
           {
-            method:  'PUT',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Authorization:  `Basic ${authString}`,
             },
-            body: JSON.stringify({"discoverable": true, "shareable": true, "allow_private_sharing": true }),
+            body: JSON.stringify({ flag: 'make_discoverable' })
           },
         );
-        if (pubResp.status !== 200)
-          throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
+        if (discResp.status !== 202) // Unique to this API endpoint
+          throw new Error(`Setting access rules failed (HTTP ${discResp.status})`);
+        const privLinkResp = await fetch(
+          `${urlBase}/resource/${resourceId}/flag/`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Basic ${authString}`,
+            },
+            body: JSON.stringify({ flag: 'enable_private_sharing_link' })
+          },
+        );
+        if (privLinkResp.status !== 202) // Unique to this API endpoint
+          throw new Error(`Setting access rules failed (HTTP ${privLinkResp.status})`);
         setProgressMessage(`Resource made discoverable with private link sharing enabled`);
       }
       else {
@@ -412,8 +425,8 @@ export default function HydroShareResourceCreator({
             value={visibility}
             onChange={(e) => setVisibility(e.target.value)}
           >
-            {/*<option value="discoverable">Discoverable</option>*/}
             <option value="public">Public (recommended)</option>
+            <option value="discoverable">Discoverable</option>
             <option value="private">Private</option>
           </select>
           {(visibility === "private") && (
