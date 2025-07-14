@@ -24,7 +24,7 @@ export default function CoursesContribute({ description }) {
             </h3>
         </div>
 
-        <HydroShareToolResourceForm typeContribution = 'course' resourceType="CompositeResource" makePublic={true} keywordToAdd = "nwm_portal_module"/>
+        <HydroShareToolResourceForm typeContribution = 'course' resourceType="CompositeResource" keywordToAdd = "nwm_portal_module"/>
           <ActionButtons
             buttons={[
                 { label: "Add your Course", href: "https://docs.ciroh.org/docs/products/Portal", primary: true },

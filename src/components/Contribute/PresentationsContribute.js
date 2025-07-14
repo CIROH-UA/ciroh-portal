@@ -28,7 +28,6 @@ export default function PresentationsTabContributeContent() {
           resourceType="CompositeResource"
           typeContribution='presentations'
           keywordToAdd = "nwm_portal_presentation"
-          makePublic={true} 
         />
 
         <hr className={Appstyles.sectionDivider} />

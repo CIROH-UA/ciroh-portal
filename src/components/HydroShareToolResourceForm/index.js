@@ -22,7 +22,6 @@ const getTypeString = (type) => {
 
 export default function HydroShareResourceCreator({
   resourceType      = 'ToolResource',
-  makePublic        = false,
   keywordToAdd      = 'nwm_portal_app',
   typeContribution  = 'app',
 }) {
@@ -244,7 +243,6 @@ export default function HydroShareResourceCreator({
         setProgressMessage(`Resource made ${visibility}`);
       }
       else if (visibility === "discoverable") { // TODO: not yet working
-        setProgressMessage(`Resource made discoverable with private link sharing enabled`);
         const pubResp = await fetch(
           `${urlBase}/resource/accessRules/${resourceId}/`,
           {
@@ -253,11 +251,12 @@ export default function HydroShareResourceCreator({
               'Content-Type': 'application/json',
               Authorization:  `Basic ${authString}`,
             },
-            body: JSON.stringify({"discoverable": true, "sharable": true, "allow_private_sharing": true }),
+            body: JSON.stringify({"discoverable": true, "shareable": true, "allow_private_sharing": true }),
           },
         );
         if (pubResp.status !== 200)
           throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
+        setProgressMessage(`Resource made discoverable with private link sharing enabled`);
       }
       else {
         setProgressMessage(`Invalid visibility setting, skipping...`)
@@ -413,8 +412,8 @@ export default function HydroShareResourceCreator({
             value={visibility}
             onChange={(e) => setVisibility(e.target.value)}
           >
-            <option value="public">Public</option>
             {/*<option value="discoverable">Discoverable</option>*/}
+            <option value="public">Public (recommended)</option>
             <option value="private">Private</option>
           </select>
           {(visibility === "private") && (
