@@ -47,6 +47,12 @@ const config = {
     locales: ['en'],
   },
 
+  // Future flags. (In preparation for DocuHub v4.)
+  future: {
+    v4: true,
+    experimental_faster: true,
+  },
+
   presets: [
     [
       'classic',
