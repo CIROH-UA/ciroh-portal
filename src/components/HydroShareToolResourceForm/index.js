@@ -34,7 +34,7 @@ export default function HydroShareResourceCreator({
   const [abstract, setAbstract]     = useState('');
   const [keywords, setKeywords]     = useState('');
   const [inputUrl, setInputUrl]     = useState('');   // page / landing-page URL
-  const [docsUrl,  setDocsUrl]      = useState('');   // NEW – documentation URL
+  const [docsUrl,  setDocsUrl]      = useState('');   // documentation URL (apps/datasets only)
 
   const [fundingAgencies, setFundingAgencies] = useState([]);
   const [coverages,       setCoverages]       = useState([]);
@@ -42,6 +42,7 @@ export default function HydroShareResourceCreator({
   const [files,     setFiles]     = useState([]);     // HydroShare files
   const [iconFile,  setIconFile]  = useState(null);   // icon uploaded to S3
   const [presPath,  setPresPath]  = useState('');     // Path for presentation embed on HydroShare
+  const [visibility, setVisibility] = useState('public'); // HydroShare visibility setting
 
   const [loading,         setLoading]         = useState(false);
   const [error,           setError]           = useState('');
@@ -224,8 +225,9 @@ export default function HydroShareResourceCreator({
         setProgressMessage(`Uploaded file: ${f.name}`);
       }
 
-      /* make public (optional) */
-      if (makePublic) {
+      /* Set access rules */
+      if (visibility === "public" || visibility === "private") {
+        const makePublic = (visibility === "public");
         const pubResp = await fetch(
           `${urlBase}/resource/accessRules/${resourceId}/`,
           {
@@ -234,12 +236,31 @@ export default function HydroShareResourceCreator({
               'Content-Type': 'application/json',
               Authorization:  `Basic ${authString}`,
             },
-            body: JSON.stringify({ public: true }),
+            body: JSON.stringify({ "public": makePublic }),
           },
         );
         if (pubResp.status !== 200)
           throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
-        setProgressMessage('Resource made public');
+        setProgressMessage(`Resource made ${visibility}`);
+      }
+      else if (visibility === "discoverable") { // TODO: not yet working
+        setProgressMessage(`Resource made discoverable with private link sharing enabled`);
+        const pubResp = await fetch(
+          `${urlBase}/resource/accessRules/${resourceId}/`,
+          {
+            method:  'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization:  `Basic ${authString}`,
+            },
+            body: JSON.stringify({"discoverable": true, "sharable": true, "allow_private_sharing": true }),
+          },
+        );
+        if (pubResp.status !== 200)
+          throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
+      }
+      else {
+        setProgressMessage(`Invalid visibility setting, skipping...`)
       }
 
       /* final link */
@@ -257,7 +278,7 @@ export default function HydroShareResourceCreator({
               'Content-Type': 'application/json',
               Authorization:  `Basic ${authString}`,
             },
-            body: JSON.stringify({ url: extraMetaObj }),
+            body: JSON.stringify(extraMetaObj),
           },
         );
       }
@@ -383,6 +404,24 @@ export default function HydroShareResourceCreator({
           </label>
         )}
 
+        {/* Visibility settings----------------- */}
+        
+        <label className={styles.label}>
+          Visibility
+          <select
+            className={styles.input}
+            value={visibility}
+            onChange={(e) => setVisibility(e.target.value)}
+          >
+            <option value="public">Public</option>
+            {/*<option value="discoverable">Discoverable</option>*/}
+            <option value="private">Private</option>
+          </select>
+          {(visibility === "private") && (
+            <i>Note: Private resources will not appear on CIROH Portal until they are made public or discoverable.</i>
+          )}
+        </label>
+
         {/* hidden advanced editors ----------------------------------- */}
         <div style={{display: 'none'}}>
           <CoveragesInput       onChange={handleCoveragesChange} />
@@ -411,7 +450,11 @@ export default function HydroShareResourceCreator({
             {!loading && resourceUrl && (
               <>
                 <a
-                  href={`/${typeContribution}s#${resourceUrl.split('/')[4]}`}
+                  href={
+                    (visibility === "private") 
+                    ? resourceUrl
+                    : `/${typeContribution}s#${resourceUrl.split('/')[4]}`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                 >
