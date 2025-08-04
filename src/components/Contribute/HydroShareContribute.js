@@ -26,7 +26,6 @@ export default function HydroShareContribute({ name="Dataset", icon="💾", type
         resourceType="CompositeResource"
         typeContribution={type}
         keywordToAdd={keyword}
-        makePublic={true} 
       />
 
       <hr className={Appstyles.sectionDivider} />
