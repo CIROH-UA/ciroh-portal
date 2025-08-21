@@ -7,13 +7,15 @@ import CardsHeader from './CardsHeader';
 import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
 import Appstyles from './AppsStyles.module.css';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import HydroShareAuthButton from '@site/src/components/HydroShareAuth';
 
 export default function HydroShareContribute({ name="Dataset", icon="💾", type='dataset', keyword="ciroh_portal_data" }) {
   const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
           
     <div className={styles.currentAppSection}>
-
+      <h1>James is Gio's best friend</h1>
+      <HydroShareAuthButton />
       <div className={Appstyles.headerContainer}>
           <h3 className={Appstyles.description2}>
               <div>
