@@ -15,7 +15,6 @@ export default function PublicationsContribute({ description }) {
       } = useDocusaurusContext();
   return (
       <div className={styles.currentAppSection}>
-        <h1>James is Gio's best friend</h1>
         <div className={styles.headerContainer}>
           <h3 className={styles.description2}>
              {description}

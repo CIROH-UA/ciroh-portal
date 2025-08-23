@@ -7,14 +7,12 @@ import CardsHeader from './CardsHeader';
 import HydroShareToolResourceForm from '@site/src/components/HydroShareToolResourceForm';
 import Appstyles from './AppsStyles.module.css';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import HydroShareAuthButton from '@site/src/components/HydroShareAuth';
 
 export default function PresentationsTabContributeContent() {
   const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
           
     <div className={styles.currentAppSection}>
-      <h1>James is Gio's best friend</h1>
       {/* <CardsHeader header="Add your Presentation!" />
        */}
         <div className={Appstyles.headerContainer}>
@@ -24,9 +22,6 @@ export default function PresentationsTabContributeContent() {
                 </div>
             </h3>
         </div>
-
-        <h1>I Know Gio's secret</h1>
-        <HydroShareAuthButton />
 
         <HydroShareToolResourceForm 
           resourceType="CompositeResource"
