@@ -1,57 +1,58 @@
 /* HydroShareResourceCreator.jsx */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { FaSpinner } from 'react-icons/fa';
-import CoveragesInput        from './CoveragesInput';
-import FundingAgenciesInput  from './FundingAgenciesInput';
-import UploadDataS3          from './UploadDataS3';
-import styles                from './HydroShareResourceCreator.module.css';
-import clsx                  from 'clsx';
+import clsx from 'clsx';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { AuthContext } from 'react-oauth2-code-pkce';
 
+import CoveragesInput       from './CoveragesInput';
+import FundingAgenciesInput from './FundingAgenciesInput';
+import UploadDataS3         from './UploadDataS3';
+import HydroShareAuthButton from '@site/src/components/HydroShareAuth';
 import { uploadFileToS3Bucket } from './utils';
-import useDocusaurusContext     from '@docusaurus/useDocusaurusContext';
+import styles from './HydroShareResourceCreator.module.css';
 
 const getTypeString = (type) => {
   switch (type) {
-    case 'app':     return 'Application';
-    case 'dataset': return 'Dataset';
+    case 'app':          return 'Application';
+    case 'dataset':      return 'Dataset';
     case 'presentation': return 'Presentation';
-    case 'course':  return 'Course';
-    default:        return 'Contribution';
+    case 'course':       return 'Course';
+    default:             return 'Contribution';
   }
 };
 
 export default function HydroShareResourceCreator({
-  resourceType      = 'ToolResource',
-  keywordToAdd      = 'nwm_portal_app',
-  typeContribution  = 'app',
+  resourceType     = 'ToolResource',
+  keywordToAdd     = 'nwm_portal_app',
+  typeContribution = 'app',
 }) {
-  /* ───────────────────────── state ───────────────────────── */
-  const [username, setUsername]     = useState('');
-  const [password, setPassword]     = useState('');
+  /* ─────────── OAuth2 (HydroShare) ─────────── */
+  // Provided by react-oauth2-code-pkce <AuthProvider />
+  const { token, logIn, loginInProgress } = useContext(AuthContext);
 
-  const [title,    setTitle]        = useState('');
-  const [abstract, setAbstract]     = useState('');
-  const [keywords, setKeywords]     = useState('');
-  const [inputUrl, setInputUrl]     = useState('');   // page / landing-page URL
-  const [docsUrl,  setDocsUrl]      = useState('');   // documentation URL (apps/datasets only)
+  /* ─────────── state (NO username/password) ─────────── */
+  const [title,    setTitle]    = useState('');
+  const [abstract, setAbstract] = useState('');
+  const [keywords, setKeywords] = useState('');
+  const [inputUrl, setInputUrl] = useState('');  // page / landing-page URL
+  const [docsUrl,  setDocsUrl]  = useState('');  // documentation URL (apps/datasets only)
 
   const [fundingAgencies, setFundingAgencies] = useState([]);
   const [coverages,       setCoverages]       = useState([]);
 
-  const [files,     setFiles]     = useState([]);     // HydroShare files
-  const [iconFile,  setIconFile]  = useState(null);   // icon uploaded to S3
-  const [presPath,  setPresPath]  = useState('');     // Path for presentation embed on HydroShare
-  const [visibility, setVisibility] = useState('public'); // HydroShare visibility setting
+  const [files,     setFiles]     = useState([]);   // HydroShare files
+  const [iconFile,  setIconFile]  = useState(null); // icon uploaded to S3
+  const [presPath,  setPresPath]  = useState('');   // presentation file path (must be in files[])
+  const [visibility, setVisibility] = useState('public');
 
   const [loading,         setLoading]         = useState(false);
   const [error,           setError]           = useState('');
   const [progressMessage, setProgressMessage] = useState('');
   const [resourceUrl,     setResourceUrl]     = useState('');
 
-  /* S3 credentials from docusaurus.config.js ----------------------- */
-  const {
-    siteConfig: { customFields },
-  } = useDocusaurusContext();
+  /* S3 credentials from docusaurus.config.js */
+  const { siteConfig: { customFields } } = useDocusaurusContext();
   const S3_BUCKET     = customFields.s3_bucket;
   const REGION        = customFields.s3_region;
   const S3_ACCESS_KEY = customFields.s3_access_key;
@@ -59,66 +60,157 @@ export default function HydroShareResourceCreator({
 
   const urlBase = 'https://www.hydroshare.org/hsapi';
 
-  /* ───────────────────────── helpers ───────────────────────── */
-  const countWords = (str) => str.trim().split(/\s+/).filter(Boolean).length;
+  /* ─────────── button text logic ─────────── */
+  const getSubmitButtonText = () => {
+    if (loading) return 'Processing…';
+    if (!token) return 'Authenticate with HydroShare';
+    return `Create ${getTypeString(typeContribution)}`;
+  };
 
+  /* ─────────── form state persistence ─────────── */
+  const FORM_STATE_KEY = `hydroshare-form-${typeContribution}`;
+  const AUTH_PENDING_KEY = `hydroshare-auth-pending-${typeContribution}`;
+
+  const saveFormState = () => {
+    const formState = {
+      title,
+      abstract,
+      keywords,
+      inputUrl,
+      docsUrl,
+      presPath,
+      visibility,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(FORM_STATE_KEY, JSON.stringify(formState));
+  };
+
+  const saveCurrentTab = () => {
+    // Save the current tab from URL query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentTab = urlParams.get('current-contribution') || typeContribution;
+    console.log(`Saving current tab for restoration: ${currentTab}`);
+    localStorage.setItem('hydroshare-last-tab', currentTab);
+  };
+
+  const markAuthenticationPending = () => {
+    localStorage.setItem(AUTH_PENDING_KEY, Date.now().toString());
+  };
+
+  const isReturningFromAuth = () => {
+    const authPendingTime = localStorage.getItem(AUTH_PENDING_KEY);
+    if (authPendingTime) {
+      const timeDiff = Date.now() - parseInt(authPendingTime);
+      // Consider it a return from auth if less than 10 minutes and we now have a token
+      return timeDiff < 10 * 60 * 1000 && token;
+    }
+    return false;
+  };
+
+  const clearAuthPending = () => {
+    localStorage.removeItem(AUTH_PENDING_KEY);
+  };
+
+  const loadFormState = () => {
+    try {
+      const saved = localStorage.getItem(FORM_STATE_KEY);
+      if (saved) {
+        const formState = JSON.parse(saved);
+        // Only restore if saved within last 30 minutes
+        if (Date.now() - formState.timestamp < 30 * 60 * 1000) {
+          setTitle(formState.title || '');
+          setAbstract(formState.abstract || '');
+          setKeywords(formState.keywords || '');
+          setInputUrl(formState.inputUrl || '');
+          setDocsUrl(formState.docsUrl || '');
+          setPresPath(formState.presPath || '');
+          setVisibility(formState.visibility || 'public');
+          return true; // Indicates state was restored
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to restore form state:', error);
+    }
+    return false;
+  };
+
+  const clearFormState = () => {
+    localStorage.removeItem(FORM_STATE_KEY);
+  };
+
+  /* ─────────── form state management ─────────── */
+  useEffect(() => {
+    // Only restore form state if returning from authentication
+    if (isReturningFromAuth()) {
+      const restored = loadFormState();
+
+      // Clear the auth pending flag since we've handled it
+      clearAuthPending();
+    }
+  }, [token]); // Run when token changes
+
+  const handleAuthenticateWithFormSave = () => {
+    saveFormState();
+    saveCurrentTab();
+    markAuthenticationPending();
+    logIn();
+  };
+
+  /* ─────────── helpers ─────────── */
   const handleCoveragesChange       = useCallback((covs)     => setCoverages(covs || []), []);
   const handleFundingAgenciesChange = useCallback((agencies) => setFundingAgencies(agencies), []);
 
-  const FileNamesList = () => {
-    const list = files.map((file, index) => (
-      <p className={styles.label} key={index}>⬆️ {file.name}</p>
-    ));
-    return <div>{list}</div>;
-  }
+  const FileNamesList = () => (
+    <div>
+      {files.map((file, i) => (
+        <p className={styles.label} key={i}>⬆️ {file.name}</p>
+      ))}
+    </div>
+  );
 
-  /* ──────────────────────── submit handler ─────────────────────── */
+  /* ─────────── submit handler ─────────── */
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
     setProgressMessage('');
     setResourceUrl('');
 
-    /* validation --------------------------------------------------- */
+    // Require OAuth token instead of username/password
+    if (!token) {
+      setError('Please authenticate with HydroShare first.');
+      return;
+    }
 
-    if (!username || !password)     { setError('Username and password are required.'); return; }
-    if (!title.trim())              { setError('Title is required.');                 return; }
-    if (abstract.trim().length < 150) { setError('Abstract must be at least 150 characters.'); return; }
+    // Basic validation
+    if (!title.trim())               { setError('Title is required.'); return; }
+    if (abstract.trim().length < 150){ setError('Abstract must be at least 150 characters.'); return; }
 
     const validAgencies = fundingAgencies.filter(
       (fa) =>
-        fa.agency_name.trim() &&
-        fa.award_title.trim() &&
-        fa.award_number.trim() &&
-        fa.agency_url.trim(),
+        fa.agency_name?.trim() &&
+        fa.award_title?.trim() &&
+        fa.award_number?.trim() &&
+        fa.agency_url?.trim(),
     );
     if (!validAgencies.length) {
       setError('At least one complete funding agency entry is required.');
       return;
     }
 
-    if (presPath.trim()) { // If presentation path is present...
-      let trimmedPath = presPath.trim();
-      let pathLen = trimmedPath.length;
-
-      // Ensure path corresponds to a PDF
-      if (pathLen < 4 || trimmedPath.substring(pathLen-4) != ".pdf") {
-        setError("Presentation filename must be a PDF file for embedding.");
+    if (presPath.trim()) {
+      const trimmedPath = presPath.trim();
+      if (!trimmedPath.toLowerCase().endsWith('.pdf')) {
+        setError('Presentation filename must be a PDF file for embedding.');
         return;
       }
-
-      // Ensure path corresponds to a real file
-      let presPathValid = false;
-      files.forEach(f => {
-        if (f.name === presPath.trim()) presPathValid = true;
-      })
-      if (!presPathValid) {
-        setError("Presentation filename must exist within the uploaded files.");
+      const exists = files.some(f => f.name === trimmedPath);
+      if (!exists) {
+        setError('Presentation filename must exist within the uploaded files.');
         return;
       }
     }
 
-    /* 0️⃣ — upload icon to S3 (if any) ---------------------------- */
+    /* 0) upload icon to S3 (if any) */
     let imageUrl = null;
     if (iconFile) {
       try {
@@ -127,11 +219,7 @@ export default function HydroShareResourceCreator({
         const renamed  = new File([iconFile], uuidName, { type: iconFile.type });
 
         await uploadFileToS3Bucket(
-          S3_BUCKET,
-          REGION,
-          S3_ACCESS_KEY,
-          S3_SECRET_KEY,
-          renamed,
+          S3_BUCKET, REGION, S3_ACCESS_KEY, S3_SECRET_KEY, renamed
         );
         imageUrl = `https://${S3_BUCKET}.s3.${REGION}.amazonaws.com/${uuidName}`;
       } catch (err) {
@@ -140,27 +228,27 @@ export default function HydroShareResourceCreator({
       }
     }
 
-    /* 1️⃣ — keywords --------------------------------------------- */
+    /* 1) keywords */
     const keywordArr = keywords
       .split(/[,\s]+/)
       .map((k) => k.trim())
       .filter(Boolean);
     if (!keywordArr.includes(keywordToAdd)) keywordArr.push(keywordToAdd);
 
-    /* 2️⃣ — coverages & extra_metadata ---------------------------- */
+    /* 2) coverages & extra_metadata */
     const metadataJson = JSON.stringify([...coverages]);
 
     const extraMetaObj = {};
     if (inputUrl.trim()) extraMetaObj.page_url = inputUrl.trim();
     if (imageUrl)        extraMetaObj.thumbnail_url = imageUrl;
-    if (docsUrl.trim())  extraMetaObj.docs_url      = docsUrl.trim();
-    if (presPath.trim()) extraMetaObj.pres_path     = presPath.trim();
+    if (docsUrl.trim())  extraMetaObj.docs_url = docsUrl.trim();
+    if (presPath.trim()) extraMetaObj.pres_path = presPath.trim();
 
     const extraMetaJson = Object.keys(extraMetaObj).length
       ? JSON.stringify(extraMetaObj)
       : '{}';
 
-    /* 3️⃣ — multipart form ---------------------------------------- */
+    /* 3) form data for create resource */
     const formData = new FormData();
     formData.append('resource_type',  resourceType);
     formData.append('title',          title.trim());
@@ -169,20 +257,19 @@ export default function HydroShareResourceCreator({
     formData.append('metadata',       metadataJson);
     formData.append('extra_metadata', extraMetaJson);
 
-    const authString = btoa(`${username}:${password}`);
+    const authHeader = { Authorization: `Bearer ${token}` }; // OAuth2 bearer (standard) :contentReference[oaicite:2]{index=2}
 
-    /* ─── HydroShare request chain ─── */
     setLoading(true);
     try {
       /* create resource */
       const postResp = await fetch(`${urlBase}/resource/`, {
         method:  'POST',
-        headers: { Authorization: `Basic ${authString}` },
+        headers: authHeader,
         body:    formData,
       });
-      if (!postResp.ok)
-        throw new Error(await postResp.text() || `Server error ${postResp.status}`);
-
+      if (!postResp.ok) {
+        throw new Error((await postResp.text()) || `Server error ${postResp.status}`);
+      }
       const { resource_id: resourceId } = await postResp.json();
       if (!resourceId) throw new Error('No resource ID returned');
       setProgressMessage(`Resource created (ID: ${resourceId})`);
@@ -192,18 +279,16 @@ export default function HydroShareResourceCreator({
         `${urlBase}/resource/${resourceId}/scimeta/elements/`,
         {
           method:  'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization:  `Basic ${authString}`,
-          },
+          headers: { ...authHeader, 'Content-Type': 'application/json' },
           body: JSON.stringify({ funding_agencies: validAgencies }),
         },
       );
-      if (sciResp.status !== 202)
+      if (sciResp.status !== 202) {
         throw new Error(`Updating science metadata failed (HTTP ${sciResp.status})`);
+      }
       setProgressMessage('Funding agencies updated');
 
-      /* files ------------------------------------------------------ */
+      /* files */
       const metadataBlob = new Blob(
         [JSON.stringify({ name: title.trim() })],
         { type: 'application/json' },
@@ -217,85 +302,75 @@ export default function HydroShareResourceCreator({
         const fd = new FormData(); fd.append('file', f);
         const fResp = await fetch(
           `${urlBase}/resource/${resourceId}/files/`,
-          { method: 'POST', headers: { Authorization: `Basic ${authString}` }, body: fd },
+          { method: 'POST', headers: authHeader, body: fd },
         );
-        if (!fResp.ok)
+        if (!fResp.ok) {
           throw new Error(`Uploading file ${f.name} failed (HTTP ${fResp.status})`);
+        }
         setProgressMessage(`Uploaded file: ${f.name}`);
       }
 
-      /* Set access rules */
-      if (visibility === "public" || visibility === "private") {
-        const makePublic = (visibility === "public");
+      /* visibility */
+      if (visibility === 'public' || visibility === 'private') {
+        const makePublic = (visibility === 'public');
         const pubResp = await fetch(
           `${urlBase}/resource/accessRules/${resourceId}/`,
           {
             method:  'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Basic ${authString}`,
-            },
-            body: JSON.stringify({ "public": makePublic }),
+            headers: { ...authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ public: makePublic }),
           },
         );
-        if (pubResp.status !== 200)
+        if (pubResp.status !== 200) {
           throw new Error(`Setting access rules failed (HTTP ${pubResp.status})`);
+        }
         setProgressMessage(`Resource made ${visibility}`);
-      }
-      else if (visibility === "discoverable") { // Needs to set two flags
+      } else if (visibility === 'discoverable') {
         const discResp = await fetch(
           `${urlBase}/resource/${resourceId}/flag/`,
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Basic ${authString}`,
-            },
-            body: JSON.stringify({ flag: 'make_discoverable' })
+            headers: { ...authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ flag: 'make_discoverable' }),
           },
         );
-        if (discResp.status !== 202) // Unique to this API endpoint
+        if (discResp.status !== 202) {
           throw new Error(`Setting access rules failed (HTTP ${discResp.status})`);
+        }
         const privLinkResp = await fetch(
           `${urlBase}/resource/${resourceId}/flag/`,
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Basic ${authString}`,
-            },
-            body: JSON.stringify({ flag: 'enable_private_sharing_link' })
+            headers: { ...authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ flag: 'enable_private_sharing_link' }),
           },
         );
-        if (privLinkResp.status !== 202) // Unique to this API endpoint
+        if (privLinkResp.status !== 202) {
           throw new Error(`Setting access rules failed (HTTP ${privLinkResp.status})`);
-        setProgressMessage(`Resource made discoverable with private link sharing enabled`);
-      }
-      else {
-        setProgressMessage(`Invalid visibility setting, skipping...`)
+        }
+        setProgressMessage('Resource made discoverable with private link sharing enabled');
+      } else {
+        setProgressMessage('Invalid visibility setting, skipping…');
       }
 
       /* final link */
       const hsUrl = `https://www.hydroshare.org/resource/${resourceId}`;
       setResourceUrl(hsUrl);
 
-      /* add self URL as custom scimeta if user didn’t supply a link */
+      /* add self URL to custom scimeta if no link was supplied */
       if (!inputUrl.trim()) {
-        extraMetaObj.url = hsUrl;
-        await fetch(
-          `${urlBase}/resource/${resourceId}/scimeta/custom/`,
-          {
-            method:  'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization:  `Basic ${authString}`,
-            },
-            body: JSON.stringify(extraMetaObj),
-          },
-        );
+        const obj = { ...extraMetaObj, url: hsUrl };
+        await fetch(`${urlBase}/resource/${resourceId}/scimeta/custom/`, {
+          method:  'POST',
+          headers: { ...authHeader, 'Content-Type': 'application/json' },
+          body: JSON.stringify(obj),
+        });
       }
 
       setProgressMessage(`Resource created successfully! Visit your ${typeContribution} `);
+      
+      // Clear saved form state on successful submission
+      clearFormState();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -303,30 +378,18 @@ export default function HydroShareResourceCreator({
     }
   }
 
-  /* ──────────────────────── UI  ─────────────────────── */
+  /* ─────────── UI ─────────── */
   return (
     <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        {/* Credentials ------------------------------------------------ */}
-        <label className={`${styles.label} required`}>
-          HydroShare Username
-          <input
-            className={styles.input}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </label>
-        <label className={`${styles.label} required`}>
-          HydroShare Password
-          <input
-            className={styles.input}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
+      {/* 0) HydroShare login button (shows “Authenticated” when already logged in) */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ display: 'none' }}>
+          <HydroShareAuthButton />
+        </div>
+      </div>
 
-        {/* Title & URLs ---------------------------------------------- */}
+      <form className={styles.form} onSubmit={handleSubmit}>
+        {/* Title & URLs */}
         <label className={`${styles.label} required`}>
           {getTypeString(typeContribution)} Title
           <input
@@ -347,7 +410,6 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        {/* Documentation URL – only for app / dataset ----------------- */}
         {(typeContribution === 'app' || typeContribution === 'dataset') && (
           <label className={styles.label}>
             Documentation URL
@@ -361,10 +423,10 @@ export default function HydroShareResourceCreator({
           </label>
         )}
 
-        {/* Icon (S3) -------------------------------------------------- */}
+        {/* Icon (S3) */}
         <UploadDataS3 title="Thumbnail" acceptType="image/*" onChange={setIconFile} />
 
-        {/* Abstract --------------------------------------------------- */}
+        {/* Abstract */}
         <label className={`${styles.label} required`}>
           {getTypeString(typeContribution)} Description (≥150 characters)
           <textarea
@@ -375,7 +437,7 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        {/* Keywords --------------------------------------------------- */}
+        {/* Keywords */}
         <label className={styles.label}>
           Keywords (comma or space separated)
           <input
@@ -386,7 +448,7 @@ export default function HydroShareResourceCreator({
           />
         </label>
 
-        {/* File upload ------------------------------------------------ */}
+        {/* File upload (all but app) */}
         {typeContribution !== 'app' && (
           <div className={styles.inputFileDiv}>
             <p className={styles.label}>Attach Files</p>
@@ -403,8 +465,8 @@ export default function HydroShareResourceCreator({
           </div>
         )}
 
-        {/* Embedded presentation ----------------- */}
-        {(typeContribution === 'presentation') && (
+        {/* Embedded presentation (presentations only) */}
+        {typeContribution === 'presentation' && (
           <label className={styles.label}>
             Presentation Filename <i>(PDF only; used for embedding on Portal. Optional.)</i>
             <input
@@ -416,8 +478,7 @@ export default function HydroShareResourceCreator({
           </label>
         )}
 
-        {/* Visibility settings----------------- */}
-        
+        {/* Visibility */}
         <label className={styles.label}>
           Visibility
           <select
@@ -429,31 +490,32 @@ export default function HydroShareResourceCreator({
             <option value="discoverable">Discoverable</option>
             <option value="private">Private</option>
           </select>
-          {(visibility === "private") && (
+          {visibility === 'private' && (
             <i>Note: Private resources will not appear on CIROH Portal until they are made public or discoverable.</i>
           )}
         </label>
 
-        {/* hidden advanced editors ----------------------------------- */}
-        <div style={{display: 'none'}}>
+        {/* hidden advanced editors */}
+        <div style={{ display: 'none' }}>
           <CoveragesInput       onChange={handleCoveragesChange} />
           <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
         </div>
 
-        {/* Submit ----------------------------------------------------- */}
+        {/* Submit */}
         <br className={styles.sectionDivider} />
         <button
-          type="submit"
+          type={!token ? "button" : "submit"}
           className={clsx(styles.button, styles.buttonPrimary)}
-          disabled={loading}
+          disabled={loading || loginInProgress}
+          onClick={!token ? handleAuthenticateWithFormSave : undefined}
+          title={!token ? 'Click to authenticate with HydroShare' : undefined}
         >
-          {loading ? 'Processing…' : `Create ${getTypeString(typeContribution)}`}
+          {getSubmitButtonText()}
         </button>
       </form>
 
-      {/* Feedback ---------------------------------------------------- */}
+      {/* Feedback */}
       <br className={styles.sectionDivider} />
-
       {progressMessage && (
         <div className={styles.progressMessage}>
           {loading && <FaSpinner className={styles.spinner} />}
@@ -463,9 +525,9 @@ export default function HydroShareResourceCreator({
               <>
                 <a
                   href={
-                    (visibility === "private") 
-                    ? resourceUrl
-                    : `/${typeContribution}s#${resourceUrl.split('/')[4]}`
+                    visibility === 'private'
+                      ? resourceUrl
+                      : `/${typeContribution}s#${resourceUrl.split('/')[4]}`
                   }
                   target="_blank"
                   rel="noopener noreferrer"
