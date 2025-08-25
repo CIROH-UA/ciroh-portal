@@ -13,7 +13,6 @@ export default function HydroShareContribute({ name="Dataset", icon="💾", type
   return (
           
     <div className={styles.currentAppSection}>
-
       <div className={Appstyles.headerContainer}>
           <h3 className={Appstyles.description2}>
               <div>

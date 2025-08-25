@@ -29,6 +29,11 @@ const config = {
     s3_access_key: process.env.S3_ACCESS_KEY,
     s3_secret_key: process.env.S3_SECRET_KEY,
     s3_region: process.env.S3_REGION,
+    hs_client_id: process.env.HS_CLIENT_ID || "dummy",
+    hs_scopes: ['read', 'write'],
+    hs_authorize_url: "https://www.hydroshare.org/o/authorize/",
+    hs_token_url: "https://www.hydroshare.org/o/token/",
+    hs_redirect_uri: "http://localhost:3000/contribute"
   },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
