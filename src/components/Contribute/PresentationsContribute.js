@@ -13,8 +13,6 @@ export default function PresentationsTabContributeContent() {
   return (
           
     <div className={styles.currentAppSection}>
-      {/* <CardsHeader header="Add your Presentation!" />
-       */}
         <div className={Appstyles.headerContainer}>
             <h3 className={Appstyles.description2}>
                 <div>
