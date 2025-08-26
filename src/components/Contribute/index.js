@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './styles.module.css';
 import tabStyles from './tabsStyles.module.css';
 import AppsTethysInfo from './AppsTethysInfo';
@@ -11,6 +11,48 @@ import { IoLayers,IoAppsSharp,IoBookmarks,IoSchool,IoFileTrayFull,IoTvOutline } 
 
 
 export default function Contribute({ title }) {
+  // Function to programmatically change tab using event
+  const changeTab = (tabValue) => {
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('current-contribution', tabValue);
+    window.history.replaceState({}, '', currentUrl.toString());
+    
+    // Dispatch a custom event that Docusaurus might listen to
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+
+  // Make changeTab available globally for debugging/external use
+  useEffect(() => {
+    window.changeContributeTab = changeTab;
+    return () => {
+      delete window.changeContributeTab;
+    };
+  }, []);
+
+  // Check for tab restoration after authentication
+  useEffect(() => {
+    const savedTab = localStorage.getItem('hydroshare-last-tab');
+    if (savedTab) {
+      // Check if we're returning from auth by looking for auth pending flags
+      const authPendingKeys = Object.keys(localStorage).filter(key => 
+        key.startsWith('hydroshare-auth-pending-')
+      );
+      
+      if (authPendingKeys.length > 0) {
+        console.log('Restoring tab after authentication:', savedTab);
+        // Small delay to ensure component is fully mounted
+        setTimeout(() => {
+          changeTab(savedTab);
+          // Clean up after successful restoration
+          localStorage.removeItem('hydroshare-last-tab');
+        }, 500);
+      } else {
+        // No auth pending, clean up old saved tab
+        localStorage.removeItem('hydroshare-last-tab');
+      }
+    }
+  }, []);
+
   return (
     <div>
       <div className={styles.wrapper}>
