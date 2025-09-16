@@ -161,6 +161,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
           )}
           
           {authors ? (
+            
             <p className={styles.authors}>{authors}</p>
           ) : (
             <p className={styles.authorsPlaceholder} />
