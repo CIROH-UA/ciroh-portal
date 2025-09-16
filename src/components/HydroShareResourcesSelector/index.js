@@ -18,6 +18,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   const initialPlaceholders = Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => ({
     resource_id: `placeholder-${index}`,
     title: "",
+    authors: "",
     resource_type: "",
     resource_url: "",
     description: "",
@@ -40,6 +41,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         const mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
           title: res.resource_title,
+          authors: res.authors.map(
+            (author) => author.split(',').reverse().join(' ')
+          ).join(' 💠 '),
           resource_type: res.resource_type,
           resource_url: res.resource_url,
           description: res.abstract || "No description available.",

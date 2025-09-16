@@ -22,6 +22,7 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
   const {
     resource_id,
     title = 'Untitled',
+    authors = '',
     description,
     thumbnail_url,
     page_url,
@@ -157,6 +158,12 @@ export default function HydroShareResourceRow({ resource, defaultImage }) {
             </h1>
           ) : (
             <h1 className={styles.titlePlaceholder} />
+          )}
+          
+          {authors ? (
+            <p className={styles.authors}>{authors}</p>
+          ) : (
+            <p className={styles.authorsPlaceholder} />
           )}
 
           {description ? (

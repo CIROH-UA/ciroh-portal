@@ -4,6 +4,12 @@
   gap: 1rem;
 }
 
+.authors{
+  font-size: 0.9rem;
+  color: var(--ifm-color-content-secondary);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
 
 .rowItem {
   position: relative;      /* so the overlay can be absolutely positioned */
@@ -216,7 +222,6 @@
   color: #fff;
   margin-bottom: 0.75rem;
   text-align: center;
-  font-size: 1.2rem;
 }
 
 /* Overlay Icons */

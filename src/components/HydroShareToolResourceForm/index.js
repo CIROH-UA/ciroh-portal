@@ -511,6 +511,10 @@ export default function HydroShareResourceCreator({
           title={!token ? 'Click to authenticate with HydroShare' : undefined}
         >
           {getSubmitButtonText()}
+          {token ? ''
+          :
+          <img className={styles.logoAuth} id="img-brand-logo" src="https://storage.googleapis.com/hydroshare-prod-static-media/static/img/logo-lg.cf4395806c8e.png" alt="CUAHSI HydroShare"></img>
+          }
         </button>
       </form>
 

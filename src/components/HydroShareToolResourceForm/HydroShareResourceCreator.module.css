@@ -1,3 +1,10 @@
+
+.logoAuth{
+  width: 120px;
+  clip-path: inset(0% 75% 0% 0%);
+  padding-left: 1%;
+}
+
 .inputFile {
   opacity: 0;
   width: 0.1px;
