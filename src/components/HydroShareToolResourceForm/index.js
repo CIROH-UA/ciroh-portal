@@ -138,6 +138,37 @@ export default function HydroShareResourceCreator({
     localStorage.removeItem(FORM_STATE_KEY);
   };
 
+  const setFilesArray = (e) => {
+    // Sanitize file names before storing
+    const sanitizedFiles = Array.from(e.target.files).map(file => {
+      const sanitizedName = sanitizeFileName(file.name);
+      return new File([file], sanitizedName, { type: file.type });
+    });
+    
+    setFiles(sanitizedFiles);
+
+    if (typeContribution === 'presentation' && e.target.files.length > 0) {
+      if (e.target.files[0].name.toLowerCase().endsWith('.pdf')) {
+        const sanitizedFileName = sanitizeFileName(e.target.files[0].name);
+        setPresPath(sanitizedFileName);
+      }
+    }
+  };
+
+  const sanitizeFileName = (fileName) => {
+    const [name, ...extensions] = fileName.split('.');
+    const extension = extensions.join('.');
+
+    const sanitizedName = name
+      .toLowerCase()                          // Convert to lowercase
+      .replace(/\s+/g, '_')                  // Replace spaces with underscores
+      .replace(/[^a-z0-9._-]/g, '_')         // Keep only alphanumeric, dots, underscores, hyphens
+      .replace(/_{2,}/g, '_')                // Replace multiple underscores with single
+      .replace(/^_+|_+$/g, '');              // Remove leading/trailing underscores
+
+    return extension ? `${sanitizedName}.${extension}` : sanitizedName;
+  };
+
   /* ─────────── form state management ─────────── */
   useEffect(() => {
     // Only restore form state if returning from authentication
@@ -229,11 +260,15 @@ export default function HydroShareResourceCreator({
     }
 
     /* 1) keywords */
-    const keywordArr = keywords
+    let keywordArr = keywords
       .split(/[,\s]+/)
       .map((k) => k.trim())
       .filter(Boolean);
     if (!keywordArr.includes(keywordToAdd)) keywordArr.push(keywordToAdd);
+
+    // remove duplicates
+    keywordArr = new Set(keywordArr);
+    keywordArr = Array.from(keywordArr);
 
     /* 2) coverages & extra_metadata */
     const metadataJson = JSON.stringify([...coverages]);
@@ -457,25 +492,12 @@ export default function HydroShareResourceCreator({
               <input
                 className={styles.inputFile}
                 type="file"
-                multiple
-                onChange={(e) => setFiles(Array.from(e.target.files))}
+                multiple={typeContribution !== 'presentation'}
+                onChange={(e) => setFilesArray(e)}
               />
             </label>
             <FileNamesList />
           </div>
-        )}
-
-        {/* Embedded presentation (presentations only) */}
-        {typeContribution === 'presentation' && (
-          <label className={styles.label}>
-            Presentation Filename <i>(PDF only; used for embedding on Portal. Optional.)</i>
-            <input
-              className={styles.input}
-              value={presPath}
-              onChange={(e) => setPresPath(e.target.value)}
-              placeholder="presentation.pdf"
-            />
-          </label>
         )}
 
         {/* Visibility */}
