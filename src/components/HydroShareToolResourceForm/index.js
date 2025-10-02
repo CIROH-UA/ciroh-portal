@@ -574,11 +574,20 @@ export default function HydroShareResourceCreator({
   // User is NOT authenticated with HydroShare
   else
   {
+    // Get the info text based on typeContribution
+    let infoText = `Login to HydroShare to add a ${getTypeString(typeContribution)} resource.`;
+
+    if (getTypeString(typeContribution) === 'Application')
+    {
+      // Use "an" instead of "a"
+      infoText = `Login to HydroShare to add an ${getTypeString(typeContribution)} resource.`;
+    }
+
     return (
       <div className={styles.container}>
 
         <div className={styles.form}>
-          <p>Login to HydroShare to add a {getTypeString(typeContribution)} resource.</p>
+          <p>{infoText}</p>
           <button
             type="button"
             className={clsx(styles.button, styles.buttonPrimary)}
