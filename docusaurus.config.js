@@ -33,7 +33,9 @@ const config = {
     hs_scopes: ['read', 'write'],
     hs_authorize_url: "https://www.hydroshare.org/o/authorize/",
     hs_token_url: "https://www.hydroshare.org/o/token/",
-    hs_redirect_uri: "https://portal.ciroh.org/contribute"
+    hs_redirect_uri: "https://portal.ciroh.org/contribute",
+    hs_logout_endpoint: "https://www.hydroshare.org/accounts/logout/",
+    hs_logout_redirect: "https://portal.ciroh.org/contribute"
   },
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
