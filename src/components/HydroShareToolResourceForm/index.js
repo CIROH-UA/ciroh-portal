@@ -417,161 +417,159 @@ export default function HydroShareResourceCreator({
   // User is authenticated with HydroShare
   if (token)
   {
-  return (
-    <div className={styles.container}>
-      {/* 0) HydroShare login button (shows “Authenticated” when already logged in) */}
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ display: 'none' }}>
+    return (
+      <div className={styles.container}>
+        {/* 0) HydroShare login button (shows “Authenticated” when already logged in) */}
+        <div style={{ marginBottom: 16, textAlign: 'right' }}>
           <HydroShareAuthButton />
         </div>
-      </div>
 
-      <form className={styles.form} onSubmit={handleSubmit}>
-        {/* Title & URLs */}
-        <label className={`${styles.label} required`}>
-          {getTypeString(typeContribution)} Title
-          <input
-            className={styles.input}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          {/* Title & URLs */}
+          <label className={`${styles.label} required`}>
+            {getTypeString(typeContribution)} Title
+            <input
+              className={styles.input}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </label>
 
-        <label className={styles.label}>
-          {getTypeString(typeContribution)} URL
-          <input
-            className={styles.input}
-            type="url"
-            value={inputUrl}
-            onChange={(e) => setInputUrl(e.target.value)}
-            placeholder="https://example.org/landing-page"
-          />
-        </label>
-
-        {(typeContribution === 'app' || typeContribution === 'dataset') && (
           <label className={styles.label}>
-            Documentation URL
+            {getTypeString(typeContribution)} URL
             <input
               className={styles.input}
               type="url"
-              value={docsUrl}
-              onChange={(e) => setDocsUrl(e.target.value)}
-              placeholder="https://example.org/docs"
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              placeholder="https://example.org/landing-page"
             />
           </label>
-        )}
 
-        {/* Icon (S3) */}
-        <UploadDataS3 title="Thumbnail" acceptType="image/*" onChange={setIconFile} />
-
-        {/* Abstract */}
-        <label className={`${styles.label} required`}>
-          {getTypeString(typeContribution)} Description (≥150 characters)
-          <textarea
-            className={styles.textarea}
-            rows={5}
-            value={abstract}
-            onChange={(e) => setAbstract(e.target.value)}
-          />
-        </label>
-
-        {/* Keywords */}
-        <label className={styles.label}>
-          Keywords (comma or space separated)
-          <input
-            className={styles.input}
-            value={keywords}
-            onChange={(e) => setKeywords(e.target.value)}
-            placeholder="e.g. model HPC weather"
-          />
-        </label>
-
-        {/* File upload (all but app) */}
-        {typeContribution !== 'app' && (
-          <div className={styles.inputFileDiv}>
-            <p className={styles.label}>Attach Files</p>
+          {(typeContribution === 'app' || typeContribution === 'dataset') && (
             <label className={styles.label}>
-              🗃️ Upload files
+              Documentation URL
               <input
-                className={styles.inputFile}
-                type="file"
-                multiple={typeContribution !== 'presentation'}
-                onChange={(e) => setFilesArray(e)}
+                className={styles.input}
+                type="url"
+                value={docsUrl}
+                onChange={(e) => setDocsUrl(e.target.value)}
+                placeholder="https://example.org/docs"
               />
             </label>
-            <FileNamesList />
+          )}
+
+          {/* Icon (S3) */}
+          <UploadDataS3 title="Thumbnail" acceptType="image/*" onChange={setIconFile} />
+
+          {/* Abstract */}
+          <label className={`${styles.label} required`}>
+            {getTypeString(typeContribution)} Description (≥150 characters)
+            <textarea
+              className={styles.textarea}
+              rows={5}
+              value={abstract}
+              onChange={(e) => setAbstract(e.target.value)}
+            />
+          </label>
+
+          {/* Keywords */}
+          <label className={styles.label}>
+            Keywords (comma or space separated)
+            <input
+              className={styles.input}
+              value={keywords}
+              onChange={(e) => setKeywords(e.target.value)}
+              placeholder="e.g. model HPC weather"
+            />
+          </label>
+
+          {/* File upload (all but app) */}
+          {typeContribution !== 'app' && (
+            <div className={styles.inputFileDiv}>
+              <p className={styles.label}>Attach Files</p>
+              <label className={styles.label}>
+                🗃️ Upload files
+                <input
+                  className={styles.inputFile}
+                  type="file"
+                  multiple={typeContribution !== 'presentation'}
+                  onChange={(e) => setFilesArray(e)}
+                />
+              </label>
+              <FileNamesList />
+            </div>
+          )}
+
+          {/* Visibility */}
+          <label className={styles.label}>
+            Visibility
+            <select
+              className={styles.input}
+              value={visibility}
+              onChange={(e) => setVisibility(e.target.value)}
+            >
+              <option value="public">Public (recommended)</option>
+              <option value="discoverable">Discoverable</option>
+              <option value="private">Private</option>
+            </select>
+            {visibility === 'private' && (
+              <i>Note: Private resources will not appear on CIROH Portal until they are made public or discoverable.</i>
+            )}
+          </label>
+
+          {/* hidden advanced editors */}
+          <div style={{ display: 'none' }}>
+            <CoveragesInput       onChange={handleCoveragesChange} />
+            <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
+          </div>
+
+          {/* Submit */}
+          <br className={styles.sectionDivider} />
+          <button
+            type={!token ? "button" : "submit"}
+            className={clsx(styles.button, styles.buttonPrimary)}
+            disabled={loading || loginInProgress}
+            onClick={!token ? handleAuthenticateWithFormSave : undefined}
+            title={!token ? 'Click to authenticate with HydroShare' : undefined}
+          >
+            {getSubmitButtonText()}
+            {token ? ''
+            :
+            <img className={styles.logoAuth} id="img-brand-logo" src="https://storage.googleapis.com/hydroshare-prod-static-media/static/img/logo-lg.cf4395806c8e.png" alt="CUAHSI HydroShare"></img>
+            }
+          </button>
+        </form>
+
+        {/* Feedback */}
+        <br className={styles.sectionDivider} />
+        {progressMessage && (
+          <div className={styles.progressMessage}>
+            {loading && <FaSpinner className={styles.spinner} />}
+            <span>
+              {progressMessage}
+              {!loading && resourceUrl && (
+                <>
+                  <a
+                    href={
+                      visibility === 'private'
+                        ? resourceUrl
+                        : `/${typeContribution}s#${resourceUrl.split('/')[4]}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    here
+                  </a>
+                </>
+              )}
+            </span>
           </div>
         )}
 
-        {/* Visibility */}
-        <label className={styles.label}>
-          Visibility
-          <select
-            className={styles.input}
-            value={visibility}
-            onChange={(e) => setVisibility(e.target.value)}
-          >
-            <option value="public">Public (recommended)</option>
-            <option value="discoverable">Discoverable</option>
-            <option value="private">Private</option>
-          </select>
-          {visibility === 'private' && (
-            <i>Note: Private resources will not appear on CIROH Portal until they are made public or discoverable.</i>
-          )}
-        </label>
-
-        {/* hidden advanced editors */}
-        <div style={{ display: 'none' }}>
-          <CoveragesInput       onChange={handleCoveragesChange} />
-          <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
-        </div>
-
-        {/* Submit */}
-        <br className={styles.sectionDivider} />
-        <button
-          type={!token ? "button" : "submit"}
-          className={clsx(styles.button, styles.buttonPrimary)}
-          disabled={loading || loginInProgress}
-          onClick={!token ? handleAuthenticateWithFormSave : undefined}
-          title={!token ? 'Click to authenticate with HydroShare' : undefined}
-        >
-          {getSubmitButtonText()}
-          {token ? ''
-          :
-          <img className={styles.logoAuth} id="img-brand-logo" src="https://storage.googleapis.com/hydroshare-prod-static-media/static/img/logo-lg.cf4395806c8e.png" alt="CUAHSI HydroShare"></img>
-          }
-        </button>
-      </form>
-
-      {/* Feedback */}
-      <br className={styles.sectionDivider} />
-      {progressMessage && (
-        <div className={styles.progressMessage}>
-          {loading && <FaSpinner className={styles.spinner} />}
-          <span>
-            {progressMessage}
-            {!loading && resourceUrl && (
-              <>
-                <a
-                  href={
-                    visibility === 'private'
-                      ? resourceUrl
-                      : `/${typeContribution}s#${resourceUrl.split('/')[4]}`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  here
-                </a>
-              </>
-            )}
-          </span>
-        </div>
-      )}
-
-      {error && <div className={styles.errorMessage}>{error}</div>}
-    </div>
-  );
+        {error && <div className={styles.errorMessage}>{error}</div>}
+      </div>
+    );
   }
   // User is NOT authenticated with HydroShare
   else
