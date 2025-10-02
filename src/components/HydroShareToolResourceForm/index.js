@@ -414,6 +414,9 @@ export default function HydroShareResourceCreator({
   }
 
   /* ─────────── UI ─────────── */
+  // User is authenticated with HydroShare
+  if (token)
+  {
   return (
     <div className={styles.container}>
       {/* 0) HydroShare login button (shows “Authenticated” when already logged in) */}
@@ -569,4 +572,29 @@ export default function HydroShareResourceCreator({
       {error && <div className={styles.errorMessage}>{error}</div>}
     </div>
   );
+  }
+  // User is NOT authenticated with HydroShare
+  else
+  {
+    return (
+      <div className={styles.container}>
+
+        <div className={styles.form}>
+          <p>Login to HydroShare to add a {getTypeString(typeContribution)} resource.</p>
+          <button
+            type="button"
+            className={clsx(styles.button, styles.buttonPrimary)}
+            disabled={loginInProgress}
+            onClick={handleAuthenticateWithFormSave}
+            title="Click to authenticate with HydroShare"
+          >
+            {loginInProgress ? 'Redirecting…' : 'Authenticate with HydroShare'}
+            <img className={styles.logoAuth} id="img-brand-logo" src="https://storage.googleapis.com/hydroshare-prod-static-media/static/img/logo-lg.cf4395806c8e.png" alt="Authenticate with HydroShare"></img>
+          </button>
+        </div>
+
+        {error && <div className={styles.errorMessage}>{error}</div>}
+      </div>
+    );
+  }
 }
