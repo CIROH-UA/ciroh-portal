@@ -425,7 +425,7 @@ export default function HydroShareResourceCreator({
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* Title & URLs */}
+          {/* Title */}
           <label className={`${styles.label} required`}>
             {getTypeString(typeContribution)} Title
             <input
@@ -434,33 +434,6 @@ export default function HydroShareResourceCreator({
               onChange={(e) => setTitle(e.target.value)}
             />
           </label>
-
-          <label className={styles.label}>
-            {getTypeString(typeContribution)} URL
-            <input
-              className={styles.input}
-              type="url"
-              value={inputUrl}
-              onChange={(e) => setInputUrl(e.target.value)}
-              placeholder="https://example.org/landing-page"
-            />
-          </label>
-
-          {(typeContribution === 'app' || typeContribution === 'dataset') && (
-            <label className={styles.label}>
-              Documentation URL
-              <input
-                className={styles.input}
-                type="url"
-                value={docsUrl}
-                onChange={(e) => setDocsUrl(e.target.value)}
-                placeholder="https://example.org/docs"
-              />
-            </label>
-          )}
-
-          {/* Icon (S3) */}
-          <UploadDataS3 title="Thumbnail" acceptType="image/*" onChange={setIconFile} />
 
           {/* Abstract */}
           <label className={`${styles.label} required`}>
@@ -499,6 +472,34 @@ export default function HydroShareResourceCreator({
               </label>
               <FileNamesList />
             </div>
+          )}
+
+          {/* Icon (S3) */}
+          <UploadDataS3 title="Thumbnail" acceptType="image/*" onChange={setIconFile} />
+
+          {/* URLs */}
+          <label className={styles.label}>
+            {getTypeString(typeContribution)} URL
+            <input
+              className={styles.input}
+              type="url"
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              placeholder="https://example.org/landing-page"
+            />
+          </label>
+
+          {(typeContribution === 'app' || typeContribution === 'dataset') && (
+            <label className={styles.label}>
+              Documentation URL
+              <input
+                className={styles.input}
+                type="url"
+                value={docsUrl}
+                onChange={(e) => setDocsUrl(e.target.value)}
+                placeholder="https://example.org/docs"
+              />
+            </label>
           )}
 
           {/* Visibility */}
