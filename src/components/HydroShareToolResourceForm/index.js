@@ -33,6 +33,7 @@ export default function HydroShareResourceCreator({
 
   /* ─────────── state (NO username/password) ─────────── */
   const [title,    setTitle]    = useState('');
+  const [authors,  setAuthors]  = useState('');
   const [abstract, setAbstract] = useState('');
   const [keywords, setKeywords] = useState('');
   const [inputUrl, setInputUrl] = useState('');  // page / landing-page URL
@@ -119,6 +120,7 @@ export default function HydroShareResourceCreator({
         // Only restore if saved within last 30 minutes
         if (Date.now() - formState.timestamp < 30 * 60 * 1000) {
           setTitle(formState.title || '');
+          setAuthors(formState.authors || '');
           setAbstract(formState.abstract || '');
           setKeywords(formState.keywords || '');
           setInputUrl(formState.inputUrl || '');
@@ -216,6 +218,21 @@ export default function HydroShareResourceCreator({
     if (!title.trim())               { setError('Title is required.'); return; }
     if (abstract.trim().length < 150){ setError('Abstract must be at least 150 characters.'); return; }
 
+    const validAuthors = authors
+      .split(',')
+      .map(a => a.trim())
+      .filter(a => a.length > 0);
+    if (validAuthors.length === 0) {
+      setError('At least one author is required, separated by commas.');
+      return;
+    }
+
+    for(let i = 0; i < validAuthors.length; i++)
+    {
+      let author = validAuthors[i];
+      validAuthors[i] = {name: author};
+    }
+
     const validAgencies = fundingAgencies.filter(
       (fa) =>
         fa.agency_name?.trim() &&
@@ -309,13 +326,13 @@ export default function HydroShareResourceCreator({
       if (!resourceId) throw new Error('No resource ID returned');
       setProgressMessage(`Resource created (ID: ${resourceId})`);
 
-      /* funding agencies */
+      /* funding agencies and authors */
       const sciResp = await fetch(
         `${urlBase}/resource/${resourceId}/scimeta/elements/`,
         {
           method:  'PUT',
           headers: { ...authHeader, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ funding_agencies: validAgencies }),
+          body: JSON.stringify({ funding_agencies: validAgencies, creators: validAuthors }),
         },
       );
       if (sciResp.status !== 202) {
@@ -432,6 +449,16 @@ export default function HydroShareResourceCreator({
               className={styles.input}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+            />
+          </label>
+
+          {/* Author(s) */}
+          <label className={`${styles.label} required`}>
+            {getTypeString(typeContribution)} Author(s)
+            <input
+              className={styles.input}
+              value={authors}
+              onChange={(e) => setAuthors(e.target.value)}
             />
           </label>
 
