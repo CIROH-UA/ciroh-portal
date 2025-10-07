@@ -12,6 +12,11 @@ export default function Root({ children }) {
       ? (cf.hs_redirect_uri || `${window.location.origin}/auth/callback`)
       : 'http://localhost:3000/auth/callback';
 
+  const logoutRedirectUri = 
+    typeof window !== 'undefined'
+      ? (cf.hs_logout_redirect || `${window.location.origin}/`)
+      : 'http://localhost:3000/contribute';
+
   const scope = Array.isArray(cf.hs_scopes) ? cf.hs_scopes.join(' ') : (cf.hs_scopes || 'read write');
 
   const authConfig = {
@@ -20,6 +25,8 @@ export default function Root({ children }) {
     tokenEndpoint: cf.hs_token_url || 'https://www.hydroshare.org/o/token/',
     redirectUri,
     scope,
+    logoutEndpoint: cf.hs_logout_endpoint || 'https://www.hydroshare.org/accounts/logout/',
+    logoutRedirect: logoutRedirectUri,
     autoLogin: false,       // avoids dev-time redirect loops
     loginMethod: 'redirect',
     decodeToken: false,     // HS tokens may not be JWTs
