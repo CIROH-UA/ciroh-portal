@@ -53,6 +53,7 @@ export default function Presentations({ community_id = 4 }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState("row");
+  const [activeTab, setActiveTab] = useState("presentations");
 
   useEffect(() => {
     // Maps a resource list to the internal format, including custom metadata
@@ -260,6 +261,22 @@ export default function Presentations({ community_id = 4 }) {
   };
   const handleBlur = () => commitSearch(searchInput);
 
+  const getFilteredResourceCount = () => {
+    if (activeTab === "presentations") {
+      return filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+    } else {
+      return filteredCollections.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+    }
+  }
+
+  const getTotalResourceCount = () => {
+    if (activeTab === "presentations") {
+      return resources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+    } else {
+      return collections.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+    }
+  }
+
   if (error) {
     return <p style={{ color: "red" }}>Error: {error}</p>;
   }
@@ -268,12 +285,14 @@ export default function Presentations({ community_id = 4 }) {
   return (
     <div className={clsx(styles.wrapper)}>
       <div className={clsx("container", "margin-bottom--lg")}>
-        {/* counter */}
+        {/* Counter */}
         <div className={styles.counterRow}>
           Showing&nbsp;
-          <strong>{filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong>
+          <strong>{getFilteredResourceCount()}</strong>
           &nbsp;resources
-          {!loading && <> of <strong>{resources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong></>}
+          {!loading && (
+            <> of <strong>{getTotalResourceCount()}</strong></>
+          )}
         </div>
 
         {/* Search Form */}
@@ -341,11 +360,14 @@ export default function Presentations({ community_id = 4 }) {
         </div>
 
         {/* Tabs for "Presentations" and "Collections" */}
-        <Tabs className={styles.contributeTabs}>
+        <Tabs className={styles.contributeTabs}
+          defaultValue="presentations"
+          onChange={(value) => setActiveTab(value)}
+        >
           <TabItem
             value="presentations"
             label={
-              <span className={styles.tabLabel}>
+              <span className={styles.tabLabel} onClick={() => setActiveTab('presentations')}>
                 <FaListUl className={styles.tabIcon} /> Presentations
               </span>
             }
@@ -361,7 +383,7 @@ export default function Presentations({ community_id = 4 }) {
           <TabItem
             value="collections"
             label={
-              <span className={styles.tabLabel}>
+              <span className={styles.tabLabel} onClick={() => setActiveTab('collections')}>
                 <MdFilterList className={styles.tabIcon} /> Collections
               </span>
             }
@@ -375,8 +397,7 @@ export default function Presentations({ community_id = 4 }) {
         </Tabs>
 
         {/* empty */}
-        {!loading &&
-          filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length === 0 && (
+        {!loading && getFilteredResourceCount() === 0 && (
             <p className={styles.emptyMessage}>No&nbsp;Resources&nbsp;Found</p>
           )}
       </div>
