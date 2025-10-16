@@ -183,7 +183,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
       <div className={styles.counterRow}>
         Showing&nbsp;
         <strong>{filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong>
-        &nbsp;resources
+        &nbsp; { keyword == 'nwm_portal_app' ? 'Applications' : keyword == 'nwm_portal_module' ? 'Courses' : 'Resources' }
         {!loading && <> of <strong>{resources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong></>}
       </div>
 

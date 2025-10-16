@@ -289,7 +289,7 @@ export default function Presentations({ community_id = 4 }) {
         <div className={styles.counterRow}>
           Showing&nbsp;
           <strong>{getFilteredResourceCount()}</strong>
-          &nbsp;resources
+          &nbsp;Presentations
           {!loading && (
             <> of <strong>{getTotalResourceCount()}</strong></>
           )}

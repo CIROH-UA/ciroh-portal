@@ -284,7 +284,7 @@ export default function Datasets({ community_id = 4 }) {
         <div className={styles.counterRow}>
           Showing&nbsp;
           <strong>{getFilteredResourceCount()}</strong>
-          &nbsp;resources
+          &nbsp;Datasets
           {!loading && (
             <> of <strong>{getTotalResourceCount()}</strong></>
           )}
