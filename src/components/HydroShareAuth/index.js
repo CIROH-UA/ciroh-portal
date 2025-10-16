@@ -14,7 +14,7 @@ export default function HydroShareAuthButton() {
       gap: '4px' 
     }}>
       <span>
-        Authenticated with <img src={hydroShareLogoAuthenticated} alt="HydroShare" style={{ verticalAlign: 'middle' }} />
+        Authenticated with <img src={hydroShareLogoAuthenticated} alt="HydroShare" style={{ verticalAlign: 'middle', fontWeight: 'bold', fontSize: '13px', color: 'var(--ifm-color-primary)' }} />
       </span>
       <button 
         type="button" 
