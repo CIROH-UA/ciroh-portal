@@ -14,7 +14,7 @@ const SERVICES = [
     projects: 24,
     users: 69,
     Icon: SiAmazon ,
-    accent: "#232f3e",
+    accent: "#4bc1d3",
   },
   {
     id: "gcp",
@@ -22,7 +22,7 @@ const SERVICES = [
     projects: 63,
     users: 183,
     Icon: SiGooglecloud,
-    accent: "#4285f4",
+    accent: "#4bc1d3",
   },
   {
     id: "hpc",
@@ -30,7 +30,7 @@ const SERVICES = [
     projects: 57,
     users: 78,
     Icon: LuServer,
-    accent: "#1f8a70",
+    accent: "#4bc1d3",
   },
   {
     id: "nsf",
@@ -38,7 +38,7 @@ const SERVICES = [
     projects: 7,
     users: 75,
     Icon: PiGlobeHemisphereEastBold,
-    accent: "#c5941a",
+    accent: "#4bc1d3",
   },
 ];
 
