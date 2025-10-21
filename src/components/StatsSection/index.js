@@ -3,14 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import Counter from "./Counter";
 import styles from "./styles.module.css";
-import { fetchResourcesByKeyword } from "@site/src/components/HydroShareImporter";
+import { fetchResourcesByKeyword, getCommunityResources } from "@site/src/components/HydroShareImporter";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { FaRocket, FaBook, FaFlask, FaUserGraduate } from "react-icons/fa6";
 import HeroSection from "@site/src/components/HeroSection";
 
 const LOOKUP_TYPE_KEYWORD = {
     'products': 'nwm_portal_app',
-    'datasets': 'ciroh_portal_data',
+    'datasets': 'datasets',
     'courses': 'nwm_portal_module',
     'publications': 'publications',
 }
@@ -118,6 +118,17 @@ export default function StatsSection() {
               const count = resources.length;
               return { ...item, target: count };
             } catch (error) {
+              console.error(`[StatsSection] Failed to load ${item.label}`, error);
+              return item;
+            }
+          }
+          if (keyword ==='datasets'){
+            try{
+              const resources = await getCommunityResources();
+              const count = resources.length;
+              return { ...item, target: count };
+            }
+            catch (error){
               console.error(`[StatsSection] Failed to load ${item.label}`, error);
               return item;
             }
