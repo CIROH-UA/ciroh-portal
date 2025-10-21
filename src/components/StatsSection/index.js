@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Counter from "./Counter";
 import styles from "./styles.module.css";
 import { fetchResourcesByKeyword, getCommunityResources } from "@site/src/components/HydroShareImporter";
+import { fetchTotal } from "@site/src/components/Publications";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { FaRocket, FaBook, FaFlask, FaUserGraduate } from "react-icons/fa6";
 import HeroSection from "@site/src/components/HeroSection";
@@ -15,19 +16,6 @@ const LOOKUP_TYPE_KEYWORD = {
     'publications': 'publications',
 }
 
-async function fetchTotal(groupId, apiKey, params, keyStr = '') {
-  const path = keyStr ? `/collections/${keyStr}/items/top` : '/items/top';
-
-  const url = new URL(`https://api.zotero.org/groups/${groupId}${path}`);
-  Object.entries({ ...params, limit: 1 }).forEach(([k, v]) =>
-    url.searchParams.append(k, v),
-  );
-
-  const resp = await fetch(url.href, { headers: { 'Zotero-API-Key': apiKey } });
-  if (!resp.ok) return null;
-  const hdr = resp.headers.get('Total-Results');
-  return hdr ? Number(hdr) : null;
-}
 
 function usePrefersReducedMotion() {
   const [prefers, setPrefers] = useState(false);
@@ -62,36 +50,34 @@ export default function StatsSection() {
   const itemDefaults = useRef([
     {
       label: "Products",
-      target: 0,
+      target: 10,
       Icon: FaRocket,
       accent: "#4BC1D3",
       accentSoft: "#4BC1D3",
     },
     {
       label: "Datasets",
-      target: 0,
+      target: 12,
       Icon: FaFlask,
       accent: "#255F9C",
       accentSoft: "#255F9C",
     },
     {
       label: "Publications",
-      target: 0,
+      target: 100,
       Icon: FaBook,
       accent: "#4BC1D3",
       accentSoft: "#4BC1D3",
     },
     {
       label: "Courses",
-      target: 0,
+      target: 15,
       Icon: FaUserGraduate,
       accent: "#255F9C",
       accentSoft: "#255F9C",
     },
   ]);
-  const [items, setItems] = useState(() =>
-    itemDefaults.current.map((item) => ({ ...item, target: 0 })),
-  );
+  const [items, setItems] = useState(itemDefaults.current);
   const [startCounting, setStartCounting] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -101,13 +87,10 @@ export default function StatsSection() {
     siteConfig: { customFields },
   } = useDocusaurusContext();
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
-
+    setIsClient(true);
     (async () => {
       const updatedItems = await Promise.all(
         itemDefaults.current.map(async (item) => {
@@ -161,7 +144,7 @@ export default function StatsSection() {
     return () => {
       isMounted = false;
     };
-  }, [customFields]);
+  }, []);
 
   useEffect(() => {
     if (isVisible) return;
@@ -210,7 +193,7 @@ export default function StatsSection() {
       >
         <div className={styles.statsGrid}>
           {items.map(({ label, target, Icon, accent, accentSoft }, index) => {
-            const duration = 720 + index * 80;
+            const duration = 1800;
 
             return (
             <article
@@ -222,9 +205,6 @@ export default function StatsSection() {
               )}
               style={{ '--accent': accent, '--accent-soft': accentSoft, '--delay': index }}
             >
-             {/* <div className={styles.iconBadge} aria-hidden="true">
-                <Icon size={36} />
-              </div> */}
               <div className={styles.statContent}>
                <div className={styles.iconBadge} aria-hidden="true">
                   <Icon size={80} />
@@ -235,8 +215,6 @@ export default function StatsSection() {
                   duration={duration}
                   format={(n) => n.toLocaleString()}
                 />
-
-                {/* <span className={styles.statLabel}>{label}</span> */}
               </div>
               <div aria-hidden="true">
                 
