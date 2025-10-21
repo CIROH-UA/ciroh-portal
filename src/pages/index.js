@@ -5,6 +5,7 @@ import FrameworkHero from '@site/src/components/FrameworkHero';
 import FundingSection from '@site/src/components/FundingSection';
 import GeneralHomeSection from '@site/src/components/GeneralHomeSection';
 import StatsSection from '@site/src/components/StatsSection';
+import Services from '@site/src/components/Services';
 import PublicationsExampleLight from '@site/static/img/zotero_publications_light.png';
 import PublicationsExampleDark from '@site/static/img/zotero_publications_dark.png';
 import PortalAppExampleLight from '@site/static/img/portal_apps_light.png';
@@ -35,6 +36,7 @@ export default function Home() {
 
       <main>
         <StatsSection/>
+        <Services />
 
         <FundingSection
           title="Co­op­er­at­ive In­sti­tu­te for Re­search to Op­er­a­tions in Hy­dro­logy"
