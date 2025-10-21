@@ -198,7 +198,11 @@ export default function StatsSection() {
   }, [isVisible, prefersReducedMotion]);
 
   return (
-    <HeroSection>
+    <HeroSection
+      description="At CIROH, our team of researchers, hydrologists, 
+        and engineers is committed to advancing our understanding of hydrologic processes, 
+        improving operational hydrologic forecasting techniques and workflows."
+    >
       <div
         ref={sectionRef}
         className={clsx(styles.statsSection)}
