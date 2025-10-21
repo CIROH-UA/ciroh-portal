@@ -29,6 +29,34 @@ async function fetchTotal(groupId, apiKey, params, keyStr = '') {
   return hdr ? Number(hdr) : null;
 }
 
+function usePrefersReducedMotion() {
+  const [prefers, setPrefers] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return undefined;
+
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleChange = (event) => setPrefers(event.matches);
+
+    setPrefers(query.matches);
+    if (query.addEventListener) {
+      query.addEventListener("change", handleChange);
+    } else if (query.addListener) {
+      query.addListener(handleChange);
+    }
+
+    return () => {
+      if (query.removeEventListener) {
+        query.removeEventListener("change", handleChange);
+      } else if (query.removeListener) {
+        query.removeListener(handleChange);
+      }
+    };
+  }, []);
+
+  return prefers;
+}
+
 export default function StatsSection() {
   const sectionRef = useRef(null);
   const itemDefaults = useRef([
@@ -65,10 +93,17 @@ export default function StatsSection() {
     itemDefaults.current.map((item) => ({ ...item, target: 0 })),
   );
   const [startCounting, setStartCounting] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const {
     siteConfig: { customFields },
   } = useDocusaurusContext();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -118,11 +153,18 @@ export default function StatsSection() {
   }, [customFields]);
 
   useEffect(() => {
-    if (startCounting) return;
+    if (isVisible) return;
+
+    if (prefersReducedMotion) {
+      setStartCounting(true);
+      setIsVisible(true);
+      return undefined;
+    }
 
     const node = sectionRef.current;
     if (!node || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
       setStartCounting(true);
+      setIsVisible(true);
       return undefined;
     }
 
@@ -131,17 +173,18 @@ export default function StatsSection() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setStartCounting(true);
+            setIsVisible(true);
             observer.disconnect();
           }
         });
       },
-      { threshold: 0.35 },
+      { threshold: 0.2, rootMargin: "0px 0px -10% 0px" },
     );
 
     observer.observe(node);
 
     return () => observer.disconnect();
-  }, [startCounting]);
+  }, [isVisible, prefersReducedMotion]);
 
   return (
     <section
@@ -150,11 +193,18 @@ export default function StatsSection() {
       aria-label="Portal statistics"
     >
       <div className={styles.statsGrid}>
-        {items.map(({ label, target, Icon, accent, accentSoft }) => (
+        {items.map(({ label, target, Icon, accent, accentSoft }, index) => {
+          const duration = 720 + index * 80;
+
+          return (
           <article
             key={label}
-            className={styles.statCard}
-            style={{ '--accent': accent, '--accent-soft': accentSoft }}
+            className={clsx(
+              styles.statCard,
+              isClient && styles.statCardAnimated,
+              isClient && isVisible && styles.statCardVisible,
+            )}
+            style={{ '--accent': accent, '--accent-soft': accentSoft, '--delay': index }}
           >
             <div className={styles.iconBadge} aria-hidden="true">
               <Icon size={36} />
@@ -163,12 +213,14 @@ export default function StatsSection() {
               <Counter
                 target={target}
                 start={startCounting}
+                duration={duration}
                 format={(n) => n.toLocaleString()}
               />
               <span className={styles.statLabel}>{label}</span>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

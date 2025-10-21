@@ -40,9 +40,19 @@
   border-radius: 24px;
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.7));
   border: 1px solid rgba(255, 255, 255, 0.65);
-  /* box-shadow: 0 22px 50px rgba(15, 23, 42, 0.18); */
+  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.18);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
   overflow: hidden;
+}
+
+.statCardAnimated {
+  opacity: 0;
+  transform: translateY(32px) scale(0.96);
+}
+
+.statCardVisible {
+  animation: statCardReveal 0.75s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation-delay: calc(var(--delay) * 0.12s);
 }
 
 .statCard::before {
@@ -76,6 +86,7 @@
   background: linear-gradient(135deg, var(--accent), rgba(255, 255, 255, 0.3));
   color: #ffffff;
   box-shadow: 0 18px 32px rgba(15, 23, 42, 0.2);
+  animation: iconFloat 6s ease-in-out infinite;
 }
 
 .iconBadge svg {
@@ -178,4 +189,41 @@
 
 :global(html[data-theme='dark']) :local(.counter) {
   text-shadow: 0 16px 28px rgba(15, 23, 42, 0.65);
+}
+
+@keyframes statCardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(32px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes iconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statCardAnimated,
+  .iconBadge {
+    animation: none !important;
+  }
+
+  .statCardAnimated {
+    opacity: 1;
+    transform: none;
+  }
 }
