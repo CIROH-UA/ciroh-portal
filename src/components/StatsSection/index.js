@@ -199,7 +199,7 @@ export default function StatsSection() {
 
   return (
     <HeroSection
-      description="At CIROH, our team of researchers, hydrologists, 
+      description="Our team of researchers, hydrologists, 
         and engineers is committed to advancing our understanding of hydrologic processes, 
         improving operational hydrologic forecasting techniques and workflows."
     >
