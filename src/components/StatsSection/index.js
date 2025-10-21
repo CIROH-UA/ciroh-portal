@@ -6,7 +6,7 @@ import styles from "./styles.module.css";
 import { fetchResourcesByKeyword } from "@site/src/components/HydroShareImporter";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { FaRocket, FaBook, FaFlask, FaUserGraduate } from "react-icons/fa6";
-
+import HeroSection from "@site/src/components/HeroSection";
 
 const LOOKUP_TYPE_KEYWORD = {
     'products': 'nwm_portal_app',
@@ -187,41 +187,53 @@ export default function StatsSection() {
   }, [isVisible, prefersReducedMotion]);
 
   return (
-    <section
-      ref={sectionRef}
-      className={clsx(styles.statsSection)}
-      aria-label="Portal statistics"
-    >
-      <div className={styles.statsGrid}>
-        {items.map(({ label, target, Icon, accent, accentSoft }, index) => {
-          const duration = 720 + index * 80;
+    <HeroSection>
+      <div
+        ref={sectionRef}
+        className={clsx(styles.statsSection)}
+        aria-label="Portal statistics"
+      >
+        <div className={styles.statsGrid}>
+          {items.map(({ label, target, Icon, accent, accentSoft }, index) => {
+            const duration = 720 + index * 80;
 
-          return (
-          <article
-            key={label}
-            className={clsx(
-              styles.statCard,
-              isClient && styles.statCardAnimated,
-              isClient && isVisible && styles.statCardVisible,
-            )}
-            style={{ '--accent': accent, '--accent-soft': accentSoft, '--delay': index }}
-          >
-            <div className={styles.iconBadge} aria-hidden="true">
-              <Icon size={36} />
-            </div>
-            <div className={styles.statContent}>
-              <Counter
-                target={target}
-                start={startCounting}
-                duration={duration}
-                format={(n) => n.toLocaleString()}
-              />
-              <span className={styles.statLabel}>{label}</span>
-            </div>
-          </article>
-          );
-        })}
+            return (
+            <article
+              key={label}
+              className={clsx(
+                styles.statCard,
+                isClient && styles.statCardAnimated,
+                isClient && isVisible && styles.statCardVisible,
+              )}
+              style={{ '--accent': accent, '--accent-soft': accentSoft, '--delay': index }}
+            >
+             {/* <div className={styles.iconBadge} aria-hidden="true">
+                <Icon size={36} />
+              </div> */}
+              <div className={styles.statContent}>
+               <div className={styles.iconBadge} aria-hidden="true">
+                  <Icon size={80} />
+                </div>
+                <Counter
+                  target={target}
+                  start={startCounting}
+                  duration={duration}
+                  format={(n) => n.toLocaleString()}
+                />
+
+                {/* <span className={styles.statLabel}>{label}</span> */}
+              </div>
+              <div aria-hidden="true">
+                
+                <span className={styles.statLabel}>{label}</span>
+              </div>
+
+
+            </article>
+            );
+          })}
+        </div>
       </div>
-    </section>
+    </HeroSection>
   );
 }

@@ -5,6 +5,7 @@ import Counter from "../StatsSection/Counter";
 import { SiAmazon , SiGooglecloud } from "react-icons/si";
 import { LuServer } from "react-icons/lu";
 import { PiGlobeHemisphereEastBold } from "react-icons/pi";
+import HeroSection from "@site/src/components/HeroSection";
 
 const SERVICES = [
   {
@@ -104,15 +105,11 @@ export default function Services() {
   }, [prefersReducedMotion]);
 
   return (
-    <section ref={sectionRef} className={styles.servicesSection} aria-labelledby="services-heading">
-      <div className={styles.servicesIntro}>
-        <h2 id="services-heading">Research Infrastructure at Work</h2>
-        <p>
-          A glance at the platforms powering CIROH projects and the vibrant community of researchers who
-          rely on them daily.
-        </p>
-      </div>
+    <HeroSection 
+      description="We are committed to providing infrastructure support to CIROH consortium partners and members to advance their research. Our impact spans across various cloud platforms and resources."
+      background="secondary">
 
+    <section ref={sectionRef} className={styles.servicesSection} aria-labelledby="services-heading">
       <div className={styles.servicesGrid}>
         {SERVICES.map(({ id, title, projects, users, Icon, accent }, index) => (
           <article
@@ -145,5 +142,6 @@ export default function Services() {
         ))}
       </div>
     </section>
+  </HeroSection>
   );
 }
