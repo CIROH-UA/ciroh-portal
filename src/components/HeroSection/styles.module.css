@@ -5,8 +5,8 @@
   font-size: 1.5rem;
   margin-top: 1rem;
   margin-bottom: 4rem;
-  /* color: var(--ifm-color-primary); */
-  color: var(--ifm-color-secondary);
+  color: var(--ifm-color-primary);
+  /* color: var(--ifm-color-secondary); */
   
 }
 
@@ -74,10 +74,12 @@
 /* Background style classes */
 .primaryBackground {
   background-color: var(--ifm-background-color);
+  color: var(--ifm-color-primary);
 }
 
 .secondaryBackground {
   background-color: var(--ifm-background-color-secondary);
+  color: var(--ifm-color-secondary);
 }
 
 /* Fade-in animation */

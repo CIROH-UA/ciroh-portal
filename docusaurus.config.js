@@ -148,8 +148,8 @@ const config = {
             title: 'Quick Links',
             items: [
               {
-                label: 'Applications',
-                href: '/apps'
+                label: 'Products',
+                href: '/products'
               },
               {
                 label: 'Datasets',

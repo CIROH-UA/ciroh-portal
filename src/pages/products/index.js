@@ -26,15 +26,15 @@ export default function ProductsPage() {
   const contributeUrl = useBaseUrl('/contribute?current-contribution=apps');
   const defaultImage = 'https://ciroh-portal-static-data.s3.us-east-1.amazonaws.com/app_placeholder.png'
   return (
-    <Layout title="Applications" description="CIROH Applications">
+    <Layout title="Products" description="CIROH Products">
     
       <div className="margin-top--lg">
         <Header 
-            title="Web Applications" 
+            title="Products" 
             tagline="En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives."
             buttons={[
-              { label: "Add your App", href: contributeUrl, primary: true },
-              { label: "Develop Your App", href: developUrl }
+              { label: "Add your Product", href: contributeUrl, primary: true },
+              { label: "Develop a Product", href: developUrl }
             ]}
         />
       </div>

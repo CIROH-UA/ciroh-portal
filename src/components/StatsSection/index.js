@@ -53,7 +53,7 @@ export default function StatsSection() {
       target: 10,
       Icon: FaRocket,
       accent: "#4BC1D3",
-      accentSoft: "#4BC1D3",
+      accentSoft: "#6a7779ff",
     },
     {
       label: "Datasets",
