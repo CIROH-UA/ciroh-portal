@@ -4,7 +4,8 @@ import Layout from '@theme/Layout';
 import FrameworkHero from '@site/src/components/FrameworkHero';
 import FundingSection from '@site/src/components/FundingSection';
 import GeneralHomeSection from '@site/src/components/GeneralHomeSection';
-
+import StatsSection from '@site/src/components/StatsSection';
+import Services from '@site/src/components/Services';
 import PublicationsExampleLight from '@site/static/img/zotero_publications_light.png';
 import PublicationsExampleDark from '@site/static/img/zotero_publications_dark.png';
 import PortalAppExampleLight from '@site/static/img/portal_apps_light.png';
@@ -49,10 +50,12 @@ export default function Home() {
           ]}
         />
 
+        <StatsSection/>
+        <Services />
 
-        {/* Applications Section */}
+       {/* Applications Section */}
         <GeneralHomeSection
-          title="Empower Your Projects with Collaborative Web Applications"
+          title="Empower Your Projects with Collaborative Products"
           description="Leverage innovative web apps built in partnership with NOAA’s hydrologic research. Enhance water resource management, forecasting, and analysis through interactive tools—ensuring broad accessibility and real-time insights."
           lightImage={PortalAppExampleLight}
           darkImage={PortalAppExampleDark}

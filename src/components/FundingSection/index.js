@@ -22,6 +22,7 @@ export default function FundingSection({
       <div className={styles.container}>
         <div className={styles.currentAppSection}>
           <div className={styles.headerContainer}>
+            <h1 className={styles.title}>Our Partnership</h1>
             <h3 className={styles.description}>{description}</h3>
 
             {images && images.length > 0 && (

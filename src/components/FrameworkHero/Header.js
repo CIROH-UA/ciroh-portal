@@ -60,7 +60,7 @@ export default function Header({ title,image,  tagline, buttons }) {
         <div  className={clsx('hero__subtitle',styles.heroSubtitle, styles.typewriterContainer)}>
           <TypewriterText
             texts={[
-              'Web Applications',
+              'Products',
               'Datasets',
               'Docs',
               'Publications',

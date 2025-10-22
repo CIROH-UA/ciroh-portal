@@ -24,7 +24,7 @@ let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
 /* ----- helper: read “Total-Results” header -------------------------------- */
-async function fetchTotal(groupId, apiKey, params, keyStr = '') {
+export async function fetchTotal(groupId, apiKey, params, keyStr = '') {
   const path = keyStr ? `/collections/${keyStr}/items/top` : '/items/top';
 
   const url = new URL(`https://api.zotero.org/groups/${groupId}${path}`);

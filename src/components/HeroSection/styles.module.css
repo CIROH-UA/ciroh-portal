@@ -74,10 +74,12 @@
 /* Background style classes */
 .primaryBackground {
   background-color: var(--ifm-background-color);
+  color: var(--ifm-color-primary);
 }
 
 .secondaryBackground {
   background-color: var(--ifm-background-color-secondary);
+  color: var(--ifm-color-secondary);
 }
 
 /* Fade-in animation */
@@ -91,3 +93,4 @@
     transform: translateY(0);
   }
 }
+

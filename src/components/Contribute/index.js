@@ -70,13 +70,13 @@ export default function Contribute({ title }) {
                 value="apps" 
                 label={
                   <span className={tabStyles.tabLabel}>
-                    <IoAppsSharp  className={tabStyles.tabIcon} /> Apps
+                    <IoAppsSharp  className={tabStyles.tabIcon} /> Products
                   </span>
                 }
                 default
               >
               <HydroShareContribute
-                name="Apps"
+                name="Products"
                 type="app"
                 keyword="nwm_portal_app"
                 icon="🕹️"

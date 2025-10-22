@@ -14,7 +14,7 @@ import styles from './HydroShareResourceCreator.module.css';
 
 const getTypeString = (type) => {
   switch (type) {
-    case 'app':          return 'Application';
+    case 'app':          return 'Product';
     case 'dataset':      return 'Dataset';
     case 'presentation': return 'Presentation';
     case 'course':       return 'Course';
