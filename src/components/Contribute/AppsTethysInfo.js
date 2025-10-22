@@ -4,7 +4,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 export default function AppsTethysInfo() {
   const developUrl = useBaseUrl('/develop');
-  const hydroshareUrl = useBaseUrl('/hydroshare');
   return (
     <>
       <hr className={Appstyles.sectionDivider} />
