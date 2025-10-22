@@ -4,7 +4,12 @@ import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { fetchResource, fetchResourcesByKeyword, getCuratedIds,fetchResourceCustomMetadata, joinExtraResources } from "../HydroShareImporter";
+import { 
+  fetchResourcesByKeyword, 
+  fetchResourceCustomMetadata, 
+  joinExtraResources, 
+  fetchRawCuratedResources 
+} from "../HydroShareImporter";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
@@ -87,28 +92,12 @@ export default function Presentations({ community_id = 4 }) {
       return mapping;
     }
 
-    // Fetch the curated resources first (from the "parent" resource).
-    const fetchRawCuratedResources = async () => {
-      try {
-        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-
-        const curatedList = await Promise.all(curatedIds.map(async (id) => {
-          const resource = await fetchResource(id);
-          return resource;
-        }));
-
-        return curatedList;
-      } catch (err) {
-        console.error("Error fetching curated resources:", err);
-        return [];
-      }
-    };
 
     // Fetch all resources by keyword and/or curation
     const fetchAll = async () => {
       try {
         const [rawCuratedResources, invKeywordResources, invCollections] = await Promise.all([
-          fetchRawCuratedResources(), // get array of curated resource IDs
+          fetchRawCuratedResources(CURATED_PARENT_ID), // get array of curated resource IDs
           fetchResourcesByKeyword("ciroh_portal_presentation"), // Chronological order
           fetchResourcesByKeyword("ciroh_portal_pres_collections"),
         ]);

@@ -107,7 +107,7 @@ export default function Services() {
   return (
     <HeroSection 
       description="We are committed to providing infrastructure support to CIROH consortium partners and members to advance their research. Our impact spans across various cloud platforms and resources."
-      background="secondary"
+      background="primary"
     >
 
     <section ref={sectionRef} className={styles.servicesSection} aria-labelledby="services-heading">

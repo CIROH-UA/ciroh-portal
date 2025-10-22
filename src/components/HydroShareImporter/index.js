@@ -178,4 +178,30 @@ async function fetchResourceCustomMetadata(resourceId) {
   return data;
 }
 
-export {getCuratedIds, fetchResource, fetchResourcesByGroup, fetchResourcesByKeyword, getCommunityResources, fetchResourceCustomMetadata, joinExtraResources};
+// Fetch the curated resources first (from the "parent" resource).
+async function fetchRawCuratedResources(curated_parent_id) {
+  try {
+    const curatedIds = await getCuratedIds(curated_parent_id);
+
+    const curatedList = await Promise.all(curatedIds.map(async (id) => {
+      const resource = await fetchResource(id);
+      return resource;
+    }));
+
+    return curatedList;
+  } catch (err) {
+    console.error("Error fetching curated resources:", err);
+    return [];
+  }
+};
+
+export {
+  getCuratedIds, 
+  fetchResource, 
+  fetchResourcesByGroup, 
+  fetchResourcesByKeyword, 
+  getCommunityResources, 
+  fetchResourceCustomMetadata, 
+  joinExtraResources, 
+  fetchRawCuratedResources
+};

@@ -35,9 +35,6 @@ export default function Home() {
       <FrameworkHero />
 
       <main>
-        <StatsSection/>
-        <Services />
-
         <FundingSection
           title="Co­op­er­at­ive In­sti­tu­te for Re­search to Op­er­a­tions in Hy­dro­logy"
           description="CIROH en­hances U.S. hy­dro­lo­gic­al fore­cast­ing in col­lab­or­a­tion with NOAA, fo­cus­ing on wa­ter events and qual­ity through a con­sor­ti­um of di­verse in­sti­tu­tions. Ex­plore this portal for re­search pub­lic­a­tions, ap­plic­a­tions, and data­sets from the NOAA and CIROH com­munity of sci­ent­ists."
@@ -52,7 +49,11 @@ export default function Home() {
             },
           ]}
         />
-        {/* Applications Section */}
+
+        <StatsSection/>
+        <Services />
+
+       {/* Applications Section */}
         <GeneralHomeSection
           title="Empower Your Projects with Collaborative Web Applications"
           description="Leverage innovative web apps built in partnership with NOAA’s hydrologic research. Enhance water resource management, forecasting, and analysis through interactive tools—ensuring broad accessibility and real-time insights."
