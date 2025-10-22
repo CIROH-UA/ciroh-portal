@@ -55,7 +55,7 @@ export default function Home() {
 
        {/* Applications Section */}
         <GeneralHomeSection
-          title="Empower Your Projects with Collaborative Web Applications"
+          title="Empower Your Projects with Collaborative Products"
           description="Leverage innovative web apps built in partnership with NOAA’s hydrologic research. Enhance water resource management, forecasting, and analysis through interactive tools—ensuring broad accessibility and real-time insights."
           lightImage={PortalAppExampleLight}
           darkImage={PortalAppExampleDark}

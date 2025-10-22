@@ -105,7 +105,8 @@ export default function Services() {
   }, [prefersReducedMotion]);
 
   return (
-    <HeroSection 
+    <HeroSection
+      title="Our Services" 
       description="We are committed to providing infrastructure support to CIROH consortium partners and members to advance their research. Our impact spans across various cloud platforms and resources."
       background="primary"
     >

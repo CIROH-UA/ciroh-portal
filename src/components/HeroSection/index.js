@@ -4,6 +4,7 @@ import styles from './styles.module.css';
 
 
 export default function HeroSection({
+  title,
   description,
   background = 'primary',
   children,
@@ -19,6 +20,7 @@ export default function HeroSection({
       <div className={styles.container}>
         <div className={styles.currentAppSection}>
           <div className={styles.headerContainer}>
+            <h1 className={styles.title}>{title}</h1>
             <h3 className={styles.description}>{description}</h3>
             {children}
           </div>
