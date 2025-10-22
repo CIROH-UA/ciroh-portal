@@ -4,7 +4,7 @@ import { FaThLarge, FaBars } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { fetchResourcesByKeyword, fetchResourceMetadata, fetchResourceCustomMetadata } from "@site/src/components/HydroShareImporter";
+import { fetchResourcesByKeyword, fetchResourcesBySearch, fetchResourceMetadata, fetchResourceCustomMetadata } from "@site/src/components/HydroShareImporter";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
@@ -20,8 +20,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   // Search State
   const [searchInput,    setSearchInput]    = useState('');
   const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('last-updated');
+  const [sortType,       setSortType]       = useState('modified');
   const [sortDirection,  setSortDirection]  = useState('desc');
+  const [selectedAuthor, setSelectedAuthor] = useState('all-authors');
 
   const { colorMode } = useColorMode(); // Get the current theme
   const PLACEHOLDER_ITEMS = 10;
@@ -42,14 +43,68 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
   
   const [resources, setResources] = useState(initialPlaceholders);
+  const [initialAuthors, setInitialAuthors] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("row");
   useEffect(() => {
     (async () => {
       try {
+        let resourceList = undefined;
+
         // Start data fetching (while placeholders are already rendered)
-        const resourceList = await fetchResourcesByKeyword(keyword);
+        // Search bar has text
+        if (filterSearch.trim() !== '')
+        {
+          // For search, use the search API with server-side sorting
+          const ascending = sortDirection === 'asc' ? true : false;
+          const author = selectedAuthor !== 'all-authors' ? selectedAuthor : undefined;
+          resourceList = await fetchResourcesBySearch(keyword, filterSearch, ascending, sortType, author);
+        } 
+        else
+        // Search bar does NOT have text
+        {
+          // For no search, get all resources and apply client-side filtering/sorting
+          resourceList = await fetchResourcesByKeyword(keyword);
+          
+          // Apply author filtering if needed
+          if (selectedAuthor !== 'all-authors') {
+            resourceList = resourceList.filter(res => 
+              res.authors && res.authors.some(author => 
+                author.split(',').reverse().join(' ').trim() === selectedAuthor
+              )
+            );
+          }
+          
+          // Apply client-side sorting
+          resourceList = resourceList.sort((a, b) => {
+            let comparison = 0;
+            
+            switch (sortType) {
+              case 'modified':
+                comparison = a.date_last_updated.localeCompare(b.date_last_updated);
+                break;
+              case 'created':
+                comparison = a.date_created.localeCompare(b.date_created);
+                break;
+              case 'title':
+                comparison = a.resource_title.localeCompare(b.resource_title);
+                break;
+              case 'author':
+                const aAuthors = a.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
+                const bAuthors = b.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
+                comparison = aAuthors.localeCompare(bAuthors);
+                break;
+              default:
+                comparison = 0;
+                break;
+            }
+            
+            // Apply sort direction
+            return sortDirection === 'asc' ? comparison : -comparison;
+          });
+        }
+
         const mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
           title: res.resource_title,
@@ -70,6 +125,23 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         // Replace placeholders with fetched data
         setResources(mappedList);
         setLoading(false);
+
+        // Set initial authors only on the first load (the values used for the author filter dropdown)
+        if (filterSearch.trim() === '' && initialAuthors.length === 0) {
+          const authorSet = new Set();
+          mappedList.forEach(resource => {
+            if (resource.authors) {
+              // Split authors by 🖊️ and add each one
+              resource.authors.split(' 🖊️ ').forEach(author => {
+                const trimmedAuthor = author.trim();
+                if (trimmedAuthor) {
+                  authorSet.add(trimmedAuthor);
+                }
+              });
+            }
+          });
+          setInitialAuthors(Array.from(authorSet).sort());
+        }
 
         // Fetch metadata for each resource and update them individually
         for (let res of mappedList) {
@@ -98,64 +170,17 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         setLoading(false);
       }
     })();
-  }, [keyword]);
+  }, [keyword, filterSearch, sortDirection, sortType, selectedAuthor]);
 
   if (error) {
     return <p style={{ color: "red" }}>Error: {error}</p>;
   }
 
-  // Get filtered and sorted resources based on search and sort options
-  const filteredResources = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = resources.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
+  // Use the stored initial authors (set only once during first load)
+  const uniqueAuthors = initialAuthors;
 
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [resources, filterSearch, sortType, sortDirection]);
+  // Resources are pre-processed in useEffect, so just return them
+  const displayResources = resources;
 
   /* search helpers */
   const commitSearch = q => {
@@ -182,9 +207,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         {/* counter */}
       <div className={styles.counterRow}>
         Showing&nbsp;
-        <strong>{filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong>
+        <strong>{displayResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong>
         &nbsp; { keyword == 'nwm_portal_app' ? 'Products' : keyword == 'nwm_portal_module' ? 'Courses' : 'Resources' }
-        {!loading && <> of <strong>{resources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong></>}
+        {!loading && <> of <strong>{displayResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong></>}
       </div>
 
         {/* Search Form */}
@@ -205,14 +230,25 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
           />
 
           <select
+            value={selectedAuthor}
+            onChange={e => setSelectedAuthor(e.target.value)}
+            className={styles.sortSelect}
+          >
+            <option value="all-authors">All Authors</option>
+            {uniqueAuthors.map(author => (
+              <option key={author} value={author}>{author}</option>
+            ))}
+          </select>
+
+          <select
             value={sortType}
             onChange={e => setSortType(e.target.value)}
             className={styles.sortSelect}
           >
-            <option value="last-updated">Last Updated</option>
-            <option value="date-created">Date Created</option>
+            <option value="modified">Last Updated</option>
+            <option value="created">Date Created</option>
             <option value="title">Title</option>
-            <option value="authors">Authors</option>
+            <option value="author">Authors</option>
           </select>
 
           <button
@@ -253,14 +289,14 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
 
         {/* Resources */}
         {view === "grid" ? (
-          <HydroShareResourcesTiles resources={filteredResources} />
+          <HydroShareResourcesTiles resources={displayResources} />
         ) : (
-          <HydroShareResourcesRows resources={filteredResources} />
+          <HydroShareResourcesRows resources={displayResources} />
         )}
 
         {/* empty */}
         {!loading &&
-          filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length === 0 && (
+          displayResources.filter(r => !r.resource_id.startsWith('placeholder-')).length === 0 && (
             <p className={styles.emptyMessage}>No&nbsp;Resources&nbsp;Found</p>
           )}
       </div>
