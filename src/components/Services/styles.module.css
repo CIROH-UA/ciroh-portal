@@ -61,6 +61,7 @@
   margin: 0;
   font-size: clamp(1.05rem, 2vw, 1.2rem);
   font-weight: 600;
+  padding: 10px;
   color: var(--ifm-font-color-secondary);
 }
 

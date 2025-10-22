@@ -8,6 +8,7 @@ import { fetchTotal } from "@site/src/components/Publications";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import { FaRocket, FaBook, FaFlask, FaUserGraduate } from "react-icons/fa6";
 import HeroSection from "@site/src/components/HeroSection";
+import Link from "@docusaurus/Link";
 
 const LOOKUP_TYPE_KEYWORD = {
     'products': 'nwm_portal_app',
@@ -54,6 +55,7 @@ export default function StatsSection() {
       Icon: FaRocket,
       accent: "#4BC1D3",
       accentSoft: "#6a7779ff",
+      href: "/products",
     },
     {
       label: "Datasets",
@@ -61,6 +63,7 @@ export default function StatsSection() {
       Icon: FaFlask,
       accent: "#255F9C",
       accentSoft: "#255F9C",
+      href: "/datasets",
     },
     {
       label: "Publications",
@@ -68,6 +71,7 @@ export default function StatsSection() {
       Icon: FaBook,
       accent: "#4BC1D3",
       accentSoft: "#4BC1D3",
+      href: "/publications",
     },
     {
       label: "Courses",
@@ -75,6 +79,7 @@ export default function StatsSection() {
       Icon: FaUserGraduate,
       accent: "#255F9C",
       accentSoft: "#255F9C",
+      href: "/courses",
     },
   ]);
   const [items, setItems] = useState(itemDefaults.current);
@@ -192,37 +197,40 @@ export default function StatsSection() {
         aria-label="Portal statistics"
       >
         <div className={styles.statsGrid}>
-          {items.map(({ label, target, Icon, accent, accentSoft }, index) => {
+          {items.map(({ label, target, Icon, accent, accentSoft, href }, index) => {
             const duration = 1800;
 
             return (
-            <article
-              key={label}
-              className={clsx(
-                styles.statCard,
-                isClient && styles.statCardAnimated,
-                isClient && isVisible && styles.statCardVisible,
-              )}
-              style={{ '--accent': accent, '--accent-soft': accentSoft, '--delay': index }}
-            >
-              <div className={styles.statContent}>
-               <div className={styles.iconBadge} aria-hidden="true">
-                  <Icon size={80} />
-                </div>
-                <Counter
-                  target={target}
-                  start={startCounting}
-                  duration={duration}
-                  format={(n) => n.toLocaleString()}
-                />
-              </div>
-              <div aria-hidden="true">
-                
-                <span className={styles.statLabel}>{label}</span>
-              </div>
-
-
-            </article>
+              <Link
+                key={label}
+                to={href}
+                className={styles.statCardLink}
+                aria-label={`${label} resources`}
+              >
+                <article
+                  className={clsx(
+                    styles.statCard,
+                    isClient && styles.statCardAnimated,
+                    isClient && isVisible && styles.statCardVisible,
+                  )}
+                  style={{ '--accent': accent, '--accent-soft': accentSoft, '--delay': index }}
+                >
+                  <div className={styles.statContent}>
+                    <div className={styles.iconBadge} aria-hidden="true">
+                      <Icon size={80} />
+                    </div>
+                    <Counter
+                      target={target}
+                      start={startCounting}
+                      duration={duration}
+                      format={(n) => n.toLocaleString()}
+                    />
+                  </div>
+                  <div aria-hidden="true">
+                    <span className={styles.statLabel}>{label}</span>
+                  </div>
+                </article>
+              </Link>
             );
           })}
         </div>
