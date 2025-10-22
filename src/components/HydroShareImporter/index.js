@@ -166,6 +166,79 @@ async function fetchResourcesByKeyword(keyword) {
   return data.results;
 }
 
+/**
+ * Fetch resources from HydroShare based on search criteria.
+ * @param {string} keyword  - The keyword (subject) to use for the api request
+ * @param {string} searchText - The text to look for in all the resource fields
+ * @param {boolean} ascending - Whether to sort results in ascending order (true) or descending order (false)
+ * @param {string} sortBy - The field to sort by. One of 'title', 'author', 'created', 'modified'
+ * @param {string} author - The author to filter by
+ * @returns {Promise<Array>} Array of resource objects
+ */
+async function fetchResourcesBySearch(keyword, searchText, ascending=false, sortBy=undefined, author=undefined) {
+  // API Url with query parameters
+  let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent([keyword])}`;
+
+  // Add sort order parameter
+  if (ascending) {
+    url += `&asc=1`;
+  } else {
+    url += `&asc=-1`;
+  }
+
+  // Add sort parameter if provided
+  if (sortBy !== undefined) {
+    url += `&sort=${encodeURIComponent(sortBy)}`;
+  }
+
+  // Convert author name from "First Middle Last" to "Last, First Middle"
+  if (author !== undefined) {
+    const nameParts = author.split(' ');
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    author = `${lastName}, ${firstName}`;
+  }
+
+  // Add filter parameter
+  const filter = {
+    author: [author].filter(a => a !== undefined),
+    subject: [keyword],
+  };
+
+  url += `&filter=${encodeURIComponent(JSON.stringify(filter))}`;
+
+  // Fetch data from the API
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Error fetching resources (status: ${response.status})`);
+  }
+  const data = await response.json();
+
+  // Put resources into a corrected format
+  let resources = JSON.parse(data.resources);
+  let resourcesCorrected = [];
+
+  for (let i = 0;i < resources.length;i++)
+  {
+    let resource = resources[i];
+    let resourceCorrected = {
+      resource_id: resource.short_id,
+      resource_title: resource.title,
+      authors: resource.authors,
+      resource_type: resource.type,
+      resource_url: 'http://www.hydroshare.org' + resource.link,
+      abstract: resource.abstract,
+      date_created: resource.created,
+      date_last_updated: resource.modified,
+    };
+
+    resourcesCorrected.push(resourceCorrected);
+  }
+
+  // Return the corrected resources
+  return resourcesCorrected;
+}
+
 async function fetchResourceCustomMetadata(resourceId) {
   const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/custom/`;
   const response = await fetch(url);
@@ -178,4 +251,4 @@ async function fetchResourceCustomMetadata(resourceId) {
   return data;
 }
 
-export {getCuratedIds, fetchResource, fetchResourcesByGroup, fetchResourcesByKeyword, getCommunityResources, fetchResourceCustomMetadata, joinExtraResources};
+export {getCuratedIds, fetchResource, fetchResourcesByGroup, fetchResourcesByKeyword, fetchResourcesBySearch, getCommunityResources, fetchResourceCustomMetadata, joinExtraResources};
