@@ -28,7 +28,7 @@
   
   .title {
     font-size: 48px;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     color: var(--ifm-font-color-secondary);
   }
 
@@ -45,7 +45,7 @@
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 3rem 0 3rem; 
+    padding: 2rem 0 3rem; 
   }
   
   .primaryBackground {

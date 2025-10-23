@@ -5,15 +5,15 @@
     text-align: center;
     overflow: hidden;
     color: var(--ifm-color-primary);
-    padding: 0rem 0 2rem;
+    padding: 0rem 0 1rem;
   }
   .heroImage{
     display: block;
     margin: 0 auto;
     width: 100%;
-    height: 300px;
+    height: 280px;
     object-fit: contain;
-    padding: 40px 40px 10px 40px;
+    padding: 30px 30px 10px 30px;
   }
   
   .heroContainer {
@@ -27,8 +27,8 @@
     color: var(--ifm-color-secondary);
   }
   .heroSubtitle {
-    font-weight: 700;
-    margin-bottom: 3rem;
+    /* font-weight: 700; */
+    /* margin-bottom: 3rem; */
     color: var(--ifm-color-primary);
   }
   
@@ -174,11 +174,11 @@
   
   /* Optional: style the container around the typed text */
   .typewriterContainer {
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin: 0.5rem 0;
     font-weight: bolder;
-    color: var(--ifm-color-primary)
-    
+    /* color: var(--ifm-color-secondary); */
+    color: var(--ifm-color-primary-lightest);
   }
 
 

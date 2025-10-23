@@ -6,8 +6,8 @@
 
 .statsSection {
   position: relative;
-  margin: clamp(2rem, 5vw, 4rem) auto;
-  padding: clamp(2.5rem, 6vw, 4rem);
+  /* margin: clamp(2rem, 5vw, 4rem) auto; */
+  padding: clamp(2.5rem, 6vw, 3rem);
   max-width: 1400px;
   width: 100%;
   overflow: hidden;
