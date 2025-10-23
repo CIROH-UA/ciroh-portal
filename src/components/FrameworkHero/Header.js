@@ -18,12 +18,12 @@ export default function Header({ title,image,  tagline, buttons }) {
         >
           <defs>
             {/* Light theme gradient */}
-            <linearGradient id="wave-gradient-light" gradientTransform="rotate(45)">
+            <linearGradient id="wave-gradient-dark" gradientTransform="rotate(45)">
               <stop offset="5%" stopColor="#02a9c173" />
               <stop offset="35%" stopColor="#02a9c173" />
             </linearGradient>
             {/* Dark theme gradient */}
-            <linearGradient id="wave-gradient-dark" gradientTransform="rotate(45)">
+            <linearGradient id="wave-gradient-light" gradientTransform="rotate(45)">
               <stop offset="5%" stopColor="#255f9c" />
               <stop offset="35%" stopColor="#255f9c" />
             </linearGradient>
@@ -55,7 +55,7 @@ export default function Header({ title,image,  tagline, buttons }) {
           {title}
         </Heading>
 
-        <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p>
+        {/* <p className={clsx('hero__subtitle', styles.heroSubtitle)}>{tagline}</p> */}
                 
         <div  className={clsx('hero__subtitle',styles.heroSubtitle, styles.typewriterContainer)}>
           <TypewriterText
