@@ -4,7 +4,7 @@ import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { fetchResource, fetchResourcesByKeyword, getCuratedIds,fetchResourceCustomMetadata, joinExtraResources } from "../HydroShareImporter";
+import { fetchResource, fetchResourcesByKeyword, fetchResourcesBySearch, getCuratedIds,fetchResourceCustomMetadata, joinExtraResources } from "../HydroShareImporter";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
@@ -24,7 +24,7 @@ export default function Presentations({ community_id = 4 }) {
   // Search State
   const [searchInput,    setSearchInput]    = useState('');
   const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('last-updated');
+  const [sortType,       setSortType]       = useState('modified');
   const [sortDirection,  setSortDirection]  = useState('desc');
 
   const { colorMode } = useColorMode(); // Get the current theme
@@ -54,6 +54,24 @@ export default function Presentations({ community_id = 4 }) {
   const [error, setError] = useState(null);
   const [view, setView] = useState("row");
   const [activeTab, setActiveTab] = useState("presentations");
+
+  // Helper function to determine if search is active
+  const usingSearch = () => filterSearch.trim() !== '';
+
+  // Helper function to search within a raw resource
+  const searchRawResource = (resource, searchTerm) => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const searchFields = [
+      resource.resource_title,
+      resource.abstract,
+      resource.authors.join(' '),
+      resource.date_created,
+      resource.date_last_updated,
+    ];
+    return searchFields.some(field => 
+      field?.toLowerCase().includes(searchTermLower)
+    );
+  };
 
   useEffect(() => {
     // Maps a resource list to the internal format, including custom metadata
@@ -107,14 +125,52 @@ export default function Presentations({ community_id = 4 }) {
     // Fetch all resources by keyword and/or curation
     const fetchAll = async () => {
       try {
-        const [rawCuratedResources, invKeywordResources, invCollections] = await Promise.all([
+        // Search parameters
+        const ascending = sortDirection === 'asc';
+
+        // Retrieve resources
+        let [rawCuratedResources, invKeywordResources, invCollections] = await Promise.all([
           fetchRawCuratedResources(), // get array of curated resource IDs
-          fetchResourcesByKeyword("ciroh_portal_presentation"), // Chronological order
-          fetchResourcesByKeyword("ciroh_portal_pres_collections"),
+          fetchResourcesBySearch("ciroh_portal_presentation", filterSearch, ascending, sortType),
+          fetchResourcesBySearch("ciroh_portal_pres_collections", filterSearch, ascending, sortType),
         ]);
+        
+        // Apply search filtering to curated resources
+        if (usingSearch()) {
+          rawCuratedResources = rawCuratedResources.filter(res => searchRawResource(res, filterSearch));
+        }
+
         const rawKeywordResources = invKeywordResources.reverse(); // Reverse chronological order
         const rawCollections = invCollections.reverse();
-        const rawResources = joinExtraResources(rawKeywordResources, rawCuratedResources); // Merge ensures backwards compatibility for presentations predating the keyword
+        let rawResources = joinExtraResources(rawKeywordResources, rawCuratedResources); // Merge ensures backwards compatibility for presentations predating the keyword
+        
+        // Apply client-side sorting so curated resources are in the correct order
+        rawResources = rawResources.sort((a, b) => {
+          let comparison = 0;
+          
+          switch (sortType) {
+            case 'modified':
+              comparison = a.date_last_updated.localeCompare(b.date_last_updated);
+              break;
+            case 'created':
+              comparison = a.date_created.localeCompare(b.date_created);
+              break;
+            case 'title':
+              comparison = a.resource_title.localeCompare(b.resource_title);
+              break;
+            case 'author':
+              const aAuthors = a.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
+              const bAuthors = b.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
+              comparison = aAuthors.localeCompare(bAuthors);
+              break;
+            default:
+              comparison = 0;
+              break;
+          }
+          
+          // Apply sort direction
+          return sortDirection === 'asc' ? comparison : -comparison;
+        });
 
         // Map the full resource lists to your internal format (with custom metadata)
         const mappedResources = await mapWithCustomMetadata(rawResources);
@@ -135,113 +191,7 @@ export default function Presentations({ community_id = 4 }) {
 
     // Kick off fetch
     fetchAll();
-  }, [community_id]);
-
-  // Get filtered and sorted resources based on search and sort options
-  const filteredResources = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = resources.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
-
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [resources, filterSearch, sortType, sortDirection]);
-
-  // Get filtered and sorted collections based on search and sort options
-  const filteredCollections = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = collections.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
-
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [collections, filterSearch, sortType, sortDirection]);
+  }, [community_id, filterSearch, sortType, sortDirection]);
 
   /* search helpers */
   const commitSearch = q => {
@@ -263,9 +213,9 @@ export default function Presentations({ community_id = 4 }) {
 
   const getFilteredResourceCount = () => {
     if (activeTab === "presentations") {
-      return filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+      return resources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
     } else {
-      return filteredCollections.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+      return collections.filter(r => !r.resource_id.startsWith('placeholder-')).length;
     }
   }
 
@@ -317,10 +267,10 @@ export default function Presentations({ community_id = 4 }) {
             onChange={e => setSortType(e.target.value)}
             className={styles.sortSelect}
           >
-            <option value="last-updated">Last Updated</option>
-            <option value="date-created">Date Created</option>
+            <option value="modified">Last Updated</option>
+            <option value="created">Date Created</option>
             <option value="title">Title</option>
-            <option value="authors">Authors</option>
+            <option value="author">Authors</option>
           </select>
 
           <button
@@ -374,9 +324,9 @@ export default function Presentations({ community_id = 4 }) {
             default
           >
             {view === "grid" ? (
-              <HydroShareResourcesTiles resources={filteredResources} loading={loading} />
+              <HydroShareResourcesTiles resources={resources} loading={loading} />
             ) : (
-              <HydroShareResourcesRows resources={filteredResources} loading={loading} />
+              <HydroShareResourcesRows resources={resources} loading={loading} />
             )}
           </TabItem>
 
@@ -389,9 +339,9 @@ export default function Presentations({ community_id = 4 }) {
             }
           >
             {view === "grid" ? (
-              <HydroShareResourcesTiles resources={filteredCollections} loading={loading} />
+              <HydroShareResourcesTiles resources={collections} loading={loading} />
             ) : (
-              <HydroShareResourcesRows resources={filteredCollections} loading={loading} />
+              <HydroShareResourcesRows resources={collections} loading={loading} />
             )}
           </TabItem>
         </Tabs>
