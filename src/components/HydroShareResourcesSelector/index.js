@@ -22,7 +22,6 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   const [filterSearch,   setFilterSearch]   = useState('');
   const [sortType,       setSortType]       = useState('modified');
   const [sortDirection,  setSortDirection]  = useState('desc');
-  const [selectedAuthor, setSelectedAuthor] = useState('all-authors');
 
   const { colorMode } = useColorMode(); // Get the current theme
   const PLACEHOLDER_ITEMS = 10;
@@ -53,57 +52,8 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         let resourceList = undefined;
 
         // Start data fetching (while placeholders are already rendered)
-        // Search bar has text
-        if (filterSearch.trim() !== '')
-        {
-          // For search, use the search API with server-side sorting
-          const ascending = sortDirection === 'asc' ? true : false;
-          const author = selectedAuthor !== 'all-authors' ? selectedAuthor : undefined;
-          resourceList = await fetchResourcesBySearch(keyword, filterSearch, ascending, sortType, author);
-        } 
-        else
-        // Search bar does NOT have text
-        {
-          // For no search, get all resources and apply client-side filtering/sorting
-          resourceList = await fetchResourcesByKeyword(keyword);
-          
-          // Apply author filtering if needed
-          if (selectedAuthor !== 'all-authors') {
-            resourceList = resourceList.filter(res => 
-              res.authors && res.authors.some(author => 
-                author.split(',').reverse().join(' ').trim() === selectedAuthor
-              )
-            );
-          }
-          
-          // Apply client-side sorting
-          resourceList = resourceList.sort((a, b) => {
-            let comparison = 0;
-            
-            switch (sortType) {
-              case 'modified':
-                comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-                break;
-              case 'created':
-                comparison = a.date_created.localeCompare(b.date_created);
-                break;
-              case 'title':
-                comparison = a.resource_title.localeCompare(b.resource_title);
-                break;
-              case 'author':
-                const aAuthors = a.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
-                const bAuthors = b.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
-                comparison = aAuthors.localeCompare(bAuthors);
-                break;
-              default:
-                comparison = 0;
-                break;
-            }
-            
-            // Apply sort direction
-            return sortDirection === 'asc' ? comparison : -comparison;
-          });
-        }
+        const ascending = sortDirection === 'asc' ? true : false;
+        resourceList = await fetchResourcesBySearch(keyword, filterSearch, ascending, sortType);
 
         const mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
@@ -125,23 +75,6 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         // Replace placeholders with fetched data
         setResources(mappedList);
         setLoading(false);
-
-        // Set initial authors only on the first load (the values used for the author filter dropdown)
-        if (filterSearch.trim() === '' && initialAuthors.length === 0) {
-          const authorSet = new Set();
-          mappedList.forEach(resource => {
-            if (resource.authors) {
-              // Split authors by 🖊️ and add each one
-              resource.authors.split(' 🖊️ ').forEach(author => {
-                const trimmedAuthor = author.trim();
-                if (trimmedAuthor) {
-                  authorSet.add(trimmedAuthor);
-                }
-              });
-            }
-          });
-          setInitialAuthors(Array.from(authorSet).sort());
-        }
 
         // Fetch metadata for each resource and update them individually
         for (let res of mappedList) {
@@ -170,14 +103,11 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         setLoading(false);
       }
     })();
-  }, [keyword, filterSearch, sortDirection, sortType, selectedAuthor]);
+  }, [keyword, filterSearch, sortDirection, sortType]);
 
   if (error) {
     return <p style={{ color: "red" }}>Error: {error}</p>;
   }
-
-  // Use the stored initial authors (set only once during first load)
-  const uniqueAuthors = initialAuthors;
 
   // Resources are pre-processed in useEffect, so just return them
   const displayResources = resources;
@@ -228,17 +158,6 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
           />
-
-          <select
-            value={selectedAuthor}
-            onChange={e => setSelectedAuthor(e.target.value)}
-            className={styles.sortSelect}
-          >
-            <option value="all-authors">All Authors</option>
-            {uniqueAuthors.map(author => (
-              <option key={author} value={author}>{author}</option>
-            ))}
-          </select>
 
           <select
             value={sortType}
