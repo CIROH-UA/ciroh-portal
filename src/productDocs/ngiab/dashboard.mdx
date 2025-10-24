@@ -1,0 +1,85 @@
+---
+sidebar_position: 10
+title: 'GitHub Repository Dashboard'
+description: "A dashboard for viewing CIROH's managed repositories and workflows."
+tags: [CIROH, NGIAB, Products]
+---
+
+import { GitHubDashboard, RepoListSectionElement } from '@site/src/components/GitHubDashboard';
+import { RepoDiv, OrgDiv, RepoWorkflowsDiv } from '@site/src/components/GitHubShards';
+import Link from '@docusaurus/Link';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Details from '@theme/Details';
+
+
+<!-- # GitHub Repository Dashboard -->
+<!--
+  Heading is provided by the "title:" field in the front matter.
+ -->
+
+<Tabs
+  defaultValue="intro"
+  values={[
+    { label: 'Introduction', value: 'intro' },
+    { label: 'Community NextGen related repositories', value: 'ngiab' },
+    { label: 'CIROH Workflow Statuses', value: 'workflow' },
+  ]}>
+  <TabItem value="intro">
+    <h2>Introduction</h2>
+    <p>This page contains the list of Community NextGen related repositories that CIROH is maintaining.</p>
+    <p>Some repositories originate from the NOAA-OWP organization, but are now forks and maintained by CIROH.</p>
+    <OrgDiv org_name="CIROH-UA" />
+  </TabItem>
+  <TabItem value="ngiab">
+    <h2>Community NextGen related repositories</h2>
+    <p>This section contains the list of NGIAB-related repositories that CIROH is maintaining.</p>
+    <RepoListSectionElement
+      org_name="CIROH-UA"
+      repo_list="NGIAB_data_preprocess, NGIAB-CloudInfra, NGIAB-HPCInfra, ngiab-client, ngiab-teehr, ngiab-cal, ngen-datastream, ngiab-website, training-NGIAB-101,ngen,t-route,lstm"
+    />
+  </TabItem>
+  <TabItem value="workflow">
+    <h2>CIROH Workflow Statuses</h2>
+    <p>This section workflow status information for some of CIROH's managed repositories that have active workflows.</p>
+    <div style={{ padding: '10px' }}>
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="NGIAB_data_preprocess"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="NGIAB-CloudInfra"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="NGIAB-HPCInfra"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="ngiab-client"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="ngiab-teehr"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="ngen-datastream"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="ngen"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="t-route"
+        />
+      <RepoWorkflowsDiv
+        org_name="CIROH-UA"
+        repo_name="lstm"
+        />
+    </div>
+    <p>The workflow status information is provided by the GitHub Actions API.</p>
+  </TabItem>
+</Tabs>

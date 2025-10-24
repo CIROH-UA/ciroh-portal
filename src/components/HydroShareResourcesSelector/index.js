@@ -16,7 +16,11 @@ import {
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
-export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app", defaultImage }) {
+export default function HydroShareResourcesSelector({
+  keyword = "nwm_portal_app",
+  defaultImage,
+  defaultView = 'row',
+}) {
   // Search State
   const [searchInput,    setSearchInput]    = useState('');
   const [filterSearch,   setFilterSearch]   = useState('');
@@ -44,7 +48,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
   const [resources, setResources] = useState(initialPlaceholders);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("row");
+  const [view, setView] = useState(defaultView === 'grid' ? 'grid' : 'row');
   useEffect(() => {
     (async () => {
       try {
@@ -253,9 +257,15 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
 
         {/* Resources */}
         {view === "grid" ? (
-          <HydroShareResourcesTiles resources={filteredResources} />
+          <HydroShareResourcesTiles
+            resources={filteredResources}
+            defaultImage={defaultImage}
+          />
         ) : (
-          <HydroShareResourcesRows resources={filteredResources} />
+          <HydroShareResourcesRows
+            resources={filteredResources}
+            defaultImage={defaultImage}
+          />
         )}
 
         {/* empty */}

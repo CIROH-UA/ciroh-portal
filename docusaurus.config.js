@@ -108,7 +108,8 @@ const config = {
           src: 'img/ciroh_small.png',
           srcDark: 'img/ciroh_small_dark.png',  // Dark mode logo
         },
-        items: [          
+        items: [
+          {to: '/product-groups', label: 'Product Groups Wireframe', position: 'left'},
           {to: '/products', label: 'Products', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/publications', label: 'Publications', position: 'left'},

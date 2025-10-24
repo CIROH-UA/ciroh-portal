@@ -1,0 +1,44 @@
+---
+title: ngen
+sidebar_position: 1
+description: "The core engine of the NextGen framework."
+tags: [National Water Model, NOAA, NGIAB, CIROH, NextGen]
+---
+
+import Link from '@docusaurus/Link';
+
+
+## Repository info
+
+> [**CIROH-UA/ngen** · `ngiab` branch](https://github.com/CIROH-UA/ngen/)
+
+- Next Generation Water Modeling Engine and Framework Prototype (ngiab branch - development version of NextGen)
+- Forked from [**NOAA-OWP/ngen**](https://github.com/NOAH-OWP/ngen/)
+
+<Link className="button button--primary" to="https://github.com/CIROH-UA/ngen/">Open Repo</Link>
+
+## Summary
+
+ngen is a model agnostic framework designed for building and integrating models rather than being a model itself. It focuses on a data-centric process that abstracts the addition of processes and data behind a standard. This design allows for greater flexibility and standardization in model creation and integration.
+
+### Key Features of ngen
+- Model Agnostic: ngen is not a specific model but rather a framework for building and integrating different models.
+- Data-Centric: ngen emphasizes a data-centric approach, ensuring that data is central to the modeling process.
+- Flexible and Standardized: ngen provides a standardized approach to model creation and integration, allowing for greater flexibility and ease of use.
+
+### Documentation
+[Documentation for the mainline NOAA-OWP repository is available here](https://noaa-owp.github.io/ngen/).
+
+Note that examples and instructions documentation may not be one-to-one with NGIAB-based installations.
+The high-level concepts should be the same, though.
+
+## Presentation ~ NextGen Framework: Building Novel and Mimic Model Formulations
+
+> **Speaker**:  Fred L. Ogden, Ph.D., P.E., Chief Scientist (ST), NOAA/NWS Office of Water Prediction
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1Wy6y37kjfY" title="YouTube Video Player" frameborder="0" allowfullscreen></iframe>
+
+The Basic Model Interface (BMI) standard employed in the Next Generation Water Resources Modeling (NextGen) framework enables the construction of both mimic and novel model formulations. This involves the ordered execution of modules designed to simulate individual processes or fluxes and the integration of these over time on various control volumes to simulate the temporal evolution of model states. These are referred to as "multi-BMI" formulations.
+
+Currently, the order of execution of modules within a multi-BMI model formulation is determined by the ordering of modules in the run realization file. This presentation showcases model/module developments undertaken to date in this regard and discusses knowledge gaps and needs. Additionally, it proposes potential coding standards for modules that allow for the monitoring of conservation law enforcement at the framework level for different model formulations using various internal discretizations.
+
