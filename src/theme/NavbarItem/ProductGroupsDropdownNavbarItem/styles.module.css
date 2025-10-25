@@ -1,0 +1,145 @@
+.dropdownWrapper {
+  position: relative;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.dropdownPanel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  background: var(--ifm-navbar-background-color);
+  border-radius: 22px;
+  min-width: 340px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 50px 120px -60px rgba(15, 23, 42, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1000;
+}
+
+.dropdownPanelOpen {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 14px);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.columnTitle {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  color: var(--ifm-color-secondary);
+  margin: 0 0 0.2rem;
+}
+
+.linkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.dropdownLink {
+  display: flex;
+  gap: 0.85rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 14px;
+  transition: background 0.15s ease, transform 0.15s ease;
+  color: inherit;
+  text-decoration: none;
+}
+
+.dropdownLink:hover,
+.dropdownLink:focus-visible {
+  background: var(--ifm-color-emphasis-200);
+  text-decoration: none;
+  transform: translateX(2px);
+}
+
+.linkIconWrapper {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--ifm-color-emphasis-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.linkIcon {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--ifm-color-primary);
+}
+
+.linkCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.linkLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.linkDescription {
+  font-size: 0.8rem;
+  color: var(--ifm-color-secondary);
+  max-width: 22rem;
+}
+
+.mobileHeading {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  color: var(--ifm-color-secondary);
+}
+
+.mobileList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mobileLinkLabel {
+  font-weight: 600;
+}

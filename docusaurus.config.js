@@ -109,7 +109,11 @@ const config = {
           srcDark: 'img/ciroh_small_dark.png',  // Dark mode logo
         },
         items: [
-          {to: '/product-groups', label: 'Product Groups Wireframe', position: 'left'},
+          {
+            type: 'custom-product-groups',
+            label: 'Product Groups',
+            position: 'left',
+          },
           {to: '/products', label: 'Products', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/publications', label: 'Publications', position: 'left'},
@@ -120,9 +124,9 @@ const config = {
           {to: '/develop', label: 'Develop', position: 'right'},
           // {to: '/hydroshare', label: 'HydroShare', position: 'right'},
           {
-            href: "https://docs.ciroh.org/",
-            label: "Docs",
-            position: "left",
+            type: 'custom-docs-mega',
+            label: 'Docs',
+            position: 'left',
           },
           {
             type: 'dropdown',

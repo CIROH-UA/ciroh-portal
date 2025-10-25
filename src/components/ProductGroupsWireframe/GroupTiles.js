@@ -7,6 +7,8 @@ export default function GroupTiles({
   groups,
   activeGroupId,
   onSelect,
+  onDocsNavigate,
+  onProductsNavigate,
   variant = 'grid',
 }) {
   return (
@@ -22,6 +24,8 @@ export default function GroupTiles({
           group={group}
           isActive={group.id === activeGroupId}
           onSelect={onSelect}
+          onDocsNavigate={onDocsNavigate}
+          onProductsNavigate={onProductsNavigate}
           variant={variant}
         />
       ))}

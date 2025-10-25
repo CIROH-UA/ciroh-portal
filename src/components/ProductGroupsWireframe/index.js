@@ -1,17 +1,38 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
+import { useHistory, useLocation } from '@docusaurus/router';
 import GroupTiles from './GroupTiles';
 import GroupSidebar from './GroupSidebar';
 import PlaceholderGrid from './PlaceholderGrid';
 import ProductTilesGrid from './ProductTilesGrid';
 import docContentMap from './docContentMap';
 import groups from './groups';
+import sidebarData from './sidebarData';
 import styles from './styles.module.css';
+
+const findSidebarItemByPath = (groupId, targetPath) => {
+  const sections = sidebarData[groupId];
+  if (!sections) return null;
+
+  const stack = [...sections];
+  while (stack.length) {
+    const item = stack.pop();
+    if (item.type === 'link' && item.to === targetPath) {
+      return item;
+    }
+    if (item.items) {
+      stack.push(...item.items);
+    }
+  }
+  return null;
+};
 
 export default function ProductGroupsWireframe() {
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [activeSidebarItem, setActiveSidebarItem] = useState(null);
   const [detailMode, setDetailMode] = useState('collections');
+  const history = useHistory();
+  const location = useLocation();
 
   const activeGroup = useMemo(
     () => groups.find(group => group.id === activeGroupId),
@@ -50,6 +71,65 @@ export default function ProductGroupsWireframe() {
     );
   };
 
+  const openGroup = (groupId, mode = 'collections') => {
+    setActiveGroupId(groupId);
+    setActiveSidebarItem(null);
+    setDetailMode(mode);
+  };
+
+  const showDocsForGroup = ({ groupId, docsPath, label }) => {
+    if (!groupId || !docsPath) return;
+
+    setActiveGroupId(groupId);
+    setDetailMode('collections');
+
+    const navItem = findSidebarItemByPath(groupId, docsPath);
+    const derivedLabel = label || navItem?.label || 'Documentation';
+
+    setActiveSidebarItem({
+      type: 'link',
+      id: docsPath,
+      to: docsPath,
+      label: derivedLabel,
+    });
+
+    const params = new URLSearchParams();
+    params.set('group', groupId);
+    params.set('doc', docsPath);
+    history.replace(`/product-groups?${params.toString()}`);
+  };
+
+  const openGroupProductsPage = groupId => {
+    history.push(`/product-groups/group-products?group=${groupId}`);
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const requestedGroupId = params.get('group');
+    const requestedDoc = params.get('doc');
+
+    if (!requestedGroupId) return;
+    const groupExists = groups.some(group => group.id === requestedGroupId);
+    if (!groupExists) return;
+
+    setActiveGroupId(requestedGroupId);
+    setDetailMode('collections');
+
+    if (requestedDoc) {
+      const navItem = findSidebarItemByPath(requestedGroupId, requestedDoc);
+      setActiveSidebarItem(
+        navItem || {
+          type: 'link',
+          id: requestedDoc,
+          to: requestedDoc,
+          label: 'Documentation',
+        },
+      );
+    } else {
+      setActiveSidebarItem(null);
+    }
+  }, [location.search]);
+
   return (
     <div className={clsx('margin-bottom--xl', styles.wrapper)}>
       {!activeGroup && (
@@ -67,11 +147,9 @@ export default function ProductGroupsWireframe() {
           <GroupTiles
             groups={groups}
             activeGroupId={activeGroupId}
-            onSelect={id => {
-              setActiveGroupId(id);
-              setActiveSidebarItem(null);
-              setDetailMode('collections');
-            }}
+            onSelect={openGroupProductsPage}
+            onDocsNavigate={id => openGroup(id, 'collections')}
+            onProductsNavigate={openGroupProductsPage}
             variant="grid"
           />
         </div>
@@ -128,7 +206,19 @@ export default function ProductGroupsWireframe() {
             {(detailMode === 'collections' || activeSidebarItem) ? (
               renderCollections()
             ) : (
-              <ProductTilesGrid products={activeGroup.products} />
+              <ProductTilesGrid
+                products={activeGroup.products}
+                showDocsAction
+                fallbackDocsLink={activeGroup.docsRoute}
+                groupId={activeGroup.id}
+                onDocsNavigate={({ docsPath, groupId: targetGroupId, product }) =>
+                  showDocsForGroup({
+                    groupId: targetGroupId,
+                    docsPath,
+                    label: product?.title,
+                  })
+                }
+              />
             )}
           </section>
         </div>

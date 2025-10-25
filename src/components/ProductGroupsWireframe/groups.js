@@ -31,6 +31,7 @@ const productGroups = [
         type: 'Application',
         summary: 'Interactive dashboards for rapid model evaluation within NGIAB.',
         icon: '/img/portal_apps_light.png',
+        docsLink: '/docs/products/ngiab/dashboard',
       },
       {
         id: 'ngiab-teehr',
@@ -38,6 +39,7 @@ const productGroups = [
         type: 'Analytics',
         summary: 'TEEHR-powered pipelines to benchmark NextGen simulations.',
         icon: '/img/hs_app_icon_web_light.png',
+        docsLink: '/docs/products/ngiab/components/ngiab-teehr',
       },
       {
         id: 'ngiab-docker',
@@ -45,6 +47,7 @@ const productGroups = [
         type: 'Distribution',
         summary: 'Pre-built Docker images for cross-platform experimentation.',
         icon: '/img/apps_light_theme.png',
+        docsLink: '/docs/products/ngiab/distributions/ngiab-docker',
       },
       {
         id: 'ngiab-calibration',
@@ -52,6 +55,7 @@ const productGroups = [
         type: 'Tool',
         summary: 'Automated calibration workflows with Cloud-optimized storage.',
         icon: '/img/hs_app_icon_png_light.png',
+        docsLink: '/docs/products/ngiab/components/ngiab-calibration',
       },
     ],
   },
@@ -83,6 +87,7 @@ const productGroups = [
         type: 'Application',
         summary: 'Browser-based tools to edit and QA national hydrofabric assets.',
         icon: '/img/datasets_light.png',
+        docsLink: '/docs/products/ngiab/components/community-hydrofabric',
       },
       {
         id: 'hydrofabric-api',
@@ -90,6 +95,7 @@ const productGroups = [
         type: 'Service',
         summary: 'REST endpoints for mesh download, lineage, and metadata.',
         icon: '/img/hs_app_urls_light.png',
+        docsLink: '/docs/products/ngiab/components/community-hydrofabric',
       },
       {
         id: 'hydrofabric-dashboard',
@@ -97,6 +103,7 @@ const productGroups = [
         type: 'Analytics',
         summary: 'Live health metrics for hydrofabric forks and pending PRs.',
         icon: '/img/docuhub_pr_light.png',
+        docsLink: '/docs/products/ngiab/components/community-hydrofabric',
       },
     ],
   },
@@ -128,6 +135,7 @@ const productGroups = [
         type: 'Application',
         summary: 'Rapidly request FIM runs through a managed service.',
         icon: '/img/hs_app_light.png',
+        docsLink: '/docs/products/community-fim',
       },
       {
         id: 'fim-eval',
@@ -135,6 +143,7 @@ const productGroups = [
         type: 'Dashboard',
         summary: 'Compare flood extents and scores across scenarios.',
         icon: '/img/hs_app_dark.png',
+        docsLink: '/docs/products/community-fim',
       },
       {
         id: 'fim-database',
@@ -142,6 +151,7 @@ const productGroups = [
         type: 'Dataset',
         summary: 'Curated FIM rasters and event metadata for repeat analysis.',
         icon: '/img/hs_app_urls_light.png',
+        docsLink: '/docs/products/community-fim',
       },
     ],
   },
@@ -173,6 +183,7 @@ const productGroups = [
         type: 'Tool',
         summary: 'Command-line interface for streaming NextGen inputs.',
         icon: '/img/modules_light.png',
+        docsLink: '/docs/products/research-datastream',
       },
       {
         id: 'nwm-repo-dashboard',
@@ -180,6 +191,7 @@ const productGroups = [
         type: 'Analytics',
         summary: 'Insights across NGIAB and CIROH GitHub organizations.',
         icon: '/img/docuhub_pr_light.png',
+        docsLink: '/docs/products/research-datastream',
       },
       {
         id: 'datastream-notebooks',
@@ -187,6 +199,7 @@ const productGroups = [
         type: 'Notebook',
         summary: 'Executable demos for APIs, QA, and ML ingestion.',
         icon: '/img/docuhub_md_light3.png',
+        docsLink: '/docs/products/research-datastream',
       },
     ],
   },
@@ -218,6 +231,7 @@ const productGroups = [
         type: 'Application',
         summary: 'Machine-learning snow forecasts with explainable cards.',
         icon: '/img/hydrolearn_101_light.png',
+        docsLink: '/docs/products/snow-tools',
       },
       {
         id: 'snow-inspector',
@@ -225,6 +239,7 @@ const productGroups = [
         type: 'Visualization',
         summary: 'MODIS-based explorer for snow depth and SWE anomalies.',
         icon: '/img/hs_app_icon_web_light.png',
+        docsLink: '/docs/products/snow-tools',
       },
       {
         id: 'sensor-optimizer',
@@ -232,6 +247,7 @@ const productGroups = [
         type: 'Tool',
         summary: 'Greedy placement assistant for alpine sensor networks.',
         icon: '/img/home_learning_ modules_light.png',
+        docsLink: '/docs/products/snow-tools',
       },
     ],
   },
