@@ -20,7 +20,7 @@ const products = productGroups
     title: group.title,
     description: group.blurb,
     icon: group.icon,
-    href: toHref(group.docsRoute),
+    href: `/product-groups?group=${group.id}`,
   }));
 
 const services = [

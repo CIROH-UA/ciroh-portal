@@ -63,11 +63,12 @@ export default function ProductGroupsWireframe() {
       );
     }
 
+    // Don't show component placeholders - return empty state
     return (
-      <PlaceholderGrid
-        title={`${activeGroup.title} Components`}
-        items={activeGroup.componentPlaceholders}
-      />
+      <div className={styles.placeholderPanel}>
+        <h3>Welcome to {activeGroup.title}</h3>
+        <p>Select a topic from the sidebar to view documentation.</p>
+      </div>
     );
   };
 

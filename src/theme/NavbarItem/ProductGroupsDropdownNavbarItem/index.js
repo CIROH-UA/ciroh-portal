@@ -5,7 +5,7 @@ import { MdExpandMore } from 'react-icons/md';
 import groups from '@site/src/components/ProductGroupsWireframe/groups';
 import styles from './styles.module.css';
 
-const buildGroupLink = id => `/product-groups/group-products?group=${id}`;
+const buildGroupLink = id => `/products-groups#${id}`;
 
 function MobileList({ label }) {
   return (

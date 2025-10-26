@@ -1,0 +1,220 @@
+.pageHeader {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 4rem;
+  padding: 3rem 1rem 2rem;
+  position: relative;
+}
+
+.pageHeader::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ifm-color-primary), var(--ifm-color-primary-dark));
+  border-radius: 2px;
+}
+
+.pageHeader h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pageDescription {
+  font-size: 1.2rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.7;
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+.groupSection {
+  margin-bottom: 5rem;
+  padding: 2.5rem 0;
+  scroll-margin-top: 100px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.groupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: var(--ifm-background-surface-color);
+  border-radius: 16px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.groupHeader:hover {
+  border-color: var(--ifm-color-primary-light);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.groupHeaderContent {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.groupIcon {
+  width: 4rem;
+  height: 4rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, var(--ifm-color-primary-lightest), var(--ifm-color-primary-lighter));
+  border-radius: 14px;
+  color: var(--ifm-color-primary);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.groupHeader:hover .groupIcon {
+  transform: scale(1.05) rotate(5deg);
+  background: linear-gradient(135deg, var(--ifm-color-primary-lighter), var(--ifm-color-primary-light));
+}
+
+.groupTitle {
+  font-size: 2.25rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-900);
+  letter-spacing: -0.02em;
+}
+
+.groupBlurb {
+  font-size: 1.05rem;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.noProducts {
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+  padding: 3rem;
+  text-align: center;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 12px;
+  font-size: 1.1rem;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ifm-color-emphasis-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ifm-color-emphasis-400);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ifm-color-primary);
+}
+
+@media (max-width: 996px) {
+  .pageHeader h1 {
+    font-size: 2.75rem;
+  }
+
+  .pageDescription {
+    font-size: 1.1rem;
+  }
+
+  .groupHeader {
+    padding: 1.5rem;
+  }
+
+  .groupHeaderContent {
+    gap: 1.5rem;
+  }
+
+  .groupIcon {
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0.85rem;
+  }
+
+  .groupTitle {
+    font-size: 1.85rem;
+  }
+
+  .groupBlurb {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHeader {
+    padding: 2rem 1rem 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .pageHeader h1 {
+    font-size: 2.25rem;
+  }
+
+  .pageDescription {
+    font-size: 1rem;
+  }
+
+  .groupHeader {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .groupHeaderContent {
+    gap: 1.25rem;
+  }
+
+  .groupIcon {
+    width: 3rem;
+    height: 3rem;
+    padding: 0.75rem;
+  }
+
+  .groupTitle {
+    font-size: 1.5rem;
+  }
+
+  .groupBlurb {
+    font-size: 0.95rem;
+  }
+
+  .groupSection {
+    margin-bottom: 3.5rem;
+  }
+}

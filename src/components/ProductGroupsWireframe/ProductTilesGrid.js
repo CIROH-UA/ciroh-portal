@@ -3,6 +3,70 @@ import { MdArrowOutward } from 'react-icons/md';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
+// Generate elegant SVG placeholder based on product type
+function ElegantPlaceholder({ title, type }) {
+  // Generate a color based on product type
+  const getColorByType = (productType) => {
+    const colors = {
+      'Application': { primary: '#3b82f6', secondary: '#60a5fa' },
+      'Analytics': { primary: '#8b5cf6', secondary: '#a78bfa' },
+      'Distribution': { primary: '#06b6d4', secondary: '#22d3ee' },
+      'Tool': { primary: '#10b981', secondary: '#34d399' },
+      'Service': { primary: '#f59e0b', secondary: '#fbbf24' },
+      'Visualization': { primary: '#ec4899', secondary: '#f472b6' },
+      'Dashboard': { primary: '#6366f1', secondary: '#818cf8' },
+      'Dataset': { primary: '#14b8a6', secondary: '#2dd4bf' },
+      'Notebook': { primary: '#f97316', secondary: '#fb923c' },
+    };
+    return colors[productType] || { primary: '#6366f1', secondary: '#818cf8' };
+  };
+
+  const colors = getColorByType(type);
+  const initials = title
+    .split(' ')
+    .map(word => word[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 200 200"
+      xmlns="http://www.w3.org/2000/svg"
+      className={styles.productCardMediaSVG}
+    >
+      <defs>
+        <linearGradient id={`grad-${title}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: colors.primary, stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: colors.secondary, stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
+
+      {/* Background circle */}
+      <circle cx="100" cy="100" r="80" fill={`url(#grad-${title})`} opacity="0.15" />
+
+      {/* Decorative shapes */}
+      <circle cx="100" cy="100" r="60" fill="none" stroke={colors.primary} strokeWidth="2" opacity="0.2" />
+      <circle cx="100" cy="100" r="45" fill="none" stroke={colors.secondary} strokeWidth="1.5" opacity="0.3" />
+
+      {/* Center text */}
+      <text
+        x="100"
+        y="110"
+        textAnchor="middle"
+        fontSize="48"
+        fontWeight="700"
+        fill={colors.primary}
+        opacity="0.9"
+      >
+        {initials}
+      </text>
+    </svg>
+  );
+}
+
 export default function ProductTilesGrid({
   products,
   showDocsAction = false,
@@ -22,7 +86,6 @@ export default function ProductTilesGrid({
   return (
     <div className={styles.productGrid}>
       {products.map(product => {
-        const iconSrc = product.icon ? useBaseUrl(product.icon) : null;
         const docsPath = product.docsLink || fallbackDocsLink;
         const owningGroupId = product.groupId || groupId;
 
@@ -39,11 +102,7 @@ export default function ProductTilesGrid({
         return (
           <article key={product.id} className={styles.productCard}>
             <div className={styles.productCardMedia}>
-              {iconSrc ? (
-                <img src={iconSrc} alt={product.title} className={styles.productCardMediaImage} />
-              ) : (
-                <span className={styles.productCardMediaPlaceholder}>{product.title}</span>
-              )}
+              <ElegantPlaceholder title={product.title} type={product.type} />
             </div>
             <div className={styles.productCardBody}>
               {product.type && (
