@@ -37,10 +37,14 @@ const services = [
 
 function GroupCard({ group }) {
   const Icon = group.icon;
+  // Construct external docs URL
+  const docsUrl = `https://docs.ciroh.org${group.docsRoute}`;
 
   return (
-    <Link
-      to={group.docsRoute}
+    <a
+      href={docsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
       className={styles.groupCard}
     >
       <div className={styles.cardIconWrapper}>
@@ -53,7 +57,7 @@ function GroupCard({ group }) {
       <div className={styles.cardArrow}>
         <MdArrowForward />
       </div>
-    </Link>
+    </a>
   );
 }
 

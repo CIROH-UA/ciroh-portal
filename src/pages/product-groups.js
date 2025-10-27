@@ -1,14 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import Layout from '@theme/Layout';
-import { useLocation, useHistory } from '@docusaurus/router';
+import { useLocation } from '@docusaurus/router';
 import ProductTilesGrid from '@site/src/components/ProductGroupsWireframe/ProductTilesGrid';
 import groups from '@site/src/components/ProductGroupsWireframe/groups';
-import docContentMap from '@site/src/components/ProductGroupsWireframe/docContentMap';
 import styles from './product-groups.module.css';
 
 export default function ProductsGroupsPage() {
   const location = useLocation();
-  const history = useHistory();
   const groupRefs = useRef({});
 
   useEffect(() => {
@@ -30,17 +28,11 @@ export default function ProductsGroupsPage() {
 
   // Handler for when user clicks "Read docs" on a product
   const handleDocsNavigate = ({ docsPath, groupId, product }) => {
-    // Check if this doc exists in our internal docContentMap
-    if (docContentMap[docsPath]) {
-      // Navigate to /docs with the group and doc
-      const params = new URLSearchParams();
-      params.set('group', groupId);
-      params.set('doc', docsPath);
-      history.push(`/docs?${params.toString()}`);
-    } else {
-      // If no internal doc, open external link
-      window.open(docsPath, '_blank');
-    }
+    // Always open docs in external site
+    const docsUrl = docsPath.startsWith('http')
+      ? docsPath
+      : `https://docs.ciroh.org${docsPath}`;
+    window.open(docsUrl, '_blank');
   };
 
   return (
