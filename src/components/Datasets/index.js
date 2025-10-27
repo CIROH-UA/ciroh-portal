@@ -24,7 +24,7 @@ export default function Datasets({ community_id = 4 }) {
   // Search State
   const [searchInput,    setSearchInput]    = useState('');
   const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('last-updated');
+  const [sortType,       setSortType]       = useState('modified');
   const [sortDirection,  setSortDirection]  = useState('desc');
 
   const { colorMode } = useColorMode(); // Get the current theme
@@ -51,6 +51,39 @@ export default function Datasets({ community_id = 4 }) {
   const [view, setView] = useState("row");
   const [activeTab, setActiveTab] = useState("all");
 
+  // Helper function to sort resources
+  const sortResources = (resourceList, sortType, sortDirection) => {
+    return resourceList.sort((a, b) => {
+      // Keep placeholders at the beginning during loading
+      if (a.resource_id.startsWith('placeholder-')) return -1;
+      if (b.resource_id.startsWith('placeholder-')) return 1;
+      
+      let comparison = 0;
+      
+      switch (sortType)
+      {
+        case 'modified':
+          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
+          break;
+        case 'created':
+          comparison = a.date_created.localeCompare(b.date_created);
+          break;
+        case 'title':
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case 'author':
+          comparison = a.authors.localeCompare(b.authors);
+          break;
+        default:
+          comparison = 0;
+          break;
+      }
+      
+      // Apply sort direction
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  };
+
   useEffect(() => {
     // Fetch the curated IDs first (from the "parent" resource).
     const fetchCuratedIds = async () => {
@@ -65,14 +98,19 @@ export default function Datasets({ community_id = 4 }) {
 
     // Fetch all resources by group, then filter them based on curated IDs
     const fetchAll = async () => {
+      // search parameters
+      const fullTextSearch = filterSearch.length > 0 ? filterSearch : undefined;
+      const ascending = sortDirection === 'asc' ? true : false;
+      const sortBy = sortType;
+
       try {
         const [curatedIds, resourceList] = await Promise.all([
           fetchCuratedIds(),                // get array of curated resource IDs
-          getCommunityResources("ciroh_portal_data") // get all resources for the group
+          getCommunityResources("ciroh_portal_data", "4", fullTextSearch, ascending, sortBy, undefined) // get all resources for the group
         ]);
 
         // Map the full resource list to your internal format
-        const mappedList = resourceList.map((res) => ({
+        let mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
           title: res.resource_title,
           authors: res.authors.map(
@@ -88,6 +126,9 @@ export default function Datasets({ community_id = 4 }) {
           docs_url: ""
         }));
         
+        // Sort locally to account for curated resources
+        mappedList = sortResources(mappedList, sortBy, sortDirection);
+
         setResources(mappedList);
         
         for (let res of mappedList) {
@@ -114,9 +155,11 @@ export default function Datasets({ community_id = 4 }) {
         }
 
         // Filter to get only curated subset
-        const curatedSubset = mappedList.filter(item =>
+        let curatedSubset = mappedList.filter(item =>
           curatedIds.includes(item.resource_id)
         );
+
+        curatedSubset = sortResources(curatedSubset, sortBy, sortDirection);
 
         // setResources(mappedList);
         setCuratedResources(curatedSubset);
@@ -130,113 +173,7 @@ export default function Datasets({ community_id = 4 }) {
 
     // Kick off fetch
     fetchAll();
-  }, [community_id]);
-
-  // Get filtered and sorted resources based on search and sort options
-  const filteredResources = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = resources.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
-
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [resources, filterSearch, sortType, sortDirection]);
-
-  // Get filtered and sorted curated resources based on search and sort options
-  const filteredCuratedResources = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = curatedResources.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
-
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [curatedResources, filterSearch, sortType, sortDirection]);
+  }, [community_id, filterSearch, sortDirection, sortType]);
 
   /* search helpers */
   const commitSearch = q => {
@@ -258,9 +195,9 @@ export default function Datasets({ community_id = 4 }) {
 
   const getFilteredResourceCount = () => {
     if (activeTab === "all") {
-      return filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+      return resources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
     } else {
-      return filteredCuratedResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+      return curatedResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
     }
   }
 
@@ -312,10 +249,10 @@ export default function Datasets({ community_id = 4 }) {
             onChange={e => setSortType(e.target.value)}
             className={styles.sortSelect}
           >
-            <option value="last-updated">Last Updated</option>
-            <option value="date-created">Date Created</option>
+            <option value="modified">Last Updated</option>
+            <option value="created">Date Created</option>
             <option value="title">Title</option>
-            <option value="authors">Authors</option>
+            <option value="author">Authors</option>
           </select>
 
           <button
@@ -370,9 +307,9 @@ export default function Datasets({ community_id = 4 }) {
             default
           >
             {view === "grid" ? (
-              <HydroShareResourcesTiles resources={filteredResources} loading={loading} />
+              <HydroShareResourcesTiles resources={resources} loading={loading} />
             ) : (
-              <HydroShareResourcesRows resources={filteredResources} loading={loading} />
+              <HydroShareResourcesRows resources={resources} loading={loading} />
             )}
           </TabItem>
 
@@ -385,9 +322,9 @@ export default function Datasets({ community_id = 4 }) {
             }
           >
             {view === "grid" ? (
-              <HydroShareResourcesTiles resources={filteredCuratedResources} loading={loading} />
+              <HydroShareResourcesTiles resources={curatedResources} loading={loading} />
             ) : (
-              <HydroShareResourcesRows resources={filteredCuratedResources} loading={loading} />
+              <HydroShareResourcesRows resources={curatedResources} loading={loading} />
             )}
           </TabItem>
         </Tabs>

@@ -32,10 +32,15 @@ async function fetchResource(id) {
 }
 
 // Helper function to fetch list of resources by group
-async function fetchResourcesByGroup(groupid) {
-  const url = `https://www.hydroshare.org/hsapi/resource/?group=${encodeURIComponent(
+async function fetchResourcesByGroup(groupid, fullTextSearch=undefined) {
+  let url = `https://www.hydroshare.org/hsapi/resource/?group=${encodeURIComponent(
     groupid
   )}`;
+
+  if (fullTextSearch !== undefined) {
+    url += `&full_text_search=${encodeURIComponent(fullTextSearch)}`;
+  }
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Error fetching resources (status: ${response.status})`);
@@ -94,14 +99,14 @@ async function getGroupIds(communityId="4") {
 }
 
 
-async function joinGroupResources(groupIds) {
+async function joinGroupResources(groupIds, fullTextSearch=undefined) {
   const seenResourceIds = new Set();
   const uniqueResources = [];
   
   // Process groups sequentially to maintain order
   for (const groupId of groupIds) {
     try {
-      const resources = await fetchResourcesByGroup(groupId);
+      const resources = await fetchResourcesByGroup(groupId, fullTextSearch);
       
 
       // Filter and collect unique resources
@@ -139,11 +144,12 @@ function joinExtraResources(groupResources, extraResources) {
 
 }
 
-async function getCommunityResources(keyword="ciroh_portal_data", communityId="4") {
+async function getCommunityResources(keyword="ciroh_portal_data", communityId="4", fullTextSearch=undefined, ascending=false, sortBy=undefined, author=undefined) {
   try {
     const groupIds = await getGroupIds(communityId);
-    const group_resources =  await joinGroupResources(groupIds);
-    const extra_resources = await fetchResourcesByKeyword(keyword);
+    const group_resources =  await joinGroupResources(groupIds, fullTextSearch);
+    const extra_resources = await fetchResourcesBySearch(keyword, fullTextSearch, ascending, sortBy, author);
+
     return joinExtraResources(group_resources, extra_resources);
     // return await joinGroupResources(groupIds);
   } catch (error) {
@@ -152,10 +158,15 @@ async function getCommunityResources(keyword="ciroh_portal_data", communityId="4
   }
 }
 
-async function fetchResourcesByKeyword(keyword) {
-  const url = `https://www.hydroshare.org/hsapi/resource/?subject=${encodeURIComponent(
+async function fetchResourcesByKeyword(keyword, fullTextSearch=undefined) {
+  let url = `https://www.hydroshare.org/hsapi/resource/?subject=${encodeURIComponent(
     keyword
   )}`;
+
+  if (fullTextSearch !== undefined) {
+    url += `&full_text_search=${encodeURIComponent(fullTextSearch)}`;
+  }
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Error fetching resources (status: ${response.status})`);
