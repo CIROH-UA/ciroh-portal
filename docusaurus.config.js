@@ -111,10 +111,10 @@ const config = {
         items: [
           {
             type: 'custom-product-groups',
-            label: 'Product Groups',
+            label: 'Product',
             position: 'left',
           },
-          {to: '/products', label: 'Products', position: 'left'},
+          // {to: '/products', label: 'Products', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/publications', label: 'Publications', position: 'left'},
           {to: '/presentations', label: 'Presentations', position: 'left'},

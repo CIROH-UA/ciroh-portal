@@ -34,7 +34,7 @@ export default function ProductGroupProductsPage() {
 
   const title = `${group.title} Products`;
   const heroButtons = [
-    { label: 'Back to Product Groups', href: '/product-groups' },
+    { label: 'Back to Product Groups', href: '/docs' },
   ];
   if (group.docsRoute) {
     heroButtons.unshift({
@@ -71,7 +71,7 @@ export default function ProductGroupProductsPage() {
               if (docsPath) {
                 params.set('doc', docsPath);
               }
-              history.push(`/product-groups?${params.toString()}`);
+              history.push(`/docs?${params.toString()}`);
             }}
           />
         </section>

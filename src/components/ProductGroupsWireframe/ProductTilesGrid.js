@@ -1,5 +1,6 @@
 import React from 'react';
 import { MdArrowOutward } from 'react-icons/md';
+import { FaGithub } from "react-icons/fa";
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
@@ -121,9 +122,18 @@ export default function ProductTilesGrid({
                   onClick={handleDocsClick}
                   aria-label={`Open docs for ${product.title}`}
                 >
-                  <span>Read docs</span>
+                  <span>Docs</span>
                   <MdArrowOutward aria-hidden="true" />
                 </button>
+                <button
+                  type="button"
+                  className={styles.productCardCTAButton}
+                  onClick={() => window.open(product.codeLink, '_blank')}
+                  aria-label={`Open docs for ${product.title}`}
+                >
+                  <span>Code</span>
+                  <FaGithub aria-hidden ="true" />
+                </button>                
               </div>
             )}
           </article>

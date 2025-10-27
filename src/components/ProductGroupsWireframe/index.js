@@ -97,11 +97,11 @@ export default function ProductGroupsWireframe() {
     const params = new URLSearchParams();
     params.set('group', groupId);
     params.set('doc', docsPath);
-    history.replace(`/product-groups?${params.toString()}`);
+    history.replace(`/docs?${params.toString()}`);
   };
 
   const openGroupProductsPage = groupId => {
-    history.push(`/product-groups/group-products?group=${groupId}`);
+    history.push(`/docs/group-products?group=${groupId}`);
   };
 
   useEffect(() => {
@@ -137,7 +137,7 @@ export default function ProductGroupsWireframe() {
           <section className={clsx('margin-top--xl', styles.hero)}>
             <h1 className={styles.heroTitle}>Products</h1>
             <p className={styles.heroDescription}>
-              En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by 
+              En­hance fore­cast­ing, ana­lys­is, and wa­ter re­source man­age­ment by 2
               mak­ing your web ap­plic­a­tions and tools ac­cess­ible to CIROH and NOAA's hy­dro­lo­gic re­search ini­ti­at­ives.
             </p>
           </section>

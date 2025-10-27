@@ -4,7 +4,7 @@ import { useLocation, useHistory } from '@docusaurus/router';
 import ProductTilesGrid from '@site/src/components/ProductGroupsWireframe/ProductTilesGrid';
 import groups from '@site/src/components/ProductGroupsWireframe/groups';
 import docContentMap from '@site/src/components/ProductGroupsWireframe/docContentMap';
-import styles from './products-groups.module.css';
+import styles from './product-groups.module.css';
 
 export default function ProductsGroupsPage() {
   const location = useLocation();
@@ -32,11 +32,11 @@ export default function ProductsGroupsPage() {
   const handleDocsNavigate = ({ docsPath, groupId, product }) => {
     // Check if this doc exists in our internal docContentMap
     if (docContentMap[docsPath]) {
-      // Navigate to /product-groups with the group and doc
+      // Navigate to /docs with the group and doc
       const params = new URLSearchParams();
       params.set('group', groupId);
       params.set('doc', docsPath);
-      history.push(`/product-groups?${params.toString()}`);
+      history.push(`/docs?${params.toString()}`);
     } else {
       // If no internal doc, open external link
       window.open(docsPath, '_blank');

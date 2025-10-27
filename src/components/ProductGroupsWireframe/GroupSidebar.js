@@ -106,9 +106,9 @@ export default function GroupSidebar({ groupId, onBack, onSelect, activeItem }) 
 
   return (
     <nav className={styles.sidebarNav} aria-label="Product group navigation">
-      <button type="button" className={styles.backButton} onClick={onBack}>
+      <Link to="/product-groups" className={styles.backButton}>
         All Products
-      </button>
+      </Link>
       <div className={styles.sidebarNavSections}>{renderItems(sections)}</div>
     </nav>
   );

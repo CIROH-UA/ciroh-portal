@@ -20,7 +20,7 @@ const products = productGroups
     title: group.title,
     description: group.blurb,
     icon: group.icon,
-    href: `/product-groups?group=${group.id}`,
+    href: `/docs?group=${group.id}`,
   }));
 
 const services = [

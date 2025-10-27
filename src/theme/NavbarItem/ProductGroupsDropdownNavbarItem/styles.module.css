@@ -6,13 +6,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  font-weight: 600;
+  font-weight: var(--ifm-font-weight-semibold);
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   border-radius: 999px;
   transition: background 0.15s ease;
+  font-size: 0.9rem;
+  color: var(--ifm-navbar-link-color);
 }
 
 .trigger:hover,

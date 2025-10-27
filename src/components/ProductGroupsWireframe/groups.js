@@ -26,12 +26,12 @@ const productGroups = [
     ],
     products: [
       {
-        id: 'ngiab-tethysdash',
-        title: 'TethysDash',
+        id: 'ngiab-preprocessor',
+        title: 'NGIAB Data Preprocess',
         type: 'Application',
-        summary: 'Interactive dashboards for rapid model evaluation within NGIAB.',
+        summary: 'Interactive tool to pre process input data for ngiab',
         icon: '/img/portal_apps_light.png',
-        docsLink: '/docs/products/ngiab/dashboard',
+        docsLink: '/docs/products/ngiab/components/ngiab-preprocessor',
       },
       {
         id: 'ngiab-teehr',
@@ -57,6 +57,14 @@ const productGroups = [
         icon: '/img/hs_app_icon_png_light.png',
         docsLink: '/docs/products/ngiab/components/ngiab-calibration',
       },
+      {
+        id: 'ngiab-visualization',
+        title: 'Visualization Suite',
+        type: 'Visualization',
+        summary: 'Interactive dashboards for NextGen model output analysis.',
+        icon: '/img/portal_apps_light.png',
+        docsLink: '/docs/products/ngiab/components/ngiab-visualization',
+      }
     ],
   },
   {
