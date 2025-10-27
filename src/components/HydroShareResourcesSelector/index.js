@@ -149,7 +149,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         >
           <input
             type="text"
-            placeholder="Search by Title, Author, Description, Last Updated, Year Created..."
+            placeholder="Search by Title, Author, Description..."
             className={styles.searchInput}
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}

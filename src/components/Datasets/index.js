@@ -234,7 +234,7 @@ export default function Datasets({ community_id = 4 }) {
         >
           <input
             type="text"
-            placeholder="Search by Title, Author, Description, Last Updated, Year Created..."
+            placeholder="Search by Title, Author, Description..."
             className={styles.searchInput}
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
