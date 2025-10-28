@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition, useMemo } from "react";
+import React, { useEffect, useState, startTransition, useMemo, useRef, useCallback } from "react";
 import clsx from "clsx";
 import { FaThLarge, FaBars } from "react-icons/fa";
 import styles from "./styles.module.css";
@@ -13,16 +13,12 @@ import {
   HiOutlineSortAscending,
 } from 'react-icons/hi';
 
+const PAGE_SIZE        = 40;
+const SCROLL_THRESHOLD = 400;
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
 export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app", defaultImage }) {
-  // Search State
-  const [searchInput,    setSearchInput]    = useState('');
-  const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('modified');
-  const [sortDirection,  setSortDirection]  = useState('desc');
-
   const { colorMode } = useColorMode(); // Get the current theme
   const PLACEHOLDER_ITEMS = 10;
 
@@ -41,19 +37,52 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
 
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
   
+  // State
   const [resources, setResources] = useState(initialPlaceholders);
-  const [initialAuthors, setInitialAuthors] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("row");
-  useEffect(() => {
-    (async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const fetching = useRef(false);
+
+  // Search State
+  const [searchInput,    setSearchInput]    = useState('');
+  const [filterSearch,   setFilterSearch]   = useState('');
+  const [sortType,       setSortType]       = useState('modified');
+  const [sortDirection,  setSortDirection]  = useState('desc');
+
+
+
+  const fetchResources = useCallback(
+    async (page) => {
+      if (fetching.current) return;
+      fetching.current = true;
+
       try {
         let resourceList = undefined;
+        
+        // Add placeholders for loading state (only for pagination, not first page)
+        if (page > 1) {
+          setResources(prev => [
+            ...prev,
+            ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+              resource_id: `placeholder-page${page}-${i}`,
+              title: "",
+              authors: "",
+              resource_type: "",
+              resource_url: "",
+              description: "",
+              thumbnail_url: "",
+              page_url: "",
+              docs_url: "",
+            }))
+          ]);
+        }
 
         // Start data fetching (while placeholders are already rendered)
         const ascending = sortDirection === 'asc' ? true : false;
-        resourceList = await fetchResourcesBySearch(keyword, filterSearch, ascending, sortType);
+        resourceList = await fetchResourcesBySearch(keyword, filterSearch, ascending, sortType, undefined, page);
 
         const mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
@@ -72,8 +101,18 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
           embed_url: "",
         }));
 
-        // Replace placeholders with fetched data
-        setResources(mappedList);
+        // Handle first page vs pagination
+        if (page === 1) {
+          setResources(mappedList); // Replace for first page
+        } else {
+          setResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...mappedList
+          ]);
+        }
+        
+        // Update hasMore based on API response
+        setHasMore(mappedList.length === PAGE_SIZE);
         setLoading(false);
 
         // Fetch metadata for each resource and update them individually
@@ -101,16 +140,45 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         console.error(`Error fetching resources: ${err.message}`);
         setError(err.message);
         setLoading(false);
+      } finally {
+        fetching.current = false;
       }
-    })();
-  }, [keyword, filterSearch, sortDirection, sortType]);
+    },
+    [keyword, filterSearch, sortDirection, sortType]
+  );
+
+
+
+  // Reset and load first page when filters change
+  useEffect(() => {
+    setResources(initialPlaceholders);
+    setCurrentPage(1);
+    setHasMore(true);
+    
+    // Reset the fetching flag to allow new requests (fixes race condition)
+    fetching.current = false;
+    
+    fetchResources(1);
+  }, [keyword, filterSearch, sortDirection, sortType, fetchResources]);
 
   if (error) {
     return <p style={{ color: "red" }}>Error: {error}</p>;
   }
 
-  // Resources are pre-processed in useEffect, so just return them
-  const displayResources = resources;
+  /* infinite scroll */
+  useEffect(() => {
+    const onScroll = () => {
+      if (fetching.current || !hasMore) return;
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
+        const next = currentPage + 1;
+        setCurrentPage(next);
+        fetchResources(next);
+      }
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [currentPage, hasMore, fetchResources]);
 
   /* search helpers */
   const commitSearch = q => {
@@ -137,9 +205,9 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         {/* counter */}
       <div className={styles.counterRow}>
         Showing&nbsp;
-        <strong>{displayResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong>
+        <strong>{resources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong>
         &nbsp; { keyword == 'nwm_portal_app' ? 'Applications' : keyword == 'nwm_portal_module' ? 'Courses' : 'Resources' }
-        {!loading && <> of <strong>{displayResources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong></>}
+        {!loading && <> of <strong>{resources.filter(r => !r.resource_id.startsWith('placeholder-')).length}</strong></>}
       </div>
 
         {/* Search Form */}
@@ -208,14 +276,14 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
 
         {/* Resources */}
         {view === "grid" ? (
-          <HydroShareResourcesTiles resources={displayResources} />
+          <HydroShareResourcesTiles resources={resources} />
         ) : (
-          <HydroShareResourcesRows resources={displayResources} />
+          <HydroShareResourcesRows resources={resources} />
         )}
 
         {/* empty */}
         {!loading &&
-          displayResources.filter(r => !r.resource_id.startsWith('placeholder-')).length === 0 && (
+          resources.filter(r => !r.resource_id.startsWith('placeholder-')).length === 0 && (
             <p className={styles.emptyMessage}>No&nbsp;Resources&nbsp;Found</p>
           )}
       </div>
