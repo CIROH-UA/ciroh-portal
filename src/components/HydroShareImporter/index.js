@@ -186,7 +186,7 @@ async function fetchResourcesByKeyword(keyword, fullTextSearch=undefined) {
  * @param {string} author - The author to filter by
  * @returns {Promise<Array>} Array of resource objects
  */
-async function fetchResourcesBySearch(keyword, searchText, ascending=false, sortBy=undefined, author=undefined) {
+async function fetchResourcesBySearch(keyword, searchText, ascending=false, sortBy=undefined, author=undefined, pageNumber=1) {
   // API Url with query parameters
   let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent([keyword])}`;
 
@@ -209,6 +209,9 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
     const firstName = nameParts.join(' ');
     author = `${lastName}, ${firstName}`;
   }
+
+  // Add page number parameter (1-based indexing)
+  url += `&pnum=${pageNumber}`;
 
   // Add filter parameter
   const filter = {
