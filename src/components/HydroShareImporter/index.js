@@ -253,6 +253,64 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
   return resourcesCorrected;
 }
 
+/**
+ * Fetch the pagination data for a given keyword and search criteria.
+ * Uses the discoverapi endpoint to get resource count, page count, and resources per page.
+ * @param {String} keyword The keyword/subject of the desired resources
+ * @param {String} searchText The text to search for within the resources
+ * @param {Boolean} ascending Whether to sort the results in ascending order
+ * @param {String} sortBy The field to sort by. One of 'title', 'author', 'created', 'modified'
+ * @param {String} author The author to filter the results by
+ * @returns {Promise<Object>} An object containing pagination data
+ */
+async function fetchKeywordPageData(keyword, searchText, ascending=false, sortBy=undefined, author=undefined) {
+  // API Url with query parameters
+  let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent([keyword])}`;
+
+  // Add sort order parameter
+  if (ascending) {
+    url += `&asc=1`;
+  } else {
+    url += `&asc=-1`;
+  }
+
+  // Add sort parameter if provided
+  if (sortBy !== undefined) {
+    url += `&sort=${encodeURIComponent(sortBy)}`;
+  }
+
+  // Convert author name from "First Middle Last" to "Last, First Middle"
+  if (author !== undefined) {
+    const nameParts = author.split(' ');
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    author = `${lastName}, ${firstName}`;
+  }
+
+  // Add page number parameter (1-based indexing)
+  url += `&pnum=${1}`;
+
+  // Add filter parameter
+  const filter = {
+    author: [author].filter(a => a !== undefined),
+    subject: [keyword],
+  };
+
+  url += `&filter=${encodeURIComponent(JSON.stringify(filter))}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Error fetching resources (status: ${response.status})`);
+  }
+  const data = await response.json();
+
+  return {
+    resourceCount: data.rescount,
+    pageCount: data.pagecount,
+    resourcesPerPage: data.perpage
+  };
+}
+
 async function fetchResourceCustomMetadata(resourceId) {
   const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/custom/`;
   const response = await fetch(url);
@@ -287,7 +345,7 @@ export {
   fetchResource, 
   fetchResourcesByGroup, 
   fetchResourcesByKeyword, 
-  fetchResourcesBySearch, getCommunityResources, 
+  fetchResourcesBySearch, fetchKeywordPageData, getCommunityResources, 
   fetchResourceCustomMetadata, 
   joinExtraResources, 
   fetchRawCuratedResources

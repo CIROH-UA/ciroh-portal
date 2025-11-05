@@ -1,11 +1,11 @@
-import React, { useEffect, useState, startTransition, useMemo } from "react";
+import React, { useEffect, useState, startTransition, useCallback, useRef } from "react";
 import clsx from "clsx";
 import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
 import { 
-  fetchResourcesByKeyword, fetchResourcesBySearch, 
+  fetchResourcesBySearch, fetchKeywordPageData, 
   fetchResourceCustomMetadata, 
   joinExtraResources, 
   fetchRawCuratedResources 
@@ -21,17 +21,15 @@ import {
   HiOutlineSortAscending,
 } from 'react-icons/hi';
 
+// Pagination
+const PAGE_SIZE        = 40;
+const SCROLL_THRESHOLD = 800;
+
 // Search input debounce
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
 export default function Presentations({ community_id = 4 }) {
-  // Search State
-  const [searchInput,    setSearchInput]    = useState('');
-  const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('modified');
-  const [sortDirection,  setSortDirection]  = useState('desc');
-
   const { colorMode } = useColorMode(); // Get the current theme
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
   const CURATED_PARENT_ID = "200fa86bea61438aa862d437103485db";
@@ -52,6 +50,7 @@ export default function Presentations({ community_id = 4 }) {
     embed_url: "",
   }));
 
+  // State
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
   const [collections, setCollections] = useState(initialPlaceholders);
   //const [curatedResources, setCuratedResources] = useState(initialPlaceholders); // Deprecated
@@ -60,11 +59,22 @@ export default function Presentations({ community_id = 4 }) {
   const [view, setView] = useState("row");
   const [activeTab, setActiveTab] = useState("presentations");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const fetching = useRef(false);
+
+  // Search State
+  const [searchInput,    setSearchInput]    = useState('');
+  const [filterSearch,   setFilterSearch]   = useState('');
+  const [sortType,       setSortType]       = useState('modified');
+  const [sortDirection,  setSortDirection]  = useState('desc');
+
   // Helper function to determine if search is active
-  const usingSearch = () => filterSearch.trim() !== '';
+  const usingSearch = useCallback(() => filterSearch.trim() !== '', [filterSearch]);
 
   // Helper function to search within a raw resource
-  const searchRawResource = (resource, searchTerm) => {
+  const searchRawResource = useCallback((resource, searchTerm) => {
     const searchTermLower = searchTerm.toLowerCase();
     const searchFields = [
       resource.resource_title,
@@ -76,11 +86,11 @@ export default function Presentations({ community_id = 4 }) {
     return searchFields.some(field => 
       field?.toLowerCase().includes(searchTermLower)
     );
-  };
+  }, []);
 
-  useEffect(() => {
-    // Maps a resource list to the internal format, including custom metadata
-    const mapWithCustomMetadata = async (resourceList) => {
+  // Maps a resource list to the internal format, including custom metadata
+  const mapWithCustomMetadata = useCallback(
+    async (resourceList) => {
       const mapping = await Promise.all(resourceList.map(async (res) => {
         let customMetadata = null;
         try {
@@ -108,21 +118,67 @@ export default function Presentations({ community_id = 4 }) {
         }
       }));
       return mapping;
-    }
+    },
+    [hs_icon]
+  );
 
-
-    // Fetch all resources by keyword and/or curation
-    const fetchAll = async () => {
+  // Fetch the curated resources first (from the "parent" resource).
+  const fetchRawCuratedResources = useCallback(
+    async () => {
       try {
+        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+
+        const curatedList = await Promise.all(curatedIds.map(async (id) => {
+          const resource = await fetchResource(id);
+          return resource;
+        }));
+
+        return curatedList;
+      } catch (err) {
+        console.error("Error fetching curated resources:", err);
+        return [];
+      }
+    },
+    [CURATED_PARENT_ID]
+  );
+
+  const fetchAll = useCallback(
+    async (page) => {
+      if (fetching.current) return;
+      fetching.current = true;
+
+      try {
+        // Add placeholders for loading state (only for pagination, not first page)
+        if (page > 1) {
+          setResources(prev => [
+            ...prev,
+            ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+              resource_id: `placeholder-page${page}-${i}`,
+              title: "",
+              authors: "",
+              resource_type: "",
+              resource_url: "",
+              description: "",
+              thumbnail_url: "",
+              page_url: "",
+              docs_url: "",
+            }))
+          ]);
+        }
+
         // Search parameters
         const ascending = sortDirection === 'asc';
 
         // Retrieve resources
-        let [rawCuratedResources, invKeywordResources, invCollections] = await Promise.all([
+        let [rawCuratedResources, invKeywordResources, invCollections, pageData] = await Promise.all([
           fetchRawCuratedResources(CURATED_PARENT_ID), // get array of curated resource IDs
-          fetchResourcesBySearch("ciroh_portal_presentation", filterSearch, ascending, sortType),
-          fetchResourcesBySearch("ciroh_portal_pres_collections", filterSearch, ascending, sortType),
+          fetchResourcesBySearch('ciroh_portal_presentation', filterSearch, ascending, sortType, undefined, page),
+          fetchResourcesBySearch('ciroh_portal_pres_collections', filterSearch, ascending, sortType, undefined, page),
+          fetchKeywordPageData('ciroh_portal_presentation', filterSearch, ascending, sortType, undefined)
         ]);
+
+        // Set last page
+        setLastPage(pageData.pageCount);
         
         // Apply search filtering to curated resources
         if (usingSearch()) {
@@ -166,7 +222,16 @@ export default function Presentations({ community_id = 4 }) {
         const mappedCollections = await mapWithCustomMetadata(rawCollections);
         //const mappedCurated = await mapWithCustomMetadata(rawCuratedResources); // If uncommenting, merge this and the above line into a Promise.all call
         
-        setResources(mappedResources);
+        // Handle first page vs pagination
+        if (page === 1) {
+          setResources(mappedResources);
+        } else {
+          setResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...mappedResources
+          ]);
+        }
+
         setCollections(mappedCollections);
         //setCuratedResources(mappedCurated);
 
@@ -176,11 +241,106 @@ export default function Presentations({ community_id = 4 }) {
         setError(err.message);
         setLoading(false);
       }
-    };
+      finally {
+        fetching.current = false;
+      }
+    },
+    [sortDirection, sortType, filterSearch, fetchRawCuratedResources, usingSearch, searchRawResource, mapWithCustomMetadata]
+  );
 
-    // Kick off fetch
-    fetchAll();
-  }, [community_id, filterSearch, sortType, sortDirection]);
+  const fetchPage = useCallback(
+    async (page) => {
+      if (fetching.current) return;
+      fetching.current = true;
+
+      try {
+        // Add placeholders for loading state (only for pagination, not first page)
+        if (page > 1) {
+          setResources(prev => [
+            ...prev,
+            ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+              resource_id: `placeholder-page${page}-${i}`,
+              title: "",
+              authors: "",
+              resource_type: "",
+              resource_url: "",
+              description: "",
+              thumbnail_url: "",
+              page_url: "",
+              docs_url: "",
+            }))
+          ]);
+        }
+
+        // Search parameters
+        const ascending = sortDirection === 'asc';
+
+        // Retrieve resources
+        let [invKeywordResources, pageData] = await Promise.all([
+          fetchResourcesBySearch('ciroh_portal_presentation', filterSearch, ascending, sortType, undefined, page),
+          fetchKeywordPageData('ciroh_portal_presentation', filterSearch, ascending, sortType, undefined)
+        ]);
+
+        // Set last page
+        setLastPage(pageData.pageCount);
+
+        const rawKeywordResources = invKeywordResources.reverse(); // Reverse chronological order
+
+        // Map the full resource lists to your internal format (with custom metadata)
+        const mappedResources = await mapWithCustomMetadata(rawKeywordResources);
+        //const mappedCurated = await mapWithCustomMetadata(rawCuratedResources); // If uncommenting, merge this and the above line into a Promise.all call
+        
+        // Handle first page vs pagination
+        if (page === 1) {
+          setResources(mappedResources);
+        } else {
+          setResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...mappedResources
+          ]);
+        }
+
+        //setCuratedResources(mappedCurated);
+
+        setLoading(false);
+      } catch (err) {
+        console.error(`Error fetching resources: ${err.message}`);
+        setError(err.message);
+        setLoading(false);
+      }
+      finally {
+        fetching.current = false;
+      }
+    },
+    [sortDirection, sortType, filterSearch, mapWithCustomMetadata]
+  );
+
+  // Reset and load first page when filters change
+  useEffect(() => {
+    setResources(initialPlaceholders);
+    setCurrentPage(1);
+    
+    // Reset the fetching flag to allow new requests
+    fetching.current = false;
+    
+    fetchAll(1); // Use fetchAll for first page (includes curated resources)
+  }, [filterSearch, sortDirection, sortType, fetchAll]);
+
+  /* infinite scroll */
+  useEffect(() => {
+    const onScroll = () => {
+      // Check if we can fetch more pages
+      if (fetching.current || currentPage >= lastPage) return;
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
+        const next = currentPage + 1;
+        setCurrentPage(next);
+        fetchPage(next);
+      }
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [currentPage, lastPage, fetchPage]);
 
   /* search helpers */
   const commitSearch = q => {
