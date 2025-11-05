@@ -166,6 +166,78 @@ async function fetchResourcesByKeyword(keyword) {
   return data.results;
 }
 
+function normalizeKeywordList(keywords = []) {
+  if (!Array.isArray(keywords)) {
+    return [];
+  }
+  return keywords
+    .map(keyword => (typeof keyword === 'string' ? keyword.trim() : ''))
+    .filter(Boolean);
+}
+
+async function fetchResourcesByKeywordsIntersection(keywords = []) {
+  const normalizedKeywords = normalizeKeywordList(keywords);
+
+  if (normalizedKeywords.length === 0) {
+    return [];
+  }
+
+  let encounteredError = null;
+  const keywordResults = await Promise.all(
+    normalizedKeywords.map(async keyword => {
+      try {
+        return await fetchResourcesByKeyword(keyword);
+      } catch (error) {
+        console.error(`Error fetching resources for keyword "${keyword}":`, error);
+        if (!encounteredError) {
+          encounteredError = error;
+        }
+        return [];
+      }
+    }),
+  );
+
+  if (encounteredError) {
+    throw encounteredError;
+  }
+
+  // Early exit if any keyword returned no matches to avoid unnecessary processing.
+  if (keywordResults.some(result => result.length === 0)) {
+    return [];
+  }
+
+  const intersectionMap = new Map();
+  const occurrenceMap = new Map();
+
+  keywordResults.forEach(resultList => {
+    resultList.forEach(resource => {
+      const resourceId = resource?.resource_id;
+      if (!resourceId) {
+        return;
+      }
+
+      if (!intersectionMap.has(resourceId)) {
+        intersectionMap.set(resourceId, resource);
+      }
+      occurrenceMap.set(resourceId, (occurrenceMap.get(resourceId) || 0) + 1);
+    });
+  });
+
+  const fullMatchResources = [];
+  const requiredMatches = normalizedKeywords.length;
+
+  occurrenceMap.forEach((count, resourceId) => {
+    if (count === requiredMatches) {
+      const resource = intersectionMap.get(resourceId);
+      if (resource) {
+        fullMatchResources.push(resource);
+      }
+    }
+  });
+
+  return fullMatchResources;
+}
+
 async function fetchResourceCustomMetadata(resourceId) {
   const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/custom/`;
   const response = await fetch(url);
@@ -200,6 +272,7 @@ export {
   fetchResource, 
   fetchResourcesByGroup, 
   fetchResourcesByKeyword, 
+  fetchResourcesByKeywordsIntersection,
   getCommunityResources, 
   fetchResourceCustomMetadata, 
   joinExtraResources, 

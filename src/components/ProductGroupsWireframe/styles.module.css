@@ -698,6 +698,11 @@
   gap: 1.75rem;
 }
 
+.productGridSingle {
+  grid-template-columns: minmax(260px, 420px);
+  justify-content: center;
+}
+
 .productCard {
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 28px;

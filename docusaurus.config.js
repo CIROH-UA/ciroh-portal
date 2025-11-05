@@ -97,6 +97,42 @@ const config = {
       }),
     ],
   ],
+  plugins: [
+    async function productGroupPagesPlugin() {
+      return {
+        name: 'product-group-pages',
+        async contentLoaded({ actions }) {
+          const { addRoute, createData } = actions;
+          const groupsModule = await import('./src/components/ProductGroupsWireframe/groups.js');
+          const allGroups = groupsModule?.default ?? groupsModule;
+
+          if (!Array.isArray(allGroups)) {
+            return;
+          }
+
+          await Promise.all(
+            allGroups
+              .filter(group => group?.id)
+              .map(async group => {
+                const dataPath = await createData(
+                  `product-group-${group.id}.json`,
+                  JSON.stringify({ id: group.id }),
+                );
+
+                addRoute({
+                  path: `/product-groups/${group.id}`,
+                  component: '@site/src/components/ProductGroupsWireframe/ProductGroupRoute.js',
+                  exact: true,
+                  modules: {
+                    group: dataPath,
+                  },
+                });
+              }),
+          );
+        },
+      };
+    },
+  ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({

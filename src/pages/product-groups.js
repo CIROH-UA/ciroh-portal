@@ -1,13 +1,30 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
+import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import ProductTilesGrid from '@site/src/components/ProductGroupsWireframe/ProductTilesGrid';
 import groups from '@site/src/components/ProductGroupsWireframe/groups';
+import { fetchHydroShareProductsForGroup } from '@site/src/components/ProductGroupsWireframe/hydroshareProducts';
 import styles from './product-groups.module.css';
 
 export default function ProductsGroupsPage() {
   const location = useLocation();
   const groupRefs = useRef({});
+  const displayGroups = useMemo(
+    () => groups.filter(group => group.docsRoute),
+    [],
+  );
+  const [groupStates, setGroupStates] = useState(() => {
+    const initialState = {};
+    displayGroups.forEach(group => {
+      initialState[group.id] = {
+        products: group.products ?? [],
+        loading: true,
+        error: null,
+      };
+    });
+    return initialState;
+  });
 
   useEffect(() => {
     // Handle hash-based navigation (e.g., #ngiab)
@@ -23,8 +40,92 @@ export default function ProductsGroupsPage() {
     }
   }, [location.hash]);
 
-  // Filter to only show groups that have docsRoute (same as dropdown)
-  const displayGroups = groups.filter(group => group.docsRoute);
+  useEffect(() => {
+    let cancelled = false;
+
+    setGroupStates(prev => {
+      const next = { ...prev };
+      displayGroups.forEach(group => {
+        const existing = prev[group.id];
+        next[group.id] = {
+          products: existing?.products ?? group.products ?? [],
+          loading: true,
+          error: null,
+        };
+      });
+      return next;
+    });
+
+    async function loadGroupResources() {
+      await Promise.all(
+        displayGroups.map(async group => {
+          const keywords = ['nwm_portal_app'];
+          if (group?.primaryKeyword) {
+            keywords.push(group.primaryKeyword);
+          }
+          if (group?.secondaryKeyword) {
+            keywords.push(group.secondaryKeyword);
+          }
+          if (Array.isArray(group?.hydroshareKeywords)) {
+            keywords.push(...group.hydroshareKeywords);
+          }
+
+          if (keywords.length === 0) {
+            if (!cancelled) {
+              setGroupStates(prev => ({
+                ...prev,
+                [group.id]: {
+                  products: group.products ?? [],
+                  loading: false,
+                  error: null,
+                },
+              }));
+            }
+            return;
+          }
+
+          try {
+            const fetchedProducts = await fetchHydroShareProductsForGroup(keywords, {
+              limit: 6,
+              includeMetadata: false,
+            });
+
+            if (cancelled) {
+              return;
+            }
+
+            setGroupStates(prev => ({
+              ...prev,
+              [group.id]: {
+                products: fetchedProducts.length > 0 ? fetchedProducts : group.products ?? [],
+                loading: false,
+                error: null,
+              },
+            }));
+          } catch (error) {
+            console.error(`Unable to load HydroShare resources for group ${group.id}:`, error);
+            if (cancelled) {
+              return;
+            }
+            setGroupStates(prev => ({
+              ...prev,
+              [group.id]: {
+                products: group.products ?? [],
+                loading: false,
+                error,
+              },
+            }));
+          }
+        }),
+      );
+    }
+
+    loadGroupResources();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [displayGroups]);
 
   // Handler for when user clicks "Read docs" on a product
   const handleDocsNavigate = ({ docsPath, groupId, product }) => {
@@ -64,11 +165,21 @@ export default function ProductsGroupsPage() {
                   <p className={styles.groupBlurb}>{group.blurb}</p>
                 </div>
               </div>
+              <div className={styles.groupHeaderAction}>
+                <Link
+                  className="button button--primary button--md"
+                  to={`/product-groups/${group.id}`}
+                >
+                  Explore group
+                </Link>
+              </div>
             </div>
 
-            {group.products && group.products.length > 0 ? (
+            {groupStates[group.id]?.loading && !(groupStates[group.id]?.products?.length) ? (
+              <p className={styles.loadingNotice}>Loading HydroShare resources…</p>
+            ) : groupStates[group.id]?.products?.length ? (
               <ProductTilesGrid
-                products={group.products}
+                products={groupStates[group.id].products}
                 showDocsAction
                 fallbackDocsLink={group.docsRoute}
                 groupId={group.id}
@@ -77,6 +188,11 @@ export default function ProductsGroupsPage() {
             ) : (
               <p className={styles.noProducts}>No products available for this group.</p>
             )}
+            {groupStates[group.id]?.error ? (
+              <p className={styles.groupErrorNotice}>
+                Unable to load live HydroShare resources right now. Showing curated content if available.
+              </p>
+            ) : null}
           </section>
         ))}
       </main>

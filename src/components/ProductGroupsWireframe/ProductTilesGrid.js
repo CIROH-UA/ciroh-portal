@@ -1,7 +1,7 @@
 import React from 'react';
 import { MdArrowOutward } from 'react-icons/md';
 import { FaGithub } from "react-icons/fa";
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import clsx from 'clsx';
 import styles from './styles.module.css';
 
 // Generate elegant SVG placeholder based on product type
@@ -84,11 +84,18 @@ export default function ProductTilesGrid({
     );
   }
 
+  const gridClassName = clsx(
+    styles.productGrid,
+    products.length === 1 && styles.productGridSingle,
+  );
+
   return (
-    <div className={styles.productGrid}>
+    <div className={gridClassName}>
       {products.map(product => {
         const docsPath = product.docsLink || fallbackDocsLink;
         const owningGroupId = product.groupId || groupId;
+        const hasDocsLink = Boolean(showDocsAction && docsPath && onDocsNavigate);
+        const hasCodeLink = Boolean(showDocsAction && product.codeLink);
 
         const handleDocsClick = () => {
           if (onDocsNavigate && docsPath) {
@@ -114,26 +121,30 @@ export default function ProductTilesGrid({
                 <p className={styles.productSummary}>{product.summary}</p>
               )}
             </div>
-            {showDocsAction && docsPath && onDocsNavigate && (
+            {showDocsAction && (hasDocsLink || hasCodeLink) && (
               <div className={styles.productCardCTA}>
-                <button
-                  type="button"
-                  className={styles.productCardCTAButton}
-                  onClick={handleDocsClick}
-                  aria-label={`Open docs for ${product.title}`}
-                >
-                  <span>Docs</span>
-                  <MdArrowOutward aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  className={styles.productCardCTAButton}
-                  onClick={() => window.open(product.codeLink, '_blank')}
-                  aria-label={`Open docs for ${product.title}`}
-                >
-                  <span>Code</span>
-                  <FaGithub aria-hidden ="true" />
-                </button>                
+                {hasDocsLink ? (
+                  <button
+                    type="button"
+                    className={styles.productCardCTAButton}
+                    onClick={handleDocsClick}
+                    aria-label={`Open docs for ${product.title}`}
+                  >
+                    <span>Docs</span>
+                    <MdArrowOutward aria-hidden="true" />
+                  </button>
+                ) : null}
+                {hasCodeLink ? (
+                  <button
+                    type="button"
+                    className={styles.productCardCTAButton}
+                    onClick={() => window.open(product.codeLink, '_blank', 'noopener,noreferrer')}
+                    aria-label={`Open code for ${product.title}`}
+                  >
+                    <span>Code</span>
+                    <FaGithub aria-hidden ="true" />
+                  </button>
+                ) : null}
               </div>
             )}
           </article>

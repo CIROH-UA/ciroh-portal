@@ -1,0 +1,377 @@
+.pageWrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1rem 5rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--ifm-color-primary-darkest);
+  transform: translateX(-2px);
+}
+
+.headerCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.5rem;
+  border-radius: 24px;
+  margin-bottom: 2.5rem;
+}
+
+.headerMain {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.headerIcon {
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 1.25rem;
+  border-radius: 18px;
+  color: var(--ifm-color-primary);
+  background: linear-gradient(135deg, var(--ifm-color-primary-lightest), rgba(99, 102, 241, 0.25));
+  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
+  flex-shrink: 0;
+}
+
+.headerTitle {
+  margin: 0 0 1rem 0;
+  font-size: 2.75rem;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.headerBlurb {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.65;
+  max-width: 720px;
+}
+
+.metricsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.metricCard {
+  flex: 1 1 180px;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.metricLabel {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.metricValue {
+  margin: 0.35rem 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary-darkest);
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  margin: 0 0 1.25rem 0;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-900);
+}
+ 
+.sectionHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.resultsMeta {
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-600);
+}
+.productsSection {
+  margin-top: 3rem;
+}
+.filtersBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-direction: column;
+}
+.filterTags {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.filterLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+.filterTag {
+  --tag-color: var(--ifm-color-primary);
+  --tag-bg: color-mix(in srgb, var(--tag-color) 16%, transparent);
+  --tag-border: color-mix(in srgb, var(--tag-color) 38%, transparent);
+  --tag-shadow: color-mix(in srgb, var(--tag-color) 24%, transparent);
+  --tag-shadow-active: color-mix(in srgb, var(--tag-color) 42%, transparent);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--tag-border);
+  background: var(--tag-bg);
+  color: var(--tag-color, var(--ifm-color-emphasis-800));
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.filterTag:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px var(--tag-shadow);
+}
+.filterTag:disabled {
+  cursor: not-allowed;
+}
+.filterTagActive {
+  background: var(--tag-color, var(--ifm-color-primary));
+  color: #ffffff;
+  border-color: var(--tag-color, var(--ifm-color-primary));
+  box-shadow: 0 8px 18px var(--tag-shadow-active);
+}
+.filterTagDisabled {
+  opacity: 0.45;
+  box-shadow: none;
+  transform: none;
+}
+
+.filterEmoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.filterIcon {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--tag-color, var(--ifm-color-primary-darkest));
+}
+
+.filterTagActive .filterIcon {
+  color: #ffffff;
+}
+.filterCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tag-color) 18%, transparent);
+  font-size: 0.75rem;
+  color: var(--tag-color, var(--ifm-color-emphasis-800));
+}
+.filterTagActive .filterCount {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+.resetFiltersButton {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ifm-color-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.resetFiltersButton:hover {
+  color: var(--ifm-color-primary-darkest);
+  transform: translateY(-1px);
+}
+.searchWrapper {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.searchInput {
+  width: 90%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.searchInput:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+.clearSearchButton {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.clearSearchButton:hover {
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+}
+.productLoadError {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--tag-color, var(--ifm-color-primary)) 35%, transparent);
+  background: color-mix(in srgb, var(--tag-color, var(--ifm-color-primary)) 16%, transparent);
+  color: var(--ifm-color-emphasis-900);
+  font-size: 0.85rem;
+}
+.loadingProducts {
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+  text-align: center;
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 600;
+}
+.noProducts {
+  padding: 2.5rem;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 16px;
+  border: 1px dashed var(--ifm-color-emphasis-300);
+  text-align: center;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 1.05rem;
+}
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.65rem 1.4rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ctaButtonPrimary {
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+}
+
+.ctaButtonPrimary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.45);
+  color: #ffffff;
+}
+
+@media (max-width: 996px) {
+  .headerCard {
+    padding: 2rem;
+  }
+
+  .headerMain {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .headerTitle {
+    font-size: 2.15rem;
+  }
+
+  .metricsGrid {
+    gap: 0.75rem;
+  }
+
+  .metricCard {
+    flex: 1 1 calc(50% - 0.75rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .pageWrapper {
+    padding: 2.5rem 0 3.5rem;
+  }
+
+  .headerCard {
+    padding: 1.75rem;
+    border-radius: 18px;
+  }
+
+  .headerTitle {
+    font-size: 1.85rem;
+  }
+
+  .headerBlurb {
+    font-size: 1rem;
+  }
+
+  .metricCard {
+    flex: 1 1 100%;
+  }
+
+  .filtersBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .searchWrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .searchInput {
+    flex: 1;
+    width: 100%;
+  }
+
+  .clearSearchButton {
+    flex-shrink: 0;
+  }
+}
