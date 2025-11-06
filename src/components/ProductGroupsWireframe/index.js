@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useHistory, useLocation } from '@docusaurus/router';
 import GroupTiles from './GroupTiles';
@@ -8,6 +8,7 @@ import ProductTilesGrid from './ProductTilesGrid';
 import docContentMap from './docContentMap';
 import groups from './groups';
 import sidebarData from './sidebarData';
+import { fetchHydroShareProductsForGroup, buildGroupKeywords } from './hydroshareProducts';
 import styles from './styles.module.css';
 
 const findSidebarItemByPath = (groupId, targetPath) => {
@@ -31,14 +32,18 @@ export default function ProductGroupsWireframe() {
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [activeSidebarItem, setActiveSidebarItem] = useState(null);
   const [detailMode, setDetailMode] = useState('collections');
+  const [groupProductsState, setGroupProductsState] = useState({});
   const history = useHistory();
   const location = useLocation();
+  const fetchInFlight = useRef(new Set());
 
   const activeGroup = useMemo(
     () => groups.find(group => group.id === activeGroupId),
     [activeGroupId],
   );
-
+  const activeGroupProductsState = activeGroupId
+    ? groupProductsState[activeGroupId] || { items: [], loading: false, error: null }
+    : { items: [], loading: false, error: null };
   const renderCollections = () => {
     if (!activeGroup) return null;
 
@@ -103,6 +108,92 @@ export default function ProductGroupsWireframe() {
   const openGroupProductsPage = groupId => {
     history.push(`/docs/group-products?group=${groupId}`);
   };
+
+  useEffect(() => {
+    if (!activeGroupId || detailMode !== 'products' || !activeGroup) {
+      return undefined;
+    }
+
+    const keywords = buildGroupKeywords(activeGroup);
+
+    if (keywords.length === 0) {
+      setGroupProductsState(prev => ({
+        ...prev,
+        [activeGroupId]: {
+          items: [],
+          loading: false,
+          error: null,
+        },
+      }));
+      return undefined;
+    }
+
+    setGroupProductsState(prev => {
+      const existing = prev[activeGroupId];
+      if (existing?.loading) {
+        return prev;
+      }
+      if (existing?.items?.length) {
+        return prev;
+      }
+      return {
+        ...prev,
+        [activeGroupId]: {
+          items: existing?.items ?? [],
+          loading: true,
+          error: null,
+        },
+      };
+    });
+
+    if (fetchInFlight.current.has(activeGroupId)) {
+      return undefined;
+    }
+
+    let cancelled = false;
+    fetchInFlight.current.add(activeGroupId);
+
+    (async () => {
+      try {
+        const resources = await fetchHydroShareProductsForGroup(keywords, {
+          includeMetadata: true,
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        setGroupProductsState(prev => ({
+          ...prev,
+          [activeGroupId]: {
+            items: resources,
+            loading: false,
+            error: null,
+          },
+        }));
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+        console.error(`Unable to load HydroShare resources for group ${activeGroupId}:`, error);
+        setGroupProductsState(prev => ({
+          ...prev,
+          [activeGroupId]: {
+            items: [],
+            loading: false,
+            error,
+          },
+        }));
+      } finally {
+        fetchInFlight.current.delete(activeGroupId);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      fetchInFlight.current.delete(activeGroupId);
+    };
+  }, [activeGroupId, activeGroup, detailMode]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -207,19 +298,32 @@ export default function ProductGroupsWireframe() {
             {(detailMode === 'collections' || activeSidebarItem) ? (
               renderCollections()
             ) : (
-              <ProductTilesGrid
-                products={activeGroup.products}
-                showDocsAction
-                fallbackDocsLink={activeGroup.docsRoute}
-                groupId={activeGroup.id}
-                onDocsNavigate={({ docsPath, groupId: targetGroupId, product }) =>
-                  showDocsForGroup({
-                    groupId: targetGroupId,
-                    docsPath,
-                    label: product?.title,
-                  })
-                }
-              />
+              <>
+                {activeGroupProductsState.loading ? (
+                  <PlaceholderGrid
+                    title="HydroShare Products"
+                    items={activeGroup.componentPlaceholders}
+                  />
+                ) : activeGroupProductsState.error ? (
+                  <div className={styles.productsErrorNotice}>
+                    Unable to load HydroShare resources right now. Please try again later.
+                  </div>
+                ) : (
+                  <ProductTilesGrid
+                    products={activeGroupProductsState.items}
+                    showDocsAction
+                    fallbackDocsLink={activeGroup.docsRoute}
+                    groupId={activeGroup.id}
+                    onDocsNavigate={({ docsPath, groupId: targetGroupId, product }) =>
+                      showDocsForGroup({
+                        groupId: targetGroupId,
+                        docsPath,
+                        label: product?.title,
+                      })
+                    }
+                  />
+                )}
+              </>
             )}
           </section>
         </div>

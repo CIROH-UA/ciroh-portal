@@ -6,7 +6,7 @@ import { MdApps } from 'react-icons/md';
 import { SiJupyter, SiPython } from 'react-icons/si';
 import { BsBucketFill } from "react-icons/bs";
 import ProductTilesGrid from './ProductTilesGrid';
-import { fetchHydroShareProductsForGroup } from './hydroshareProducts';
+import { fetchHydroShareProductsForGroup, buildGroupKeywords } from './hydroshareProducts';
 import styles from './product-group-detail.module.css';
 
 function buildDocsUrl(docsPath) {
@@ -53,24 +53,14 @@ export default function ProductGroupDetailPage({ group }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeType, setActiveType] = useState(null);
   const [dynamicProducts, setDynamicProducts] = useState([]);
-  const [productsLoading, setProductsLoading] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
   const docsUrl = useMemo(() => buildDocsUrl(group?.docsRoute), [group?.docsRoute]);
-  const fallbackProducts = useMemo(() => group?.products ?? [], [group?.products]);
 
-  const groupKeywords = useMemo(() => {
-    const keywords = ['nwm_portal_app'];
-    if (group?.primaryKeyword) {
-      keywords.push(group.primaryKeyword);
-    }
-    if (group?.secondaryKeyword) {
-      keywords.push(group.secondaryKeyword);
-    }
-    if (Array.isArray(group?.hydroshareKeywords)) {
-      keywords.push(...group.hydroshareKeywords);
-    }
-    return keywords.filter(Boolean);
-  }, [group?.primaryKeyword, group?.secondaryKeyword, group?.hydroshareKeywords]);
+  const groupKeywords = useMemo(
+    () => buildGroupKeywords(group),
+    [group],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -85,12 +75,12 @@ export default function ProductGroupDetailPage({ group }) {
 
       setProductsLoading(true);
       setProductsError(null);
+      setDynamicProducts([]);
 
       try {
         const fetchedProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
           includeMetadata: true,
         });
-
         if (!cancelled) {
           setDynamicProducts(fetchedProducts);
         }
@@ -114,8 +104,7 @@ export default function ProductGroupDetailPage({ group }) {
     };
   }, [group?.id, groupKeywords]);
 
-  const products = dynamicProducts.length > 0 ? dynamicProducts : fallbackProducts;
-
+  const products = dynamicProducts;
   const typeCounts = useMemo(() => {
     return TYPE_FILTERS.reduce((acc, filter) => {
       const count = products.filter(product => {
@@ -151,6 +140,8 @@ export default function ProductGroupDetailPage({ group }) {
         product.summary,
         product.primaryKeyword,
         product.secondaryKeyword,
+        product.productTypeMetadata,
+        product.productTypeResource,
         Array.isArray(product.keywords) ? product.keywords.join(' ') : null,
         Array.isArray(product.authors) ? product.authors.join(' ') : null,
       ]
@@ -216,7 +207,9 @@ export default function ProductGroupDetailPage({ group }) {
             <span className={styles.resultsMeta}>
               {productsLoading
                 ? 'Loading products…'
-                : hasProducts
+                : productsError
+                  ? 'No products available right now'
+                  : hasProducts
                   ? `${filteredProducts.length} of ${totalCount} shown`
                   : 'No products available yet'}
             </span>
@@ -245,7 +238,11 @@ export default function ProductGroupDetailPage({ group }) {
             <div className={styles.filterTags}>
               {TYPE_FILTERS.map(filter => {
                 const isActive = activeType === filter.label;
-                const isAvailable = (typeCounts[filter.label] || 0) > 0;
+                const count = typeCounts[filter.label] || 0;
+                if (count === 0) {
+                  return null;
+                }
+                const isAvailable = count > 0;
                 const themeVars = filter.color
                   ? { '--tag-color': filter.color }
                   : undefined;
@@ -270,7 +267,7 @@ export default function ProductGroupDetailPage({ group }) {
                     </span>
                     <span>{filter.label}</span>
                     <span className={styles.filterCount}>
-                      {typeCounts[filter.label] || 0}
+                      {count}
                     </span>
                   </button>
                 );
@@ -284,18 +281,18 @@ export default function ProductGroupDetailPage({ group }) {
                     setSearchTerm('');
                   }}
                 >
-                  x
+                  Reset
                 </button>
               ) : null}
             </div>
             {productsError ? (
               <div className={styles.productLoadError}>
-                Unable to load live HydroShare resources right now. Showing curated examples instead.
+                Unable to load live HydroShare resources right now. Please try again later.
               </div>
             ) : null}
           </div>
 
-          {productsLoading && dynamicProducts.length === 0 && fallbackProducts.length === 0 ? (
+          {productsLoading && dynamicProducts.length === 0 ? (
             <div className={styles.loadingProducts}>Loading HydroShare resources…</div>
           ) : hasFilteredResults ? (
             <ProductTilesGrid
@@ -305,7 +302,7 @@ export default function ProductGroupDetailPage({ group }) {
               groupId={group.id}
               onDocsNavigate={handleDocsNavigate}
             />
-          ) : (
+          ) : productsError ? null : (
             <div className={styles.noProducts}>
               {hasProducts
                 ? 'No products match your filters yet. Try a different search or reset the filters.'

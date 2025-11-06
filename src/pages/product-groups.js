@@ -4,7 +4,7 @@ import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
 import ProductTilesGrid from '@site/src/components/ProductGroupsWireframe/ProductTilesGrid';
 import groups from '@site/src/components/ProductGroupsWireframe/groups';
-import { fetchHydroShareProductsForGroup } from '@site/src/components/ProductGroupsWireframe/hydroshareProducts';
+import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroupsWireframe/hydroshareProducts';
 import styles from './product-groups.module.css';
 
 export default function ProductsGroupsPage() {
@@ -18,7 +18,7 @@ export default function ProductsGroupsPage() {
     const initialState = {};
     displayGroups.forEach(group => {
       initialState[group.id] = {
-        products: group.products ?? [],
+        products: [],
         loading: true,
         error: null,
       };
@@ -48,7 +48,7 @@ export default function ProductsGroupsPage() {
       displayGroups.forEach(group => {
         const existing = prev[group.id];
         next[group.id] = {
-          products: existing?.products ?? group.products ?? [],
+          products: existing?.products ?? [],
           loading: true,
           error: null,
         };
@@ -59,23 +59,14 @@ export default function ProductsGroupsPage() {
     async function loadGroupResources() {
       await Promise.all(
         displayGroups.map(async group => {
-          const keywords = ['nwm_portal_app'];
-          if (group?.primaryKeyword) {
-            keywords.push(group.primaryKeyword);
-          }
-          if (group?.secondaryKeyword) {
-            keywords.push(group.secondaryKeyword);
-          }
-          if (Array.isArray(group?.hydroshareKeywords)) {
-            keywords.push(...group.hydroshareKeywords);
-          }
+          const keywords = buildGroupKeywords(group);
 
           if (keywords.length === 0) {
             if (!cancelled) {
               setGroupStates(prev => ({
                 ...prev,
                 [group.id]: {
-                  products: group.products ?? [],
+                  products: [],
                   loading: false,
                   error: null,
                 },
@@ -87,7 +78,7 @@ export default function ProductsGroupsPage() {
           try {
             const fetchedProducts = await fetchHydroShareProductsForGroup(keywords, {
               limit: 6,
-              includeMetadata: false,
+              includeMetadata: true,
             });
 
             if (cancelled) {
@@ -97,7 +88,7 @@ export default function ProductsGroupsPage() {
             setGroupStates(prev => ({
               ...prev,
               [group.id]: {
-                products: fetchedProducts.length > 0 ? fetchedProducts : group.products ?? [],
+                products: fetchedProducts,
                 loading: false,
                 error: null,
               },
@@ -110,7 +101,7 @@ export default function ProductsGroupsPage() {
             setGroupStates(prev => ({
               ...prev,
               [group.id]: {
-                products: group.products ?? [],
+                products: [],
                 loading: false,
                 error,
               },
@@ -190,7 +181,7 @@ export default function ProductsGroupsPage() {
             )}
             {groupStates[group.id]?.error ? (
               <p className={styles.groupErrorNotice}>
-                Unable to load live HydroShare resources right now. Showing curated content if available.
+                Unable to load live HydroShare resources right now. Please try again later.
               </p>
             ) : null}
           </section>

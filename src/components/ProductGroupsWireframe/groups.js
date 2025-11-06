@@ -8,8 +8,8 @@ const productGroups = [
     title: 'NextGen In A Box',
     blurb: 'Containerized workflows, dashboards, and tooling to reproduce NextGen experiments.',
     icon: MdMonitor,
-    primaryKeyword: 'ngiab_portal_app',
-    secondaryKeyword: 'ngiab_portal_module',
+    primaryKeyword: 'community_resources',
+    // secondaryKeyword: 'ngiab_portal_module',
     docsRoute: '/docs/products/ngiab',
     defaultImage: DEFAULT_PREVIEW,
     metrics: [

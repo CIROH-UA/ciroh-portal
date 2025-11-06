@@ -234,7 +234,6 @@ async function fetchResourcesByKeywordsIntersection(keywords = []) {
       }
     }
   });
-
   return fullMatchResources;
 }
 

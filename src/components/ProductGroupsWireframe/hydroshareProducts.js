@@ -19,12 +19,26 @@ const normalizeKeywords = keywords => {
     .filter(Boolean);
 };
 
-const mapHydroShareType = resourceType => {
-  if (!resourceType) {
-    return 'Resource';
+export function buildGroupKeywords(group) {
+  const keywords = ['nwm_portal_app'];
+  if (group?.primaryKeyword) {
+    keywords.push(group.primaryKeyword);
+  }
+  if (group?.secondaryKeyword) {
+    keywords.push(group.secondaryKeyword);
+  }
+  if (Array.isArray(group?.hydroshareKeywords)) {
+    keywords.push(...group.hydroshareKeywords);
+  }
+  return keywords.filter(Boolean);
+}
+
+const normalizeProductType = value => {
+  if (!value) {
+    return null;
   }
 
-  const normalized = resourceType.toLowerCase();
+  const normalized = value.toString().toLowerCase();
 
   if (normalized.includes('notebook') || normalized.includes('jupyter')) {
     return 'Notebook';
@@ -42,7 +56,76 @@ const mapHydroShareType = resourceType => {
     return 'Library';
   }
 
-  return resourceType;
+  if (normalized.includes('framework')) {
+    return 'Framework';
+  }
+
+  if (normalized.includes('analytics')) {
+    return 'Analytics';
+  }
+
+  if (normalized.includes('distribution')) {
+    return 'Distribution';
+  }
+
+  if (normalized.includes('service')) {
+    return 'Service';
+  }
+
+  if (normalized.includes('dashboard')) {
+    return 'Dashboard';
+  }
+
+  if (normalized.includes('visual')) {
+    return 'Visualization';
+  }
+
+  return value;
+};
+
+const extractProductTypeFromMetadata = customMetadata => {
+  if (!customMetadata) {
+    return null;
+  }
+
+  const candidates = [
+    customMetadata.product_type,
+    customMetadata.productType,
+    customMetadata.product_category,
+    customMetadata.productCategory,
+    customMetadata.extra_metadata?.product_type,
+    customMetadata.extra_metadata?.productType,
+    customMetadata.extra_metadata?.product_category,
+    customMetadata.extra_metadata?.productCategory,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim()) {
+      return normalizeProductType(candidate.trim());
+    }
+  }
+
+  return null;
+};
+
+const deriveProductType = (customMetadata, resource) => {
+  const metadataType = extractProductTypeFromMetadata(customMetadata);
+  if (metadataType) {
+    return {
+      resolved: metadataType,
+      fromMetadata: metadataType,
+      fromResource: null,
+    };
+  }
+
+  const resourceType = resource?.resource_type || resource?.resourceType || '';
+  const normalizedResourceType = normalizeProductType(resourceType);
+
+  return {
+    resolved: normalizedResourceType || 'Resource',
+    fromMetadata: null,
+    fromResource: normalizedResourceType || resourceType || '',
+  };
 };
 
 function mapResourceToProduct(resource, customMetadata) {
@@ -65,10 +148,16 @@ function mapResourceToProduct(resource, customMetadata) {
     customMetadata?.github_url ||
     '';
 
+  const { resolved: resolvedType, fromMetadata, fromResource } = deriveProductType(customMetadata, resource);
+
   const product = {
     id: resource.resource_id,
     title: resource.resource_title || resource.title || 'Untitled resource',
-    type: mapHydroShareType(resource.resource_type),
+    type: resolvedType,
+    productType: resolvedType,
+    productTypeSource: fromMetadata ? 'metadata' : 'resource',
+    productTypeMetadata: fromMetadata || '',
+    productTypeResource: fromResource || '',
     summary: derivedSummary,
     docsLink: docsUrlFromMetadata || fallbackDocsUrl,
     codeLink: repoUrl,
@@ -79,6 +168,7 @@ function mapResourceToProduct(resource, customMetadata) {
     authors: Array.isArray(resource.authors) ? resource.authors : [],
     keywords: Array.isArray(resource.subjects) ? resource.subjects : [],
     thumbnailUrl: customMetadata?.thumbnail_url || '',
+    resourceType: resource.resource_type || '',
     rawResource: resource,
     rawCustomMetadata: customMetadata || null,
   };
@@ -120,7 +210,6 @@ export async function fetchHydroShareProductsForGroup(keywords, options = {}) {
     includeMetadata = true,
     sortBy = 'date_last_updated',
   } = options;
-
   const normalizedKeywords = normalizeKeywords(keywords);
   if (normalizedKeywords.length === 0) {
     return [];
