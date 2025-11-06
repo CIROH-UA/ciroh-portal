@@ -1,5 +1,5 @@
-import React from 'react';
-import { MdArrowOutward } from 'react-icons/md';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { MdArrowOutward, MdWaterDrop } from 'react-icons/md';
 import { FaGithub } from "react-icons/fa";
 import clsx from 'clsx';
 import styles from './styles.module.css';
@@ -68,6 +68,9 @@ function ElegantPlaceholder({ title, type }) {
   );
 }
 
+const INITIAL_BATCH_SIZE = 12;
+const BATCH_INCREMENT = 8;
+
 export default function ProductTilesGrid({
   products,
   showDocsAction = false,
@@ -84,6 +87,47 @@ export default function ProductTilesGrid({
     );
   }
 
+  const [visibleCount, setVisibleCount] = useState(
+    Math.min(INITIAL_BATCH_SIZE, products.length),
+  );
+  const sentinelRef = useRef(null);
+
+  useEffect(() => {
+    setVisibleCount(Math.min(INITIAL_BATCH_SIZE, products.length));
+  }, [products.length]);
+
+  useEffect(() => {
+    if (visibleCount >= products.length) {
+      return undefined;
+    }
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setVisibleCount(current =>
+            Math.min(products.length, current + BATCH_INCREMENT),
+          );
+        }
+      });
+    });
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [products.length, visibleCount]);
+
+  const visibleProducts = useMemo(
+    () => products.slice(0, visibleCount),
+    [products, visibleCount],
+  );
+
   const gridClassName = clsx(
     styles.productGrid,
     products.length === 1 && styles.productGridSingle,
@@ -91,11 +135,19 @@ export default function ProductTilesGrid({
 
   return (
     <div className={gridClassName}>
-      {products.map(product => {
+      {visibleProducts.map(product => {
         const docsPath = product.docsLink || fallbackDocsLink;
         const owningGroupId = product.groupId || groupId;
         const hasDocsLink = Boolean(showDocsAction && docsPath && onDocsNavigate);
         const hasCodeLink = Boolean(showDocsAction && product.codeLink);
+        const hasHydroLink = Boolean(showDocsAction && product.resourceUrl);
+        const subjects = Array.isArray(product.subjects) ? product.subjects : [];
+        const filteredSubjects = subjects
+          .filter(subject => {
+            const normalized = subject?.toLowerCase();
+            return normalized && !['nwm_portal_product', 'nwm_portal_app', 'nextgen_noaa'].includes(normalized);
+          })
+          .map(subject => subject.replace(/_/g, ' '));
 
         const handleDocsClick = () => {
           if (onDocsNavigate && docsPath) {
@@ -107,15 +159,38 @@ export default function ProductTilesGrid({
           }
         };
 
+        const handleCardClick = () => {
+          if (product.pageUrl) {
+            window.open(product.pageUrl, '_blank', 'noopener,noreferrer');
+          }
+        };
+
+        const stopPropagation = event => {
+          event.stopPropagation();
+        };
+
         return (
-          <article key={product.id} className={styles.productCard}>
+          <article
+            key={product.id}
+            className={clsx(
+              styles.productCard,
+              product.pageUrl && styles.productCardInteractive,
+            )}
+            onClick={handleCardClick}
+          >
             <div className={styles.productCardMedia}>
               <ElegantPlaceholder title={product.title} type={product.type} />
             </div>
             <div className={styles.productCardBody}>
-              {product.type && (
-                <span className={styles.productCategory}>{product.type}</span>
-              )}
+              {filteredSubjects.length > 0 ? (
+                <div className={styles.productSubjects}>
+                  {filteredSubjects.slice(0, 4).map(subject => (
+                    <span key={subject} className={styles.productSubjectChip}>
+                      {subject}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
               <h4 className={styles.productTitle}>{product.title}</h4>
               {product.summary && (
                 <p className={styles.productSummary}>{product.summary}</p>
@@ -127,18 +202,38 @@ export default function ProductTilesGrid({
                   <button
                     type="button"
                     className={styles.productCardCTAButton}
-                    onClick={handleDocsClick}
+                    onClick={event => {
+                      stopPropagation(event);
+                      handleDocsClick();
+                    }}
                     aria-label={`Open docs for ${product.title}`}
                   >
                     <span>Docs</span>
                     <MdArrowOutward aria-hidden="true" />
                   </button>
                 ) : null}
+                {hasHydroLink ? (
+                  <button
+                    type="button"
+                    className={styles.productCardCTAButton}
+                    onClick={event => {
+                      stopPropagation(event);
+                      window.open(product.resourceUrl, '_blank', 'noopener,noreferrer');
+                    }}
+                    aria-label={`Open HydroShare resource for ${product.title}`}
+                  >
+                    <span>HydroShare</span>
+                    <MdWaterDrop aria-hidden="true" />
+                  </button>
+                ) : null}
                 {hasCodeLink ? (
                   <button
                     type="button"
                     className={styles.productCardCTAButton}
-                    onClick={() => window.open(product.codeLink, '_blank', 'noopener,noreferrer')}
+                    onClick={event => {
+                      stopPropagation(event);
+                      window.open(product.codeLink, '_blank', 'noopener,noreferrer');
+                    }}
                     aria-label={`Open code for ${product.title}`}
                   >
                     <span>Code</span>
@@ -150,6 +245,9 @@ export default function ProductTilesGrid({
           </article>
         );
       })}
+      {visibleCount < products.length ? (
+        <div ref={sentinelRef} className={styles.loadMoreSentinel} aria-hidden="true" />
+      ) : null}
     </div>
   );
 }

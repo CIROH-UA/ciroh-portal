@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import clsx from 'clsx';
@@ -6,7 +6,11 @@ import { MdApps } from 'react-icons/md';
 import { SiJupyter, SiPython } from 'react-icons/si';
 import { BsBucketFill } from "react-icons/bs";
 import ProductTilesGrid from './ProductTilesGrid';
-import { fetchHydroShareProductsForGroup, buildGroupKeywords } from './hydroshareProducts';
+import {
+  fetchHydroShareProductsForGroup,
+  buildGroupKeywords,
+  hydrateProductMetadata,
+} from './hydroshareProducts';
 import styles from './product-group-detail.module.css';
 
 function buildDocsUrl(docsPath) {
@@ -55,12 +59,17 @@ export default function ProductGroupDetailPage({ group }) {
   const [dynamicProducts, setDynamicProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
+  const metadataFetchRef = useRef(new Set());
   const docsUrl = useMemo(() => buildDocsUrl(group?.docsRoute), [group?.docsRoute]);
 
   const groupKeywords = useMemo(
     () => buildGroupKeywords(group),
     [group],
   );
+
+  useEffect(() => {
+    metadataFetchRef.current = new Set();
+  }, [group?.id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,20 +87,40 @@ export default function ProductGroupDetailPage({ group }) {
       setDynamicProducts([]);
 
       try {
-        const fetchedProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
-          includeMetadata: true,
+        const baseProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
+          includeMetadata: false,
         });
-        if (!cancelled) {
-          setDynamicProducts(fetchedProducts);
+        if (cancelled) {
+          return;
         }
+        setDynamicProducts(baseProducts);
+        setProductsLoading(false);
+
+        baseProducts.forEach(product => {
+          if (metadataFetchRef.current.has(product.id)) {
+            return;
+          }
+          metadataFetchRef.current.add(product.id);
+          hydrateProductMetadata(product)
+            .then(enrichedProduct => {
+              if (cancelled || !enrichedProduct) {
+                return;
+              }
+              setDynamicProducts(current =>
+                current.map(item =>
+                  item.id === enrichedProduct.id ? { ...item, ...enrichedProduct } : item,
+                ),
+              );
+            })
+            .catch(metadataError => {
+              console.error(`Unable to enrich product ${product.id}:`, metadataError);
+            });
+        });
       } catch (error) {
         console.error(`Unable to load HydroShare resources for group ${group?.id}:`, error);
         if (!cancelled) {
           setProductsError(error);
           setDynamicProducts([]);
-        }
-      } finally {
-        if (!cancelled) {
           setProductsLoading(false);
         }
       }
@@ -293,7 +322,18 @@ export default function ProductGroupDetailPage({ group }) {
           </div>
 
           {productsLoading && dynamicProducts.length === 0 ? (
-            <div className={styles.loadingProducts}>Loading HydroShare resources…</div>
+            <div className={styles.productSkeletonGrid}>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={`skeleton-${index}`} className={styles.productSkeletonCard}>
+                  <div className={styles.productSkeletonMedia}>
+                    <SkeletonPlaceholderMedia />
+                  </div>
+                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
+                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineNarrow)} />
+                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
+                </div>
+              ))}
+            </div>
           ) : hasFilteredResults ? (
             <ProductTilesGrid
               products={filteredProducts}
@@ -312,5 +352,27 @@ export default function ProductGroupDetailPage({ group }) {
         </section>
       </main>
     </Layout>
+  );
+}
+function SkeletonPlaceholderMedia() {
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 200 200"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="skeleton-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="var(--ifm-color-primary-lightest)" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="var(--ifm-color-primary-lighter)" stopOpacity="0.9" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="200" rx="32" fill="url(#skeleton-grad)" opacity="0.5" />
+      <circle cx="100" cy="100" r="75" stroke="var(--ifm-color-primary-light)" strokeWidth="4" fill="none" opacity="0.4" />
+      <circle cx="100" cy="100" r="55" stroke="var(--ifm-color-primary-lightest)" strokeWidth="3" fill="none" opacity="0.3" />
+      <circle cx="100" cy="100" r="38" stroke="var(--ifm-color-primary)" strokeWidth="2" fill="none" opacity="0.25" />
+    </svg>
   );
 }

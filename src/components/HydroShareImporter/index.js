@@ -249,6 +249,18 @@ async function fetchResourceCustomMetadata(resourceId) {
   return data;
 }
 
+async function fetchResourceMetadata(resourceId) {
+  const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/elements/`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(
+      `Error fetching scimeta elements for resource ${resourceId} (status: ${response.status})`
+    );
+  }
+  const data = await response.json();
+  return data;
+}
+
 // Fetch the curated resources first (from the "parent" resource).
 async function fetchRawCuratedResources(curated_parent_id) {
   try {
@@ -274,6 +286,7 @@ export {
   fetchResourcesByKeywordsIntersection,
   getCommunityResources, 
   fetchResourceCustomMetadata, 
+  fetchResourceMetadata,
   joinExtraResources, 
   fetchRawCuratedResources
 };

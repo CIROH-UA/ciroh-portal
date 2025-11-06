@@ -1,4 +1,8 @@
-import { fetchResourcesByKeywordsIntersection, fetchResourceCustomMetadata } from '@site/src/components/HydroShareImporter';
+import {
+  fetchResourcesByKeywordsIntersection,
+  fetchResourceCustomMetadata,
+  fetchResourceMetadata,
+} from '@site/src/components/HydroShareImporter';
 
 const DEFAULT_LIMIT = 24;
 
@@ -20,7 +24,9 @@ const normalizeKeywords = keywords => {
 };
 
 export function buildGroupKeywords(group) {
-  const keywords = ['nwm_portal_app'];
+  // const keywords = ['nwm_portal_app'];
+  const keywords = [];
+
   if (group?.primaryKeyword) {
     keywords.push(group.primaryKeyword);
   }
@@ -128,7 +134,80 @@ const deriveProductType = (customMetadata, resource) => {
   };
 };
 
-function mapResourceToProduct(resource, customMetadata) {
+const coerceSubjectsArray = value => {
+  if (!value) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value
+      .map(item => {
+        if (typeof item === 'string') {
+          return item.trim();
+        }
+        if (item && typeof item.value === 'string') {
+          return item.value.trim();
+        }
+        if (item && typeof item.term === 'string') {
+          return item.term.trim();
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }
+
+  if (typeof value === 'string') {
+    return value.trim() ? [value.trim()] : [];
+  }
+
+  return [];
+};
+
+const extractSubjectsFromMetadata = metadata => {
+  if (!metadata) {
+    return [];
+  }
+
+  const collected = new Set();
+  const addSubjects = list => {
+    list.forEach(subject => {
+      if (subject) {
+        collected.add(subject);
+      }
+    });
+  };
+
+  addSubjects(coerceSubjectsArray(metadata.subjects));
+  addSubjects(coerceSubjectsArray(metadata.Subjects));
+
+  const elementsArray = metadata.elements || metadata.Elements;
+  if (Array.isArray(elementsArray)) {
+    elementsArray.forEach(element => {
+      const elementType = element?.type || element?.name;
+      if (elementType && elementType.toLowerCase() === 'subject') {
+        addSubjects(coerceSubjectsArray(element.value || element.term || element));
+      }
+    });
+  }
+
+  if (metadata.extra_metadata?.subjects) {
+    addSubjects(coerceSubjectsArray(metadata.extra_metadata.subjects));
+  }
+
+  return Array.from(collected);
+};
+
+async function fetchSubjectsForResource(resourceId) {
+  try {
+    const metadata = await fetchResourceMetadata(resourceId);
+    return extractSubjectsFromMetadata(metadata);
+  } catch (error) {
+    console.error(`Unable to fetch subject metadata for resource ${resourceId}:`, error);
+    return [];
+  }
+}
+
+function mapResourceToProduct(resource, customMetadata, extras = {}) {
   if (!resource) {
     return null;
   }
@@ -149,6 +228,10 @@ function mapResourceToProduct(resource, customMetadata) {
     '';
 
   const { resolved: resolvedType, fromMetadata, fromResource } = deriveProductType(customMetadata, resource);
+  const resolvedSubjects =
+    Array.isArray(extras.subjectsOverride) && extras.subjectsOverride.length > 0
+      ? extras.subjectsOverride
+      : coerceSubjectsArray(resource.subjects);
 
   const product = {
     id: resource.resource_id,
@@ -166,7 +249,8 @@ function mapResourceToProduct(resource, customMetadata) {
     lastUpdated: resource.date_last_updated || resource.last_updated || '',
     createdAt: resource.date_created || '',
     authors: Array.isArray(resource.authors) ? resource.authors : [],
-    keywords: Array.isArray(resource.subjects) ? resource.subjects : [],
+    keywords: resolvedSubjects,
+    subjects: resolvedSubjects,
     thumbnailUrl: customMetadata?.thumbnail_url || '',
     resourceType: resource.resource_type || '',
     rawResource: resource,
@@ -178,7 +262,13 @@ function mapResourceToProduct(resource, customMetadata) {
 
 async function enrichWithCustomMetadata(resources, { includeMetadata = true }) {
   if (!includeMetadata) {
-    return resources.map(resource => mapResourceToProduct(resource, null)).filter(Boolean);
+    return resources
+      .map(resource =>
+        mapResourceToProduct(resource, null, {
+          subjectsOverride: coerceSubjectsArray(resource.subjects),
+        }),
+      )
+      .filter(Boolean);
   }
 
   const enrichedProducts = [];
@@ -195,13 +285,39 @@ async function enrichWithCustomMetadata(resources, { includeMetadata = true }) {
       console.error(`Unable to fetch custom metadata for resource ${resource.resource_id}:`, error);
     }
 
-    const mappedProduct = mapResourceToProduct(resource, customMetadata);
+    const subjects = await fetchSubjectsForResource(resource.resource_id);
+    const mappedProduct = mapResourceToProduct(resource, customMetadata, { subjectsOverride: subjects });
     if (mappedProduct) {
       enrichedProducts.push(mappedProduct);
     }
   }
 
   return enrichedProducts;
+}
+
+export async function hydrateProductMetadata(product) {
+  if (!product?.id || !product?.rawResource) {
+    return product;
+  }
+
+  try {
+    const [customMetadata, subjects] = await Promise.all([
+      fetchResourceCustomMetadata(product.id).catch(error => {
+        console.error(`Unable to fetch custom metadata for product ${product.id}:`, error);
+        return null;
+      }),
+      fetchSubjectsForResource(product.id),
+    ]);
+
+    return (
+      mapResourceToProduct(product.rawResource, customMetadata, {
+        subjectsOverride: subjects,
+      }) || product
+    );
+  } catch (error) {
+    console.error(`Unable to hydrate product ${product.id}:`, error);
+    return product;
+  }
 }
 
 export async function fetchHydroShareProductsForGroup(keywords, options = {}) {

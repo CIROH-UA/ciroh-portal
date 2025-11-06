@@ -4,13 +4,13 @@ const DEFAULT_PREVIEW = '/img/hs_resource_placeholder.png';
 
 const productGroups = [
   {
-    id: 'ngiab',
-    title: 'NextGen In A Box',
-    blurb: 'Containerized workflows, dashboards, and tooling to reproduce NextGen experiments.',
+    id: 'ngen',
+    title: 'Nextgen Ecosystem',
+    blurb: "Application of NOAA-OWP's NextGen Framework",
     icon: MdMonitor,
-    primaryKeyword: 'community_resources',
-    // secondaryKeyword: 'ngiab_portal_module',
-    docsRoute: '/docs/products/ngiab',
+    primaryKeyword: 'nextgen_noaa',
+    secondaryKeyword: 'nwm_portal_product',
+    docsRoute: '/docs/products/ngen',
     defaultImage: DEFAULT_PREVIEW,
     metrics: [
       { id: 'components', label: 'Components', count: 8 },

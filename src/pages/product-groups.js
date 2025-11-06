@@ -77,7 +77,7 @@ export default function ProductsGroupsPage() {
 
           try {
             const fetchedProducts = await fetchHydroShareProductsForGroup(keywords, {
-              limit: 6,
+              // limit: 6,
               includeMetadata: true,
             });
 
