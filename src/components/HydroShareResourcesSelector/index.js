@@ -14,7 +14,7 @@ import {
 } from 'react-icons/hi';
 
 const PAGE_SIZE        = 40;
-const SCROLL_THRESHOLD = 400;
+const SCROLL_THRESHOLD = 800;
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
