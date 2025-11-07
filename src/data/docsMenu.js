@@ -1,4 +1,4 @@
-import productGroups from '../components/ProductGroupsWireframe/groups';
+import productGroups from '../components/ProductGroups/groups';
 import {
   MdCloudQueue,
   MdStorage,

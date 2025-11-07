@@ -2,10 +2,52 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import { useLocation } from '@docusaurus/router';
-import ProductTilesGrid from '@site/src/components/ProductGroupsWireframe/ProductTilesGrid';
-import groups from '@site/src/components/ProductGroupsWireframe/groups';
-import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroupsWireframe/hydroshareProducts';
+import ProductTilesGrid from '@site/src/components/ProductGroups/ProductTilesGrid';
+import groups from '@site/src/components/ProductGroups/groups';
+import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroups/hydroshareProducts';
 import styles from './product-groups.module.css';
+
+const SKELETON_CARD_COUNT = 12;
+
+function SkeletonPlaceholderMedia() {
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 200 200"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="product-groups-skeleton-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="var(--ifm-color-primary-lightest)" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="var(--ifm-color-primary-lighter)" stopOpacity="0.9" />
+        </linearGradient>
+      </defs>
+      <rect width="200" height="200" rx="32" fill="url(#product-groups-skeleton-grad)" opacity="0.5" />
+      <circle cx="100" cy="100" r="75" stroke="var(--ifm-color-primary-light)" strokeWidth="4" fill="none" opacity="0.4" />
+      <circle cx="100" cy="100" r="55" stroke="var(--ifm-color-primary-lightest)" strokeWidth="3" fill="none" opacity="0.3" />
+      <circle cx="100" cy="100" r="38" stroke="var(--ifm-color-primary)" strokeWidth="2" fill="none" opacity="0.25" />
+    </svg>
+  );
+}
+
+function ProductSkeletonGrid({ count = SKELETON_CARD_COUNT }) {
+  return (
+    <div className={styles.productSkeletonGrid}>
+      {Array.from({ length: count }).map((_, index) => (
+        <div key={`pg-skeleton-${index}`} className={styles.productSkeletonCard}>
+          <div className={styles.productSkeletonMedia}>
+            <SkeletonPlaceholderMedia />
+          </div>
+          <div className={`${styles.productSkeletonLine} ${styles.productSkeletonLineWide}`} />
+          <div className={`${styles.productSkeletonLine} ${styles.productSkeletonLineNarrow}`} />
+          <div className={`${styles.productSkeletonLine} ${styles.productSkeletonLineWide}`} />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function ProductsGroupsPage() {
   const location = useLocation();
@@ -167,7 +209,7 @@ export default function ProductsGroupsPage() {
             </div>
 
             {groupStates[group.id]?.loading && !(groupStates[group.id]?.products?.length) ? (
-              <p className={styles.loadingNotice}>Loading HydroShare resources…</p>
+              <ProductSkeletonGrid />
             ) : groupStates[group.id]?.products?.length ? (
               <ProductTilesGrid
                 products={groupStates[group.id].products}

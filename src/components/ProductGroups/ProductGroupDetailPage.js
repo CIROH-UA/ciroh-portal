@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import clsx from 'clsx';
@@ -52,6 +52,8 @@ const TYPE_FILTERS = [
 const normalize = value =>
   value ? value.toString().toLowerCase().trim() : '';
 
+const PAGE_SIZE = 15;
+
 export default function ProductGroupDetailPage({ group }) {
   const Icon = group?.icon;
   const [searchTerm, setSearchTerm] = useState('');
@@ -59,8 +61,16 @@ export default function ProductGroupDetailPage({ group }) {
   const [dynamicProducts, setDynamicProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const metadataFetchRef = useRef(new Set());
+  const loadMoreFetchingRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const loadMoreRef = useRef(null);
+  const hydratedProductCache = useRef(new Map());
   const docsUrl = useMemo(() => buildDocsUrl(group?.docsRoute), [group?.docsRoute]);
+  const normalizedSearchTerm = useMemo(() => normalize(searchTerm), [searchTerm]);
 
   const groupKeywords = useMemo(
     () => buildGroupKeywords(group),
@@ -69,43 +79,84 @@ export default function ProductGroupDetailPage({ group }) {
 
   useEffect(() => {
     metadataFetchRef.current = new Set();
+    hydratedProductCache.current = new Map();
   }, [group?.id]);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadProducts() {
+  const fetchProducts = useCallback(
+    async ({ page: pageToLoad = 1, append = false } = {}) => {
       if (groupKeywords.length === 0) {
         setDynamicProducts([]);
         setProductsLoading(false);
         setProductsError(null);
+        setHasMore(false);
         return;
       }
 
-      setProductsLoading(true);
-      setProductsError(null);
-      setDynamicProducts([]);
+      if (append && loadMoreFetchingRef.current) {
+        return;
+      }
+
+      const requestId = append ? requestIdRef.current : requestIdRef.current + 1;
+      if (!append) {
+        requestIdRef.current = requestId;
+      }
+
+      if (append) {
+        loadMoreFetchingRef.current = true;
+        setLoadingMore(true);
+      } else {
+        setProductsLoading(true);
+        setProductsError(null);
+      }
 
       try {
+        console.log(`Fetching HydroShare products ${normalizedSearchTerm}`);
         const baseProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
           includeMetadata: false,
+          page: pageToLoad,
+          count: PAGE_SIZE,
+          fullTextSearch: normalizedSearchTerm,
         });
-        if (cancelled) {
+
+        const seededProducts = baseProducts.map(product => {
+          const cached = hydratedProductCache.current.get(product.id);
+          return cached ? cached : product;
+        });
+
+        if (requestId !== requestIdRef.current) {
           return;
         }
-        setDynamicProducts(baseProducts);
-        setProductsLoading(false);
+
+        setHasMore(baseProducts.length === PAGE_SIZE);
+
+        setDynamicProducts(current =>
+          append
+            ? [
+                ...current,
+                ...seededProducts.filter(
+                  product => !current.some(existing => existing.id === product.id),
+                ),
+              ]
+            : seededProducts,
+        );
+
+        if (!append) {
+          setProductsLoading(false);
+        } else {
+          setLoadingMore(false);
+        }
 
         baseProducts.forEach(product => {
-          if (metadataFetchRef.current.has(product.id)) {
+          if (hydratedProductCache.current.has(product.id) || metadataFetchRef.current.has(product.id)) {
             return;
           }
           metadataFetchRef.current.add(product.id);
           hydrateProductMetadata(product)
             .then(enrichedProduct => {
-              if (cancelled || !enrichedProduct) {
+              if (!enrichedProduct || requestId !== requestIdRef.current) {
                 return;
               }
+              hydratedProductCache.current.set(enrichedProduct.id, enrichedProduct);
               setDynamicProducts(current =>
                 current.map(item =>
                   item.id === enrichedProduct.id ? { ...item, ...enrichedProduct } : item,
@@ -114,24 +165,69 @@ export default function ProductGroupDetailPage({ group }) {
             })
             .catch(metadataError => {
               console.error(`Unable to enrich product ${product.id}:`, metadataError);
+            })
+            .finally(() => {
+              metadataFetchRef.current.delete(product.id);
             });
         });
       } catch (error) {
         console.error(`Unable to load HydroShare resources for group ${group?.id}:`, error);
-        if (!cancelled) {
+        if (!append) {
           setProductsError(error);
           setDynamicProducts([]);
           setProductsLoading(false);
+        } else {
+          setLoadingMore(false);
+        }
+      } finally {
+        if (append) {
+          loadMoreFetchingRef.current = false;
         }
       }
+    },
+    [groupKeywords, normalizedSearchTerm, group?.id],
+  );
+
+  useEffect(() => {
+    console.log('Resetting products due to filter/search change');
+    // console.log('Group keywords:', groupKeywords);
+    console.log('Search term:', normalizedSearchTerm);
+    setDynamicProducts([]);
+    setHasMore(true);
+    setCurrentPage(1);
+    metadataFetchRef.current.clear();
+    hydratedProductCache.current.clear();
+    if (groupKeywords.length === 0) {
+      setProductsLoading(false);
+      setProductsError(null);
+      return;
+    }
+    fetchProducts({ page: 1, append: false });
+  }, [groupKeywords, normalizedSearchTerm, fetchProducts]);
+
+  useEffect(() => {
+    if (!hasMore || productsLoading) {
+      return;
     }
 
-    loadProducts();
+    const sentinel = loadMoreRef.current;
+    if (!sentinel) {
+      return;
+    }
 
-    return () => {
-      cancelled = true;
-    };
-  }, [group?.id, groupKeywords]);
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !loadingMore && hasMore) {
+          const nextPage = currentPage + 1;
+          setCurrentPage(nextPage);
+          fetchProducts({ page: nextPage, append: true });
+        }
+      });
+    });
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, productsLoading, currentPage, fetchProducts]);
 
   const products = dynamicProducts;
   const typeCounts = useMemo(() => {
@@ -349,6 +445,23 @@ export default function ProductGroupDetailPage({ group }) {
                 : 'We are still cataloging individual products for this group. Check back soon.'}
             </div>
           )}
+          {!productsLoading && hasMore ? (
+            <div ref={loadMoreRef} className={styles.loadMoreTrigger} aria-hidden="true" />
+          ) : null}
+          {loadingMore ? (
+            <div className={styles.productSkeletonGrid}>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={`loading-more-skeleton-${index}`} className={styles.productSkeletonCard}>
+                  <div className={styles.productSkeletonMedia}>
+                    <SkeletonPlaceholderMedia />
+                  </div>
+                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
+                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineNarrow)} />
+                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
+                </div>
+              ))}
+            </div>
+          ) : null}
         </section>
       </main>
     </Layout>

@@ -20,10 +20,10 @@ import React, { useEffect, useState } from 'react';
  */
 const help = null; // help keyword in the code can be moused over to see the above explanation
 
-import { tryGetCachedRepository, tryGetCachedOrganization, tryGetCachedRepositoryWorkflows } from './GitHubHandling/AccessUtils';
-import { RateLimitError } from './GitHubHandling/RateLimitError';
-import { AccessConfig } from './GitHubHandling/AccessConfig';
-import { useObserveFraction, visibleOnce } from './GitHubHandling/VisibilityUtil';
+import { tryGetCachedRepository, tryGetCachedOrganization, tryGetCachedRepositoryWorkflows } from '../GitHubHandling/AccessUtils';
+import { RateLimitError } from '../GitHubHandling/RateLimitError';
+import { AccessConfig } from '../GitHubHandling/AccessConfig';
+import { useObserveFraction, visibleOnce } from '../GitHubHandling/VisibilityUtil';
 import Link from '@docusaurus/Link';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -407,7 +407,7 @@ function BuildRepoWorkflowsDiv(repository, workflows_0, isExpanded, setIsExpande
         </div>
     );
 }
-import { RepoCache } from './GitHubHandling/AccessUtils';
+import { RepoCache } from '../GitHubHandling/AccessUtils';
 /**
  * @name RepoWorkflowsDiv
  * @description

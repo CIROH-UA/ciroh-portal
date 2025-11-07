@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import { MdExpandMore } from 'react-icons/md';
-import groups from '@site/src/components/ProductGroupsWireframe/groups';
+import groups from '@site/src/components/ProductGroups/groups';
 import styles from './styles.module.css';
 
 const buildGroupLink = id => `/product-groups/${id}`;

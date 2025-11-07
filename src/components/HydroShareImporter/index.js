@@ -152,10 +152,16 @@ async function getCommunityResources(keyword="ciroh_portal_data", communityId="4
   }
 }
 
-async function fetchResourcesByKeyword(keyword) {
-  const url = `https://www.hydroshare.org/hsapi/resource/?subject=${encodeURIComponent(
-    keyword
-  )}`;
+async function fetchResourcesByKeyword(keyword, { page = 1, count = 15, fullTextSearch } = {}) {
+  const params = new URLSearchParams({
+    subject: keyword,
+    page: page.toString(),
+    count: count.toString(),
+  });
+  if (fullTextSearch) {
+    params.set('full_text_search', fullTextSearch);
+  }
+  const url = `https://www.hydroshare.org/hsapi/resource/?${params.toString()}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Error fetching resources (status: ${response.status})`);
@@ -175,7 +181,12 @@ function normalizeKeywordList(keywords = []) {
     .filter(Boolean);
 }
 
-async function fetchResourcesByKeywordsIntersection(keywords = []) {
+async function fetchResourcesByKeywordsIntersection(keywords = [], options = {}) {
+  const {
+    page = 1,
+    count = 15,
+    fullTextSearch,
+  } = options;
   const normalizedKeywords = normalizeKeywordList(keywords);
 
   if (normalizedKeywords.length === 0) {
@@ -186,7 +197,7 @@ async function fetchResourcesByKeywordsIntersection(keywords = []) {
   const keywordResults = await Promise.all(
     normalizedKeywords.map(async keyword => {
       try {
-        return await fetchResourcesByKeyword(keyword);
+        return await fetchResourcesByKeyword(keyword, { page, count, fullTextSearch });
       } catch (error) {
         console.error(`Error fetching resources for keyword "${keyword}":`, error);
         if (!encounteredError) {

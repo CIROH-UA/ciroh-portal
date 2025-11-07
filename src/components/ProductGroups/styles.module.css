@@ -891,6 +891,7 @@
   color: var(--ifm-color-secondary);
   border-color: var(--ifm-color-primary);
   text-decoration: none;
+  cursor: pointer;
 }
 
 @media (max-width: 1199px) {

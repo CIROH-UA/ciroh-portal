@@ -28,7 +28,7 @@ const findSidebarItemByPath = (groupId, targetPath) => {
   return null;
 };
 
-export default function ProductGroupsWireframe() {
+export default function ProductGroups() {
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [activeSidebarItem, setActiveSidebarItem] = useState(null);
   const [detailMode, setDetailMode] = useState('collections');

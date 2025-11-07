@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Layout from '@theme/Layout';
 import { useHistory, useLocation } from '@docusaurus/router';
 import Header from '@site/src/components/Header';
-import ProductTilesGrid from '@site/src/components/ProductGroupsWireframe/ProductTilesGrid';
-import groups from '@site/src/components/ProductGroupsWireframe/groups';
-import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroupsWireframe/hydroshareProducts';
+import ProductTilesGrid from '@site/src/components/ProductGroups/ProductTilesGrid';
+import groups from '@site/src/components/ProductGroups/groups';
+import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroups/hydroshareProducts';
 
 function useSelectedGroup(locationSearch) {
   return useMemo(() => {

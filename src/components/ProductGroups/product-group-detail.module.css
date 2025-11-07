@@ -273,10 +273,15 @@
 }
 .productSkeletonGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.75rem;
 }
-@media (max-width: 996px) {
+@media (min-width: 1200px) {
+  .productSkeletonGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 992px) {
   .productSkeletonGrid {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
@@ -284,11 +289,13 @@
 .productSkeletonCard {
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 28px;
-  padding: 1.5rem;
+  padding: 1.75rem;
   background: var(--ifm-background-surface-color);
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-height: 100%;
+  box-shadow: 0 35px 90px -65px rgba(15, 23, 42, 0.75);
   animation: pulseBackground 1.8s ease-in-out infinite;
 }
 .productSkeletonMedia {
@@ -315,6 +322,10 @@
 }
 .productSkeletonLineNarrow {
   width: 50%;
+}
+.loadMoreTrigger {
+  width: 100%;
+  height: 1px;
 }
 
 @keyframes pulseBackground {

@@ -103,7 +103,7 @@ const config = {
         name: 'product-group-pages',
         async contentLoaded({ actions }) {
           const { addRoute, createData } = actions;
-          const groupsModule = await import('./src/components/ProductGroupsWireframe/groups.js');
+          const groupsModule = await import('./src/components/ProductGroups/groups.js');
           const allGroups = groupsModule?.default ?? groupsModule;
 
           if (!Array.isArray(allGroups)) {
@@ -121,7 +121,7 @@ const config = {
 
                 addRoute({
                   path: `/product-groups/${group.id}`,
-                  component: '@site/src/components/ProductGroupsWireframe/ProductGroupRoute.js',
+                  component: '@site/src/components/ProductGroups/ProductGroupRoute.js',
                   exact: true,
                   modules: {
                     group: dataPath,

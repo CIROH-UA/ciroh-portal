@@ -325,13 +325,15 @@ export async function fetchHydroShareProductsForGroup(keywords, options = {}) {
     limit = DEFAULT_LIMIT,
     includeMetadata = true,
     sortBy = 'date_last_updated',
+    page = 1,
+    count = 15,
   } = options;
   const normalizedKeywords = normalizeKeywords(keywords);
   if (normalizedKeywords.length === 0) {
     return [];
   }
 
-  const resources = await fetchResourcesByKeywordsIntersection(normalizedKeywords);
+  const resources = await fetchResourcesByKeywordsIntersection(normalizedKeywords, options);
   if (!resources || resources.length === 0) {
     return [];
   }

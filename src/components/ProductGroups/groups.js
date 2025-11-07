@@ -1,0 +1,73 @@
+import { MdMonitor, MdSchema, MdShowChart, MdStackedLineChart, MdAcUnit } from 'react-icons/md';
+
+const DEFAULT_PREVIEW = '/img/hs_resource_placeholder.png';
+
+const productGroups = [
+  {
+    id: 'ngen',
+    title: 'Nextgen Ecosystem',
+    blurb: "Application of NOAA-OWP's NextGen Framework",
+    icon: MdMonitor,
+    primaryKeyword: 'CZNet',
+    secondaryKeyword: 'CZNet',
+    docsRoute: '',
+    defaultImage: DEFAULT_PREVIEW,
+    metrics: [],
+    componentPlaceholders: [],
+    products: [],
+  },
+  {
+    id: 'data-management-access-tools',
+    title: 'Data Management & Access Tools',
+    blurb: 'Data Manangement and Access Tools for Hydrological Modeling',
+    icon: MdSchema,
+    primaryKeyword: '',
+    secondaryKeyword: '',
+    docsRoute: '',
+    defaultImage: DEFAULT_PREVIEW,
+    metrics: [],
+    componentPlaceholders: [],
+    products: [],
+  },
+  {
+    id: 'community-fim',
+    title: 'Community Flood Inundation Mapping',
+    blurb: 'Visualization and evaluation tooling for flood inundation modeling studies.',
+    icon: MdShowChart,
+    primaryKeyword: 'community_fim_portal_app',
+    secondaryKeyword: 'community_fim_portal_module',
+    docsRoute: '',
+    defaultImage: DEFAULT_PREVIEW,
+    metrics: [],
+    componentPlaceholders: [],
+    products: [],
+  },
+  {
+    id: 'machione-learning-ai-tools',
+    title: 'Machine Learning & AI Tools',
+    blurb: 'Tools and applications leveraging machine learning and artificial intelligence for hydrologic research.',
+    icon: MdStackedLineChart,
+    primaryKeyword: 'research_datastream_portal_app',
+    secondaryKeyword: 'research_datastream_portal_module',
+    docsRoute: '',
+    defaultImage: DEFAULT_PREVIEW,
+    metrics: [],
+    componentPlaceholders: [],
+    products: [],
+  },
+  {
+    id: 'snow-tools',
+    title: 'Snow Sensing & Modeling',
+    blurb: 'Snow water equivalent tools, calibration notebooks, and decision dashboards.',
+    icon: MdAcUnit,
+    primaryKeyword: 'snow_tools_portal_app',
+    secondaryKeyword: 'snow_tools_portal_module',
+    docsRoute: '',
+    defaultImage: DEFAULT_PREVIEW,
+    metrics: [],
+    componentPlaceholders: [],
+    products: [],
+  },
+];
+
+export default productGroups;

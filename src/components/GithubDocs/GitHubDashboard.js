@@ -20,8 +20,8 @@ import React, { useEffect, useState } from 'react';
  */
 const help = null; // help keyword in the code can be moused over to see the above explanation
 
-import { tryGetOrganization, tryListRepositories, tryGetRepositoryWorkflows, tryGetRepository, getRateLimitStatus, tryGetCachedRepository, tryCacheOrgRepos } from './GitHubHandling/AccessUtils';
-import { AccessConfig } from './GitHubHandling/AccessConfig';
+import { tryGetOrganization, tryListRepositories, tryGetRepositoryWorkflows, tryGetRepository, getRateLimitStatus, tryGetCachedRepository, tryCacheOrgRepos } from '../GitHubHandling/AccessUtils';
+import { AccessConfig } from '../GitHubHandling/AccessConfig';
 import Link from '@docusaurus/Link';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';

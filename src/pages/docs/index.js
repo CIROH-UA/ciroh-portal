@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Layout from '@theme/Layout';
 import { useLocation } from '@docusaurus/router';
 import Link from '@docusaurus/Link';
-import groups from '@site/src/components/ProductGroupsWireframe/groups';
+import groups from '@site/src/components/ProductGroups/groups';
 import {
   MdCloudQueue,
   MdStorage,
