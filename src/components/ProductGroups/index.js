@@ -106,7 +106,7 @@ export default function ProductGroups() {
   };
 
   const openGroupProductsPage = groupId => {
-    history.push(`/docs/group-products?group=${groupId}`);
+    history.push(`/docs?group=${groupId}`);
   };
 
   useEffect(() => {
@@ -196,7 +196,8 @@ export default function ProductGroups() {
       fetchInFlight.current.delete(activeGroupId);
     };
   // }, [activeGroupId, activeGroup, detailMode]);
-  }, [activeGroupId, activeGroup]);
+  
+  }, [activeGroupId, activeGroup, detailMode]);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const requestedGroupId = params.get('group');

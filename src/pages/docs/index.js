@@ -9,7 +9,7 @@ import {
   MdShare,
   MdArrowForward,
 } from 'react-icons/md';
-import styles from './docs.module.css';
+import styles from './styles.module.css';
 
 const services = [
   {
@@ -112,7 +112,7 @@ export default function DocsPage() {
   }, [location.hash]);
 
   // Filter to only show groups that have docsRoute
-  const displayGroups = groups.filter(group => group.docsRoute);
+  const displayGroups = groups.filter(group => group.title);
 
   return (
     <Layout
@@ -134,7 +134,7 @@ export default function DocsPage() {
           ref={productGroupsRef}
           className={styles.section}
         >
-          <h2 className={styles.sectionTitle}>Product Groups</h2>
+          <h2 className={styles.sectionTitle}>Product Categories</h2>
           <div className={styles.cardsGrid}>
             {displayGroups.map(group => (
               <GroupCard key={group.id} group={group} />

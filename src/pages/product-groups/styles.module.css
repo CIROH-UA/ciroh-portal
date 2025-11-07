@@ -153,6 +153,10 @@
   .pageDescription {
     font-size: 1.1rem;
   }
+  .sectionTitle {
+    font-size: 1.75rem;
+  }
+
 }
 
 @media (max-width: 768px) {
@@ -168,4 +172,17 @@
   .pageDescription {
     font-size: 1rem;
   }
+    .sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-900);
+  margin: 0 0 2rem 0;
+  padding-left: 1rem;
+  border-left: 4px solid var(--ifm-color-primary);
 }

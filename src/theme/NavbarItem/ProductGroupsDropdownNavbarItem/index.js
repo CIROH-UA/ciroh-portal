@@ -67,7 +67,7 @@ export default function ProductGroupsDropdownNavbarItem({
         onMouseLeave={() => setOpen(false)}
       >
         <div className={styles.column}>
-          <p className={styles.columnTitle}>Category</p>
+          <p className={styles.columnTitle}>Explore</p>
           <ul className={styles.linkList}>
             {groups.map(group => {
               const Icon = group.icon;

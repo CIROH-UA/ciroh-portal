@@ -14,7 +14,7 @@ const toHref = path =>
     : `${DOCS_BASE}/${path}`;
 
 const products = productGroups
-  .filter(group => group.docsRoute)
+  .filter(group => group.title)
   .map(group => ({
     id: group.id,
     title: group.title,
@@ -22,7 +22,7 @@ const products = productGroups
     icon: group.icon,
     href: `/docs?group=${group.id}`,
   }));
-
+console.log(products);
 const services = [
   {
     id: 'cloudservices',

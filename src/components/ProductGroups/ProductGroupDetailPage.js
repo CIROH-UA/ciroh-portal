@@ -298,7 +298,7 @@ export default function ProductGroupDetailPage({ group }) {
     <Layout title={group.title} description={group.blurb}>
       <main className={styles.pageWrapper}>
         <Link className={styles.backLink} to="/product-groups">
-          ← All product groups
+          ← Groups
         </Link>
 
         <article className={styles.headerCard}>
