@@ -5,7 +5,7 @@ import { useLocation } from '@docusaurus/router';
 import ProductTilesGrid from '@site/src/components/ProductGroups/ProductTilesGrid';
 import groups from '@site/src/components/ProductGroups/groups';
 import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroups/hydroshareProducts';
-import styles from './product-groups.module.css';
+import styles from './styles.module.css';
 
 const SKELETON_CARD_COUNT = 12;
 
