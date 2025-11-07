@@ -32,7 +32,7 @@ async function fetchResource(id) {
 }
 
 // Helper function to fetch list of resources by group
-async function fetchResourcesByGroup(groupid, fullTextSearch=undefined) {
+async function fetchResourcesByGroup(groupid, fullTextSearch=undefined, pageNumber=undefined, pageSize=undefined) {
   let url = `https://www.hydroshare.org/hsapi/resource/?group=${encodeURIComponent(
     groupid
   )}`;
@@ -41,14 +41,38 @@ async function fetchResourcesByGroup(groupid, fullTextSearch=undefined) {
     url += `&full_text_search=${encodeURIComponent(fullTextSearch)}`;
   }
 
+  if (pageNumber !== undefined) {
+    url += `&page=${encodeURIComponent(pageNumber)}`;
+  }
+
+  if (pageSize !== undefined) {
+    url += `&count=${encodeURIComponent(pageSize)}`;
+  }
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Error fetching resources (status: ${response.status})`);
   }
-  const data = await response.json();
+
   // data.results is typically where the list of resources is stored.
   // If your actual structure differs, adjust accordingly.
-  return data.results;
+  const data = await response.json();
+
+  // Get resources and pagination info
+  const returnData = {
+    resources: data.results,
+    resourcesLength: data.results.length,
+    resourceCountTotal: data.count,
+    pageSize: pageSize,
+    pageNumber: pageNumber,
+    pageLast: Math.ceil(data.count / pageSize),
+    hasMorePages: data.next !== null,
+    pageNextUrl: data.next,
+    pagePreviousUrl: data.previous,
+  };
+
+  // Return the resources along with pagination info
+  return returnData;
 }
   
 function extractRelatedResourceIds(metadata) {
@@ -99,18 +123,22 @@ async function getGroupIds(communityId="4") {
 }
 
 
-async function joinGroupResources(groupIds, fullTextSearch=undefined) {
+async function joinGroupResources(groupIds, fullTextSearch=undefined, pageNumber=undefined, pageSize=undefined) {
   const seenResourceIds = new Set();
   const uniqueResources = [];
-  
+  let hasMorePages = false;
+
   // Process groups sequentially to maintain order
   for (const groupId of groupIds) {
     try {
-      const resources = await fetchResourcesByGroup(groupId, fullTextSearch);
+      const apiResponse = await fetchResourcesByGroup(groupId, fullTextSearch, pageNumber, pageSize);
       
+      if (apiResponse.hasMorePages) {
+        hasMorePages = true;
+      }
 
       // Filter and collect unique resources
-      for (const resource of resources) {
+      for (const resource of apiResponse.resources) {
         const resourceId = resource.resource_id;
         if (!seenResourceIds.has(resourceId)) {
           seenResourceIds.add(resourceId);
@@ -122,8 +150,14 @@ async function joinGroupResources(groupIds, fullTextSearch=undefined) {
       // Continue processing other groups even if one fails
     }
   }
-  
-  return uniqueResources;
+
+  return {
+    resources: uniqueResources,
+    resourcesLength: uniqueResources.length,
+    pageSize: pageSize,
+    pageNumber: pageNumber,
+    hasMorePages: hasMorePages,
+  };
 }
 
 function joinExtraResources(groupResources, extraResources) {
@@ -144,17 +178,32 @@ function joinExtraResources(groupResources, extraResources) {
 
 }
 
-async function getCommunityResources(keyword="ciroh_portal_data", communityId="4", fullTextSearch=undefined, ascending=false, sortBy=undefined, author=undefined) {
+async function getCommunityResources(keyword="ciroh_portal_data", communityId="4", fullTextSearch=undefined, ascending=false, sortBy=undefined, author=undefined, pageNumber=undefined, pageSize=undefined) {
   try {
+    // Fetch resources
     const groupIds = await getGroupIds(communityId);
-    const group_resources =  await joinGroupResources(groupIds, fullTextSearch);
-    const extra_resources = await fetchResourcesBySearch(keyword, fullTextSearch, ascending, sortBy, author);
+    const [groupResourcesResponse, extraResourcesResponse] = await Promise.all([
+      joinGroupResources(groupIds, fullTextSearch, pageNumber, pageSize),
+      fetchResourcesWithPaginationData(keyword, fullTextSearch, ascending, sortBy, author, pageNumber)
+    ]);
 
-    return joinExtraResources(group_resources, extra_resources);
+    // Extract resources
+    let groupResources = groupResourcesResponse.resources;
+    let extraResources = extraResourcesResponse.resources;
+
+    const joinedResources = joinExtraResources(groupResources, extraResources);
+
+    // Return combined data
+    return {
+      groupResourcesPageData: groupResourcesResponse,
+      extraResourcesPageData: extraResourcesResponse,
+      resources: joinedResources
+    }
+
     // return await joinGroupResources(groupIds);
   } catch (error) {
     console.error('Community resource fetch failed:', error);
-    return [];
+    return {};
   }
 }
 
@@ -254,6 +303,96 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
 }
 
 /**
+ * Fetch resources from HydroShare based on search criteria and include pagination data in the returned object.
+ * @param {string} keyword  - The keyword (subject) to use for the api request
+ * @param {string} searchText - The text to look for in all the resource fields
+ * @param {boolean} ascending - Whether to sort results in ascending order (true) or descending order (false)
+ * @param {string} sortBy - The field to sort by. One of 'title', 'author', 'created', 'modified'
+ * @param {string} author - The author to filter by
+ * @param {number} pageNumber - The page number to fetch (1-based indexing)
+ * @returns {Promise<Object>} Object containing resources array and pagination metadata
+ */
+async function fetchResourcesWithPaginationData(keyword, searchText, ascending=false, sortBy=undefined, author=undefined, pageNumber=1) {
+  // API Url with query parameters
+  let url = `https://www.hydroshare.org/discoverapi/?q=${searchText ? encodeURIComponent(searchText) : ''}&subject=${encodeURIComponent(keyword)}`;
+
+  // Add sort order parameter
+  if (ascending) {
+    url += `&asc=1`;
+  } else {
+    url += `&asc=-1`;
+  }
+
+  // Add sort parameter if provided
+  if (sortBy !== undefined) {
+    url += `&sort=${encodeURIComponent(sortBy)}`;
+  }
+
+  // Convert author name from "First Middle Last" to "Last, First Middle"
+  if (author !== undefined) {
+    const nameParts = author.split(' ');
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    author = `${lastName}, ${firstName}`;
+  }
+
+  // Add page number parameter (1-based indexing)
+  url += `&pnum=${pageNumber}`;
+
+  // Add filter parameter
+  const filter = {
+    author: [author].filter(a => a !== undefined),
+    subject: [keyword],
+  };
+
+  url += `&filter=${encodeURIComponent(JSON.stringify(filter))}`;
+
+  // Fetch data from the API
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Error fetching resources (status: ${response.status})`);
+  }
+  const data = await response.json();
+
+  // Put resources into a corrected format
+  let resources = JSON.parse(data.resources);
+  let resourcesCorrected = [];
+
+  if (pageNumber > data.pagecount) {
+    resources = [];
+  }
+
+  for (let i = 0;i < resources.length;i++)
+  {
+    let resource = resources[i];
+    let resourceCorrected = {
+      resource_id: resource.short_id,
+      resource_title: resource.title,
+      authors: resource.authors,
+      resource_type: resource.type,
+      resource_url: 'http://www.hydroshare.org' + resource.link,
+      abstract: resource.abstract,
+      date_created: resource.created,
+      date_last_updated: resource.modified,
+    };
+
+    resourcesCorrected.push(resourceCorrected);
+  }
+
+  // Return the corrected resources with pagination data
+  return {
+    resources: resourcesCorrected,
+    resourcesLength: resourcesCorrected.length,
+    resourceCountTotal: data.rescount,
+    pageCount: data.pagecount,
+    pageSize: data.perpage,
+    pageNumber: pageNumber,
+    pageLast: data.pagecount,
+    hasMorePages: pageNumber < data.pagecount,
+  };
+}
+
+/**
  * Fetch the pagination data for a given keyword and search criteria.
  * Uses the discoverapi endpoint to get resource count, page count, and resources per page.
  * @param {String} keyword The keyword/subject of the desired resources
@@ -323,4 +462,4 @@ async function fetchResourceCustomMetadata(resourceId) {
   return data;
 }
 
-export {getCuratedIds, fetchResource, fetchResourcesByGroup, fetchResourcesByKeyword, fetchResourcesBySearch, fetchKeywordPageData, getCommunityResources, fetchResourceCustomMetadata, joinExtraResources};
+export {getCuratedIds, fetchResource, fetchResourcesByGroup, fetchResourcesByKeyword, fetchResourcesBySearch, fetchResourcesWithPaginationData, fetchKeywordPageData, getCommunityResources, fetchResourceCustomMetadata, joinExtraResources};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition, useMemo } from "react";
+import React, { useEffect, useState, startTransition, useMemo, useCallback, useRef } from "react";
 import clsx from "clsx";
 import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
@@ -16,17 +16,15 @@ import {
   HiOutlineSortAscending,
 } from 'react-icons/hi';
 
+// Pagination
+const PAGE_SIZE        = 40;
+const SCROLL_THRESHOLD = 800;
+
 // Search input debounce
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
 export default function Datasets({ community_id = 4 }) {
-  // Search State
-  const [searchInput,    setSearchInput]    = useState('');
-  const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('modified');
-  const [sortDirection,  setSortDirection]  = useState('desc');
-
   const { colorMode } = useColorMode(); // Get the current theme
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
   const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
@@ -44,6 +42,7 @@ export default function Datasets({ community_id = 4 }) {
     docs_url: ""
   }));
 
+  // State
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
   const [curatedResources, setCuratedResources] = useState([]);     // subset for the curated tab
   const [loading, setLoading] = useState(true);
@@ -51,8 +50,21 @@ export default function Datasets({ community_id = 4 }) {
   const [view, setView] = useState("row");
   const [activeTab, setActiveTab] = useState("all");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const fetching = useRef(false);
+  const lastFetchedPage = useRef(0); // Track the highest page number fetched
+  const fetchedPages = useRef(new Set()); // Track fetched pages
+
+  // Search State
+  const [searchInput,    setSearchInput]    = useState('');
+  const [filterSearch,   setFilterSearch]   = useState('');
+  const [sortType,       setSortType]       = useState('modified');
+  const [sortDirection,  setSortDirection]  = useState('desc');
+
   // Helper function to sort resources
-  const sortResources = (resourceList, sortType, sortDirection) => {
+  const sortResources = useCallback((resourceList, sortType, sortDirection) => {
     return resourceList.sort((a, b) => {
       // Keep placeholders at the beginning during loading
       if (a.resource_id.startsWith('placeholder-')) return -1;
@@ -82,32 +94,80 @@ export default function Datasets({ community_id = 4 }) {
       // Apply sort direction
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  };
+  }, []);
 
-  useEffect(() => {
-    // Fetch the curated IDs first (from the "parent" resource).
-    const fetchCuratedIds = async () => {
-      try {
-        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-        return curatedIds;
-      } catch (err) {
-        console.error("Error fetching curated IDs:", err);
-        return [];
+  // Fetch the curated IDs first (from the "parent" resource).
+  const fetchCuratedIds = useCallback(async () => {
+    try {
+      const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+      return curatedIds;
+    } catch (err) {
+      console.error("Error fetching curated IDs:", err);
+      return [];
+    }
+  },
+  [CURATED_PARENT_ID]);
+
+  // Fetch all resources by group, then filter them based on curated IDs
+  const fetchAll = useCallback(
+    async (page) => {
+      // Prevent concurrent fetches
+      if (fetching.current) return;
+      
+      // Prevent refetching same or lower page numbers
+      if (page <= lastFetchedPage.current) {
+        console.log('Skipping page', page, '- already fetched up to page', lastFetchedPage.current);
+        return;
       }
-    };
 
-    // Fetch all resources by group, then filter them based on curated IDs
-    const fetchAll = async () => {
-      // search parameters
+      if (fetchedPages.current.has(page)) {
+        console.log('Skipping page', page, '- already fetched previously');
+        return;
+      }
+      
+      fetching.current = true;
+
+      // Add placeholders for loading state (only for pagination, not first page)
+      if (page > 1) {
+        setResources(prev => [
+          ...prev,
+          ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+            resource_id: `placeholder-page${page}-${i}`,
+            title: "",
+            authors: "",
+            resource_type: "",
+            resource_url: "",
+            description: "",
+            thumbnail_url: "",
+            page_url: "",
+            docs_url: "",
+          }))
+        ]);
+      }
+
+      // Search Parameters
       const fullTextSearch = filterSearch.length > 0 ? filterSearch : undefined;
       const ascending = sortDirection === 'asc' ? true : false;
       const sortBy = sortType;
 
+      // Fetch Resources
       try {
-        const [curatedIds, resourceList] = await Promise.all([
+        const [curatedIds, communityResourcesResponse] = await Promise.all([
           fetchCuratedIds(),                // get array of curated resource IDs
-          getCommunityResources("ciroh_portal_data", "4", fullTextSearch, ascending, sortBy, undefined) // get all resources for the group
+          getCommunityResources("ciroh_portal_data", "4", fullTextSearch, ascending, sortBy, undefined, page, PAGE_SIZE) // get all resources for the group
         ]);
+
+        const resourceList = communityResourcesResponse.resources;
+
+        if (fetchedPages.current.has(page)) {
+          console.log('Skipping page', page, '- already fetched previously');
+          return;
+        }
+
+        fetchedPages.current.add(page);
+
+        // Update pagination state
+        setHasMore(communityResourcesResponse.groupResourcesPageData.hasMorePages || communityResourcesResponse.extraResourcesPageData.hasMorePages);
 
         // Map the full resource list to your internal format
         let mappedList = resourceList.map((res) => ({
@@ -129,8 +189,44 @@ export default function Datasets({ community_id = 4 }) {
         // Sort locally to account for curated resources
         mappedList = sortResources(mappedList, sortBy, sortDirection);
 
-        setResources(mappedList);
+        if (page === 1) {
+          setResources(mappedList);
+        } else {
+          // Replace placeholders from this page with actual data
+          setResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...mappedList
+          ]);
+        }
+
+        // Filter to get only curated subset from current page
+        let curatedSubset = mappedList.filter(item =>
+          curatedIds.includes(item.resource_id)
+        );
+
+        curatedSubset = sortResources(curatedSubset, sortBy, sortDirection);
         
+        // Accumulate curated resources across pages (like main resources)
+        if (page === 1) {
+          setCuratedResources(curatedSubset);
+        } else {
+          // Replace placeholders from this page with actual data
+          setCuratedResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...curatedSubset
+          ]);
+        }
+        setLoading(false);
+
+        // Update the last fetched page tracker (only if this page is higher)
+        if (page > lastFetchedPage.current) {
+          lastFetchedPage.current = page;
+        }
+
+        // Allow pagination to continue - core data is loaded
+        fetching.current = false;
+
+        // Fetch metadata
         for (let res of mappedList) {
           try {
             // const metadata = await fetchResourceMetadata(res.resource_id);
@@ -153,27 +249,50 @@ export default function Datasets({ community_id = 4 }) {
             console.error(`Error fetching metadata: ${metadataErr.message}`);
           }
         }
-
-        // Filter to get only curated subset
-        let curatedSubset = mappedList.filter(item =>
-          curatedIds.includes(item.resource_id)
-        );
-
-        curatedSubset = sortResources(curatedSubset, sortBy, sortDirection);
-
-        // setResources(mappedList);
-        setCuratedResources(curatedSubset);
-        setLoading(false);
       } catch (err) {
         console.error(`Error fetching resources: ${err.message}`);
         setError(err.message);
         setLoading(false);
+        fetching.current = false;
+      }
+    },
+    [filterSearch, sortDirection, sortType, fetchCuratedIds, hs_icon, sortResources]
+  );
+
+  // Reset and load first page when filters change
+  useEffect(() => {
+    setResources(initialPlaceholders);
+    setCuratedResources(initialPlaceholders);
+    setCurrentPage(1);
+    setHasMore(true);
+    
+    // Reset the fetching flag to allow new requests
+    fetching.current = false;
+    
+    // Reset the last fetched page tracker
+    lastFetchedPage.current = 0;
+    
+    // Reset the fetched pages set
+    fetchedPages.current.clear();
+    
+    // Fetch first page with new filters
+    fetchAll(1);
+  }, [filterSearch, sortDirection, sortType, fetchAll]);
+
+  /* infinite scroll */
+  useEffect(() => {
+    const onScroll = () => {
+      if (fetching.current || !hasMore) return;
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
+        const next = currentPage + 1;
+        setCurrentPage(next);
+        fetchAll(next);
       }
     };
-
-    // Kick off fetch
-    fetchAll();
-  }, [community_id, filterSearch, sortDirection, sortType]);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [currentPage, hasMore, fetchAll]);
 
   /* search helpers */
   const commitSearch = q => {
