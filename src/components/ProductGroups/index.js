@@ -31,7 +31,7 @@ const findSidebarItemByPath = (groupId, targetPath) => {
 export default function ProductGroups() {
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [activeSidebarItem, setActiveSidebarItem] = useState(null);
-  const [detailMode, setDetailMode] = useState('collections');
+  // const [detailMode, setDetailMode] = useState('collections');
   const [groupProductsState, setGroupProductsState] = useState({});
   const history = useHistory();
   const location = useLocation();
@@ -110,7 +110,9 @@ export default function ProductGroups() {
   };
 
   useEffect(() => {
-    if (!activeGroupId || detailMode !== 'products' || !activeGroup) {
+    // if (!activeGroupId || detailMode !== 'products' || !activeGroup) {
+    
+    if (!activeGroupId || !activeGroup) {
       return undefined;
     }
 
@@ -193,8 +195,8 @@ export default function ProductGroups() {
       cancelled = true;
       fetchInFlight.current.delete(activeGroupId);
     };
-  }, [activeGroupId, activeGroup, detailMode]);
-
+  // }, [activeGroupId, activeGroup, detailMode]);
+  }, [activeGroupId, activeGroup]);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const requestedGroupId = params.get('group');

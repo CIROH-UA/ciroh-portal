@@ -4,7 +4,6 @@ import {
   fetchResourceMetadata,
 } from '@site/src/components/HydroShareImporter';
 
-const DEFAULT_LIMIT = 24;
 
 const parseDate = value => {
   if (!value) {
@@ -24,7 +23,6 @@ const normalizeKeywords = keywords => {
 };
 
 export function buildGroupKeywords(group) {
-  // const keywords = ['nwm_portal_app'];
   const keywords = [];
 
   if (group?.primaryKeyword) {
@@ -322,11 +320,8 @@ export async function hydrateProductMetadata(product) {
 
 export async function fetchHydroShareProductsForGroup(keywords, options = {}) {
   const {
-    limit = DEFAULT_LIMIT,
     includeMetadata = true,
-    sortBy = 'date_last_updated',
-    page = 1,
-    count = 15,
+    sortBy = 'date_last_updated'
   } = options;
   const normalizedKeywords = normalizeKeywords(keywords);
   if (normalizedKeywords.length === 0) {
@@ -349,12 +344,7 @@ export async function fetchHydroShareProductsForGroup(keywords, options = {}) {
     return parseDate(b.date_last_updated) - parseDate(a.date_last_updated);
   });
 
-  const limitedResources =
-    typeof limit === 'number' && limit > 0
-      ? sortedResources.slice(0, limit)
-      : sortedResources;
-
-  return enrichWithCustomMetadata(limitedResources, { includeMetadata });
+  return enrichWithCustomMetadata(sortedResources, { includeMetadata });
 }
 
 export function mapResourcesToProducts(resources) {

@@ -1,61 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
-import { useLocation } from '@docusaurus/router';
-import ProductTilesGrid from '@site/src/components/ProductGroups/ProductTilesGrid';
+import { MdArrowForward } from 'react-icons/md';
 import groups from '@site/src/components/ProductGroups/groups';
-import { fetchHydroShareProductsForGroup, buildGroupKeywords } from '@site/src/components/ProductGroups/hydroshareProducts';
 import styles from './styles.module.css';
 
-const SKELETON_CARD_COUNT = 12;
-
-function SkeletonPlaceholderMedia() {
-  return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 200 200"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="product-groups-skeleton-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="var(--ifm-color-primary-lightest)" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="var(--ifm-color-primary-lighter)" stopOpacity="0.9" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="200" rx="32" fill="url(#product-groups-skeleton-grad)" opacity="0.5" />
-      <circle cx="100" cy="100" r="75" stroke="var(--ifm-color-primary-light)" strokeWidth="4" fill="none" opacity="0.4" />
-      <circle cx="100" cy="100" r="55" stroke="var(--ifm-color-primary-lightest)" strokeWidth="3" fill="none" opacity="0.3" />
-      <circle cx="100" cy="100" r="38" stroke="var(--ifm-color-primary)" strokeWidth="2" fill="none" opacity="0.25" />
-    </svg>
-  );
-}
-
-function ProductSkeletonGrid({ count = SKELETON_CARD_COUNT }) {
-  return (
-    <div className={styles.productSkeletonGrid}>
-      {Array.from({ length: count }).map((_, index) => (
-        <div key={`pg-skeleton-${index}`} className={styles.productSkeletonCard}>
-          <div className={styles.productSkeletonMedia}>
-            <SkeletonPlaceholderMedia />
-          </div>
-          <div className={`${styles.productSkeletonLine} ${styles.productSkeletonLineWide}`} />
-          <div className={`${styles.productSkeletonLine} ${styles.productSkeletonLineNarrow}`} />
-          <div className={`${styles.productSkeletonLine} ${styles.productSkeletonLineWide}`} />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function ProductsGroupsPage() {
-  const location = useLocation();
   const groupRefs = useRef({});
+  // Only get groups that have a title defined
   const displayGroups = useMemo(
-    () => groups.filter(group => group.docsRoute),
+    () => groups.filter(group => group.title),
     [],
   );
+  // Only load products for display groups
   const [groupStates, setGroupStates] = useState(() => {
     const initialState = {};
     displayGroups.forEach(group => {
@@ -69,22 +27,6 @@ export default function ProductsGroupsPage() {
   });
 
   useEffect(() => {
-    // Handle hash-based navigation (e.g., #ngiab)
-    const hash = location.hash.replace('#', '');
-
-    if (hash && groupRefs.current[hash]) {
-      setTimeout(() => {
-        groupRefs.current[hash].scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 100);
-    }
-  }, [location.hash]);
-
-  useEffect(() => {
-    let cancelled = false;
-
     setGroupStates(prev => {
       const next = { ...prev };
       displayGroups.forEach(group => {
@@ -98,76 +40,7 @@ export default function ProductsGroupsPage() {
       return next;
     });
 
-    async function loadGroupResources() {
-      await Promise.all(
-        displayGroups.map(async group => {
-          const keywords = buildGroupKeywords(group);
-
-          if (keywords.length === 0) {
-            if (!cancelled) {
-              setGroupStates(prev => ({
-                ...prev,
-                [group.id]: {
-                  products: [],
-                  loading: false,
-                  error: null,
-                },
-              }));
-            }
-            return;
-          }
-
-          try {
-            const fetchedProducts = await fetchHydroShareProductsForGroup(keywords, {
-              // limit: 6,
-              includeMetadata: true,
-            });
-
-            if (cancelled) {
-              return;
-            }
-
-            setGroupStates(prev => ({
-              ...prev,
-              [group.id]: {
-                products: fetchedProducts,
-                loading: false,
-                error: null,
-              },
-            }));
-          } catch (error) {
-            console.error(`Unable to load HydroShare resources for group ${group.id}:`, error);
-            if (cancelled) {
-              return;
-            }
-            setGroupStates(prev => ({
-              ...prev,
-              [group.id]: {
-                products: [],
-                loading: false,
-                error,
-              },
-            }));
-          }
-        }),
-      );
-    }
-
-    loadGroupResources();
-
-    return () => {
-      cancelled = true;
-    };
   }, [displayGroups]);
-
-  // Handler for when user clicks "Read docs" on a product
-  const handleDocsNavigate = ({ docsPath, groupId, product }) => {
-    // Always open docs in external site
-    const docsUrl = docsPath.startsWith('http')
-      ? docsPath
-      : `https://docs.ciroh.org${docsPath}`;
-    window.open(docsUrl, '_blank');
-  };
 
   return (
     <Layout
@@ -183,51 +56,28 @@ export default function ProductsGroupsPage() {
           </p>
         </div>
 
-        {displayGroups.map(group => (
-          <section
-            key={group.id}
-            id={group.id}
-            ref={el => (groupRefs.current[group.id] = el)}
-            className={styles.groupSection}
-          >
-            <div className={styles.groupHeader}>
-              <div className={styles.groupHeaderContent}>
-                {group.icon && <group.icon className={styles.groupIcon} />}
-                <div>
-                  <h2 className={styles.groupTitle}>{group.title}</h2>
-                  <p className={styles.groupBlurb}>{group.blurb}</p>
-                </div>
+        <div className={styles.cardsGrid}>
+          {displayGroups.map(group => (
+            <Link
+              key={group.id}
+              id={group.id}
+              ref={el => (groupRefs.current[group.id] = el)}
+              className={styles.groupCard}
+              to={`/product-groups/${group.id}`}
+            >
+              <div className={styles.cardIconWrapper}>
+                {group.icon && <group.icon className={styles.cardIcon} />}
               </div>
-              <div className={styles.groupHeaderAction}>
-                <Link
-                  className="button button--primary button--md"
-                  to={`/product-groups/${group.id}`}
-                >
-                  Explore group
-                </Link>
+              <div className={styles.cardContent}>
+                <h2 className={styles.cardTitle}>{group.title}</h2>
+                <p className={styles.cardDescription}>{group.blurb}</p>
               </div>
-            </div>
-
-            {groupStates[group.id]?.loading && !(groupStates[group.id]?.products?.length) ? (
-              <ProductSkeletonGrid />
-            ) : groupStates[group.id]?.products?.length ? (
-              <ProductTilesGrid
-                products={groupStates[group.id].products}
-                showDocsAction
-                fallbackDocsLink={group.docsRoute}
-                groupId={group.id}
-                onDocsNavigate={handleDocsNavigate}
-              />
-            ) : (
-              <p className={styles.noProducts}>No products available for this group.</p>
-            )}
-            {groupStates[group.id]?.error ? (
-              <p className={styles.groupErrorNotice}>
-                Unable to load live HydroShare resources right now. Please try again later.
-              </p>
-            ) : null}
-          </section>
-        ))}
+              <div className={styles.cardArrow}>
+                <MdArrowForward aria-hidden="true" />
+              </div>
+            </Link>
+          ))}
+        </div>
       </main>
     </Layout>
   );
