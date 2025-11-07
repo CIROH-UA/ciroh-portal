@@ -1,4 +1,4 @@
-import productGroups from '../components/ProductGroups/groups';
+import productGroups from '../../components/ProductGroups/groups';
 import {
   MdCloudQueue,
   MdStorage,
@@ -20,9 +20,8 @@ const products = productGroups
     title: group.title,
     description: group.blurb,
     icon: group.icon,
-    href: `/docs?group=${group.id}`,
+    slug: `${group.docsRoute}`,
   }));
-console.log(products);
 const services = [
   {
     id: 'cloudservices',

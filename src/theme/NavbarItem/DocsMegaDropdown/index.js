@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import { MdExpandMore } from 'react-icons/md';
-import docsMenu from '@site/src/data/docsMenu';
+import docsMenu from '@site/src/pages/docs/docsMenu';
 import styles from './styles.module.css';
 
 const columns = [
