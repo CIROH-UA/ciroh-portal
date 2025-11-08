@@ -31,9 +31,7 @@ export function buildGroupKeywords(group) {
   if (group?.secondaryKeyword) {
     keywords.push(group.secondaryKeyword);
   }
-  if (Array.isArray(group?.hydroshareKeywords)) {
-    keywords.push(...group.hydroshareKeywords);
-  }
+
   return keywords.filter(Boolean);
 }
 

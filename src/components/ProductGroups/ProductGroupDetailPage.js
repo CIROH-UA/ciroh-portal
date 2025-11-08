@@ -1,10 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
-// import Link from '@docusaurus/Link';
 import clsx from 'clsx';
-import { MdApps } from 'react-icons/md';
-import { SiJupyter, SiPython } from 'react-icons/si';
-import { BsBucketFill } from "react-icons/bs";
 import ProductTilesGrid from './ProductTilesGrid';
 import {
   fetchHydroShareProductsForGroup,
@@ -14,6 +10,7 @@ import {
 import styles from './product-group-detail.module.css';
 import { HeaderGroup } from '../HeaderGroup';
 import { SkeletonPlaceholderMedia } from '@site/src/components/SkeletonPlaceHolders';
+import { TYPE_FILTERS } from './filterTags';
 
 function buildDocsUrl(docsPath) {
   if (!docsPath) {
@@ -24,40 +21,12 @@ function buildDocsUrl(docsPath) {
     : `https://docs.ciroh.org${docsPath}`;
 }
 
-const TYPE_FILTERS = [
-  {
-    label: 'Apps',
-    values: ['application'],
-    icon: MdApps,
-    color: 'var(--ifm-color-primary)',
-  },
-  {
-    label: 'Libraries',
-    values: ['library'],
-    icon: SiPython,
-    color: 'color-mix(in srgb, var(--ifm-color-primary) 70%, var(--ifm-color-secondary))',
-  },
-  {
-    label: 'Datasets',
-    values: ['dataset'],
-    icon: BsBucketFill,
-    color: 'color-mix(in srgb, var(--ifm-color-primary) 50%, var(--ifm-color-secondary) 50%)',
-  },
-  {
-    label: 'Notebooks',
-    values: ['jupyter notebook', 'notebook', 'jupyter'],
-    icon: SiJupyter,
-    color: 'color-mix(in srgb, var(--ifm-color-primary) 30%, var(--ifm-color-secondary) 70%)',
-  },
-];
-
 const normalize = value =>
   value ? value.toString().toLowerCase().trim() : '';
 
 const PAGE_SIZE = 15;
 
 export default function ProductGroupDetailPage({ group }) {
-  const Icon = group?.icon;
   const [searchTerm, setSearchTerm] = useState('');
   const [activeType, setActiveType] = useState(null);
   const [dynamicProducts, setDynamicProducts] = useState([]);
@@ -79,10 +48,27 @@ export default function ProductGroupDetailPage({ group }) {
     [group],
   );
 
-  useEffect(() => {
-    metadataFetchRef.current = new Set();
-    hydratedProductCache.current = new Map();
-  }, [group?.id]);
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !loadingMore && hasMore) {
+        const nextPage = currentPage + 1;
+        setCurrentPage(nextPage);
+        fetchProducts({ page: nextPage, append: true });
+      }
+    });
+  });
+
+  const loadEffectUpdate = () => {
+    if (!hasMore || productsLoading) {
+      return;
+    }
+    const sentinel = loadMoreRef.current;
+    if (!sentinel) {
+      return;
+    }
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }
 
   const fetchProducts = useCallback(
     async ({ page: pageToLoad = 1, append = false } = {}) => {
@@ -191,8 +177,12 @@ export default function ProductGroupDetailPage({ group }) {
   );
 
   useEffect(() => {
-    console.log('Resetting products due to filter/search change');
-    // console.log('Group keywords:', groupKeywords);
+    metadataFetchRef.current = new Set();
+    hydratedProductCache.current = new Map();
+  }, [group?.id]);
+
+
+  useEffect(() => {
     console.log('Search term:', normalizedSearchTerm);
     setDynamicProducts([]);
     setHasMore(true);
@@ -205,31 +195,11 @@ export default function ProductGroupDetailPage({ group }) {
       return;
     }
     fetchProducts({ page: 1, append: false });
-  }, [groupKeywords, normalizedSearchTerm, fetchProducts]);
+  }, [normalizedSearchTerm]);
 
   useEffect(() => {
-    if (!hasMore || productsLoading) {
-      return;
-    }
-
-    const sentinel = loadMoreRef.current;
-    if (!sentinel) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !loadingMore && hasMore) {
-          const nextPage = currentPage + 1;
-          setCurrentPage(nextPage);
-          fetchProducts({ page: nextPage, append: true });
-        }
-      });
-    });
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasMore, loadingMore, productsLoading, currentPage, fetchProducts]);
+    return loadEffectUpdate();
+  }, [hasMore, loadingMore, productsLoading]);
 
   const products = dynamicProducts;
   const typeCounts = useMemo(() => {
@@ -302,8 +272,6 @@ export default function ProductGroupDetailPage({ group }) {
         <HeaderGroup group={group} backLink="product-groups" docsUrl={docsUrl} />
 
         <section className={styles.productsSection}>
-
-
           <div className={styles.filtersBar}>
             <div className={styles.searchWrapper}>
               <input
