@@ -56,7 +56,7 @@ export default function ProductsGroupsPage() {
           </p>
         </div>
 
-        <h2 className={styles.sectionTitle}>Product Categories</h2>
+        <h2 className={styles.sectionTitle}>Categories</h2>
         <div className={styles.cardsGrid}>
           {displayGroups.map(group => (
             <Link

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
+// import Link from '@docusaurus/Link';
 import clsx from 'clsx';
 import { MdApps } from 'react-icons/md';
 import { SiJupyter, SiPython } from 'react-icons/si';
@@ -12,6 +12,8 @@ import {
   hydrateProductMetadata,
 } from './hydroshareProducts';
 import styles from './product-group-detail.module.css';
+import { HeaderGroup } from '../HeaderGroup';
+import { SkeletonPlaceholderMedia } from '@site/src/components/SkeletonPlaceHolders';
 
 function buildDocsUrl(docsPath) {
   if (!docsPath) {
@@ -297,48 +299,10 @@ export default function ProductGroupDetailPage({ group }) {
   return (
     <Layout title={group.title} description={group.blurb}>
       <main className={styles.pageWrapper}>
-        <Link className={styles.backLink} to="/product-groups">
-          ← Groups
-        </Link>
-
-        <article className={styles.headerCard}>
-          <div className={styles.headerMain}>
-            {Icon ? <Icon className={styles.headerIcon} aria-hidden="true" /> : null}
-            <div>
-              <h1 className={styles.headerTitle}>{group.title}</h1>
-              {group.blurb ? (
-                <p className={styles.headerBlurb}>{group.blurb}</p>
-              ) : null}
-              {docsUrl ? (
-                <div className={styles.ctaRow}>
-                  <a
-                    className={clsx(styles.ctaButton, styles.ctaButtonPrimary)}
-                    href={docsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View documentation
-                  </a>
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-        </article>
+        <HeaderGroup group={group} backLink="product-groups" docsUrl={docsUrl} />
 
         <section className={styles.productsSection}>
-          <div className={styles.sectionHeader}>
-            {/* <h2 className={styles.sectionTitle}>Featured products</h2> */}
-            <span className={styles.resultsMeta}>
-              {productsLoading
-                ? 'Loading products…'
-                : productsError
-                  ? 'No products available right now'
-                  : hasProducts
-                  ? `${filteredProducts.length} of ${totalCount} shown`
-                  : 'No products available yet'}
-            </span>
-          </div>
+
 
           <div className={styles.filtersBar}>
             <div className={styles.searchWrapper}>
@@ -417,6 +381,17 @@ export default function ProductGroupDetailPage({ group }) {
             ) : null}
           </div>
 
+          <div className={styles.sectionHeader}>
+            <span className={styles.resultsMeta}>
+              {productsLoading
+                ? 'Loading products…'
+                : productsError
+                  ? 'No products available right now'
+                  : hasProducts
+                  ? `${filteredProducts.length} Products Loaded`
+                  : 'No products available yet'}
+            </span>
+          </div>
           {productsLoading && dynamicProducts.length === 0 ? (
             <div className={styles.productSkeletonGrid}>
               {Array.from({ length: 6 }).map((_, index) => (
@@ -467,25 +442,4 @@ export default function ProductGroupDetailPage({ group }) {
     </Layout>
   );
 }
-function SkeletonPlaceholderMedia() {
-  return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 200 200"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="skeleton-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="var(--ifm-color-primary-lightest)" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="var(--ifm-color-primary-lighter)" stopOpacity="0.9" />
-        </linearGradient>
-      </defs>
-      <rect width="200" height="200" rx="32" fill="url(#skeleton-grad)" opacity="0.5" />
-      <circle cx="100" cy="100" r="75" stroke="var(--ifm-color-primary-light)" strokeWidth="4" fill="none" opacity="0.4" />
-      <circle cx="100" cy="100" r="55" stroke="var(--ifm-color-primary-lightest)" strokeWidth="3" fill="none" opacity="0.3" />
-      <circle cx="100" cy="100" r="38" stroke="var(--ifm-color-primary)" strokeWidth="2" fill="none" opacity="0.25" />
-    </svg>
-  );
-}
+

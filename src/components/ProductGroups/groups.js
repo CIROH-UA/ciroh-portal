@@ -6,7 +6,7 @@ const productGroups = [
   {
     id: 'ngen',
     title: 'Nextgen Ecosystem',
-    blurb: "Application of NOAA-OWP's NextGen Framework",
+    blurb: "A cohesive suite that operationalizes NOAA-OWP’s NextGen hydrologic modeling framework—streamlining data ingestion, model execution, routing, and evaluation into reproducible, cloud-native workflows.",
     icon: MdMonitor,
     primaryKeyword: 'CZNet',
     secondaryKeyword: 'CZNet',
