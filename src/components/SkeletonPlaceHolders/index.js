@@ -1,4 +1,8 @@
-export function SkeletonPlaceholderMedia() {
+
+import clsx from 'clsx';
+import styles from './styles.module.css';
+
+function SkeletonPlaceholderMedia() {
   return (
     <svg
       width="100%"
@@ -19,4 +23,22 @@ export function SkeletonPlaceholderMedia() {
       <circle cx="100" cy="100" r="38" stroke="var(--ifm-color-primary)" strokeWidth="2" fill="none" opacity="0.25" />
     </svg>
   );
+}
+
+export function SkeletonPlaceholders({count = 6}) {
+  return (
+
+    <div className={styles.productSkeletonGrid}>
+        {Array.from({ length: count }).map((_, index) => (
+        <div key={`skeleton-${index}`} className={styles.productSkeletonCard}>
+            <div className={styles.productSkeletonMedia}>
+            <SkeletonPlaceholderMedia />
+            </div>
+            <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
+            <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineNarrow)} />
+            <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
+        </div>
+        ))}
+    </div>
+    );
 }

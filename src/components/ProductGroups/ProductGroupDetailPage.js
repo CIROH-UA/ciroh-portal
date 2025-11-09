@@ -9,7 +9,7 @@ import {
 } from './hydroshareProducts';
 import styles from './product-group-detail.module.css';
 import { HeaderGroup } from '../HeaderGroup';
-import { SkeletonPlaceholderMedia } from '@site/src/components/SkeletonPlaceHolders';
+import { SkeletonPlaceholders } from '@site/src/components/SkeletonPlaceHolders';
 import { TYPE_FILTERS } from './filterTags';
 import { buildDocsUrl, handleDocsNavigate, normalize  } from './utils';
 
@@ -48,7 +48,7 @@ export default function ProductGroupDetailPage({ group }) {
       }
     });
   });
-
+  
   // Effect to observe load more sentinel
   const loadEffectUpdate = () => {
     if (!hasMore || productsLoading) {
@@ -90,6 +90,7 @@ export default function ProductGroupDetailPage({ group }) {
       }
 
       try {
+        console.log(`Fetching HydroShare products ${normalizedSearchTerm}`);
         const baseProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
           includeMetadata: false,
           page: pageToLoad,
@@ -340,18 +341,9 @@ export default function ProductGroupDetailPage({ group }) {
             </span>
           </div>
           {productsLoading && dynamicProducts.length === 0 ? (
-            <div className={styles.productSkeletonGrid}>
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={`skeleton-${index}`} className={styles.productSkeletonCard}>
-                  <div className={styles.productSkeletonMedia}>
-                    <SkeletonPlaceholderMedia />
-                  </div>
-                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
-                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineNarrow)} />
-                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
-                </div>
-              ))}
-            </div>
+            <SkeletonPlaceholders
+              count={6}
+            />
           ) : hasFilteredResults ? (
             <ProductTilesGrid
               products={filteredProducts}
@@ -371,18 +363,9 @@ export default function ProductGroupDetailPage({ group }) {
             <div ref={loadMoreRef} className={styles.loadMoreTrigger} aria-hidden="true" />
           ) : null}
           {loadingMore ? (
-            <div className={styles.productSkeletonGrid}>
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={`loading-more-skeleton-${index}`} className={styles.productSkeletonCard}>
-                  <div className={styles.productSkeletonMedia}>
-                    <SkeletonPlaceholderMedia />
-                  </div>
-                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
-                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineNarrow)} />
-                  <div className={clsx(styles.productSkeletonLine, styles.productSkeletonLineWide)} />
-                </div>
-              ))}
-            </div>
+            <SkeletonPlaceholders
+              count={4}
+            />  
           ) : null}
         </section>
       </main>
