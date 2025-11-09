@@ -11,18 +11,8 @@ import styles from './product-group-detail.module.css';
 import { HeaderGroup } from '../HeaderGroup';
 import { SkeletonPlaceholderMedia } from '@site/src/components/SkeletonPlaceHolders';
 import { TYPE_FILTERS } from './filterTags';
+import { buildDocsUrl, handleDocsNavigate, normalize  } from './utils';
 
-function buildDocsUrl(docsPath) {
-  if (!docsPath) {
-    return null;
-  }
-  return docsPath.startsWith('http')
-    ? docsPath
-    : `https://docs.ciroh.org${docsPath}`;
-}
-
-const normalize = value =>
-  value ? value.toString().toLowerCase().trim() : '';
 
 const PAGE_SIZE = 15;
 
@@ -48,6 +38,7 @@ export default function ProductGroupDetailPage({ group }) {
     [group],
   );
 
+  // Intersection Observer for infinite scroll
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting && !loadingMore && hasMore) {
@@ -58,6 +49,7 @@ export default function ProductGroupDetailPage({ group }) {
     });
   });
 
+  // Effect to observe load more sentinel
   const loadEffectUpdate = () => {
     if (!hasMore || productsLoading) {
       return;
@@ -98,7 +90,6 @@ export default function ProductGroupDetailPage({ group }) {
       }
 
       try {
-        console.log(`Fetching HydroShare products ${normalizedSearchTerm}`);
         const baseProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
           includeMetadata: false,
           page: pageToLoad,
@@ -183,7 +174,6 @@ export default function ProductGroupDetailPage({ group }) {
 
 
   useEffect(() => {
-    console.log('Search term:', normalizedSearchTerm);
     setDynamicProducts([]);
     setHasMore(true);
     setCurrentPage(1);
@@ -254,17 +244,6 @@ export default function ProductGroupDetailPage({ group }) {
   const hasProducts = totalCount > 0;
   const hasFilteredResults = filteredProducts.length > 0;
   const filtersActive = Boolean(activeType || normalize(searchTerm));
-
-  const handleDocsNavigate = ({ docsPath }) => {
-    const targetUrl = buildDocsUrl(docsPath);
-    if (!targetUrl) {
-      return;
-    }
-
-    if (typeof window !== 'undefined') {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
 
   return (
     <Layout title={group.title} description={group.blurb}>
