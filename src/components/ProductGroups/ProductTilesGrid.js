@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MdArrowOutward, MdWaterDrop } from 'react-icons/md';
-import { FaGithub } from "react-icons/fa";
+import { FaGithub, FaTag  } from "react-icons/fa";
 import clsx from 'clsx';
 import styles from './styles.module.css';
 
@@ -186,7 +186,7 @@ export default function ProductTilesGrid({
                 <div className={styles.productSubjects}>
                   {filteredSubjects.slice(0, 4).map(subject => (
                     <span key={subject} className={styles.productSubjectChip}>
-                      {subject}
+                      <FaTag size={10}/> {subject}
                     </span>
                   ))}
                 </div>

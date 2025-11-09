@@ -23,3 +23,24 @@ export const handleDocsNavigate = ({ docsPath }) => {
 // Normalize string for comparison
 
 export const normalize = value => value ? value.toString().toLowerCase().trim() : '';
+
+export const productMatchesFilter = (product, filter) => {
+  if (!filter) {
+    return true;
+  }
+
+  const normalizedFilterValues = filter.values
+    .map(value => normalize(value))
+    .filter(Boolean);
+
+  const matchesValue = value => {
+    const normalizedValue = normalize(value);
+    return normalizedValue && normalizedFilterValues.includes(normalizedValue);
+  };
+
+  if (Array.isArray(product?.keywords) && product.keywords.some(matchesValue)) {
+    return true;
+  }
+
+  return false;
+};

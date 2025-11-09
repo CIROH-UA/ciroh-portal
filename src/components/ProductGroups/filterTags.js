@@ -5,7 +5,8 @@ import {
   SiPython, 
   SiKubernetes,
   SiNodered,
-  SiLinuxcontainers
+  SiDocker,
+  SiFramework
 } from 'react-icons/si';
 import { BsBucketFill } from "react-icons/bs";
 import { FaRProject } from "react-icons/fa";
@@ -13,7 +14,7 @@ import { FaRProject } from "react-icons/fa";
 export const TYPE_FILTERS = [
   {
     label: 'Apps',
-    values: ['application'],
+    values: ['application','app', 'web app', 'web application', 'desktop app', 'desktop application'],
     icon: MdApps,
     color: 'var(--ifm-color-primary)',
   },
@@ -42,9 +43,9 @@ export const TYPE_FILTERS = [
     color: 'color-mix(in srgb, var(--ifm-color-primary) 40%, var(--ifm-color-secondary) 60%)',
   },
   {
-    label: 'Containers',
-    values: ['docker container', 'oci image', 'container image'],
-    icon: SiLinuxcontainers,
+    label: 'Docker',
+    values: ['docker container', 'oci image', 'container image', 'container'],
+    icon: SiDocker ,
     color: 'color-mix(in srgb, var(--ifm-color-primary) 60%, var(--ifm-color-secondary) 40%)',
   },
   {
@@ -52,6 +53,12 @@ export const TYPE_FILTERS = [
     values: ['hpc', 'high performance computing'],
     icon: SiNodered,
     color: 'color-mix(in srgb, var(--ifm-color-primary) 80%, var(--ifm-color-secondary) 20%)',
+  },
+  {
+   label: 'Frameworks',
+    values: ['framework', 'model framework', 'modeling framework'],
+    icon: SiFramework,
+    color: 'color-mix(in srgb, var(--ifm-color-primary) 90%, var(--ifm-color-secondary) 10%)', 
   },
   {
     label: 'Datasets',

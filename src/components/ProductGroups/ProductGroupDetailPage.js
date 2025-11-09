@@ -11,8 +11,7 @@ import styles from './product-group-detail.module.css';
 import { HeaderGroup } from '../HeaderGroup';
 import { SkeletonPlaceholders } from '@site/src/components/SkeletonPlaceHolders';
 import { TYPE_FILTERS } from './filterTags';
-import { buildDocsUrl, handleDocsNavigate, normalize  } from './utils';
-
+import { buildDocsUrl, handleDocsNavigate, normalize, productMatchesFilter } from './utils';
 
 const PAGE_SIZE = 15;
 
@@ -90,7 +89,6 @@ export default function ProductGroupDetailPage({ group }) {
       }
 
       try {
-        console.log(`Fetching HydroShare products ${normalizedSearchTerm}`);
         const baseProducts = await fetchHydroShareProductsForGroup(groupKeywords, {
           includeMetadata: false,
           page: pageToLoad,
@@ -195,10 +193,7 @@ export default function ProductGroupDetailPage({ group }) {
   const products = dynamicProducts;
   const typeCounts = useMemo(() => {
     return TYPE_FILTERS.reduce((acc, filter) => {
-      const count = products.filter(product => {
-        const productType = normalize(product?.type);
-        return filter.values.some(value => productType === value);
-      }).length;
+      const count = products.filter(product => productMatchesFilter(product, filter)).length;
       acc[filter.label] = count;
       return acc;
     }, {});
@@ -209,10 +204,7 @@ export default function ProductGroupDetailPage({ group }) {
     const activeFilter = TYPE_FILTERS.find(filter => filter.label === activeType);
 
     return products.filter(product => {
-      const productType = normalize(product?.type);
-      const matchesType = activeFilter
-        ? activeFilter.values.some(value => productType === value)
-        : true;
+      const matchesType = activeFilter ? productMatchesFilter(product, activeFilter) : true;
 
       if (!matchesType) {
         return false;
@@ -372,4 +364,3 @@ export default function ProductGroupDetailPage({ group }) {
     </Layout>
   );
 }
-
