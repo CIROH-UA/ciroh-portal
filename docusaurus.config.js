@@ -147,7 +147,7 @@ const config = {
         items: [
           {
             type: 'custom-product-groups',
-            label: 'Product',
+            label: 'Products',
             position: 'left',
           },
           // {to: '/products', label: 'Products', position: 'left'},
@@ -158,10 +158,9 @@ const config = {
           {to: '/contribute', label: 'Contribute', position: 'right'},
           
           {to: '/develop', label: 'Develop', position: 'right'},
-          // {to: '/hydroshare', label: 'HydroShare', position: 'right'},
           {
             type: 'custom-docs-mega',
-            label: 'Docs',
+            label: 'Resources',
             position: 'left',
           },
           {

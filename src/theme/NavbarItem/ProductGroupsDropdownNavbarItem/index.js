@@ -39,6 +39,7 @@ export default function ProductGroupsDropdownNavbarItem({
     <div
       className={clsx('navbar__item', styles.dropdownWrapper)}
       onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)} 
       onBlur={event => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
           setOpen(false);
