@@ -5,7 +5,10 @@ import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
 import { 
-  fetchResourcesBySearch, fetchKeywordPageData, 
+  fetchResource,
+  fetchResourcesBySearch,
+  fetchKeywordPageData, 
+  getCuratedIds,
   fetchResourceCustomMetadata, 
   joinExtraResources, 
   fetchRawCuratedResources 
