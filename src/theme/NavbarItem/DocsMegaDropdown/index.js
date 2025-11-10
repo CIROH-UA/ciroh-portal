@@ -6,8 +6,9 @@ import docsMenu from '@site/src/pages/docs/docsMenu';
 import styles from './styles.module.css';
 
 const columns = [
-  { title: 'Products', items: docsMenu.products },
-  { title: 'Services', items: docsMenu.services },
+  { title: 'Resources', items: docsMenu.resources },
+  // { title: 'Products', items: docsMenu.products },
+  // { title: 'Services', items: docsMenu.services },
 ];
 
 function MobileColumn({ title, items }) {

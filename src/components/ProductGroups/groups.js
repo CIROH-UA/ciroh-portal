@@ -10,7 +10,7 @@ const productGroups = [
     icon: MdMonitor,
     primaryKeyword: 'nwm_portal_product',
     secondaryKeyword: 'nextgen_noaa',
-    docsRoute: '/products/ngiab/',
+    docsRoute: 'products/ngiab/',
     defaultImage: DEFAULT_PREVIEW,
     metrics: [],
     componentPlaceholders: [],

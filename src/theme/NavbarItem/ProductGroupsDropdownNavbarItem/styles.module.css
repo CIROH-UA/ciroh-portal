@@ -1,33 +1,17 @@
 .dropdownWrapper {
-  position: relative;
+  composes: dropdownWrapper from '../dropdownShared.module.css';
 }
 
 .trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: var(--ifm-font-weight-semibold);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  transition: background 0.15s ease;
-  font-size: 0.9rem;
-  color: var(--ifm-navbar-link-color);
-}
-
-.trigger:hover,
-.trigger:focus-visible {
-  background: rgba(255, 255, 255, 0.08);
+  composes: trigger from '../dropdownShared.module.css';
 }
 
 .chevron {
-  transition: transform 0.2s ease;
+  composes: chevron from '../dropdownShared.module.css';
 }
 
 .chevronOpen {
-  transform: rotate(180deg);
+  composes: chevronOpen from '../dropdownShared.module.css';
 }
 
 .dropdownPanel {
@@ -93,19 +77,11 @@
 }
 
 .linkIconWrapper {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background: var(--ifm-color-emphasis-100);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  composes: linkIconWrapper from '../dropdownShared.module.css';
 }
 
 .linkIcon {
-  width: 1.2rem;
-  height: 1.2rem;
-  color: var(--ifm-color-primary);
+  composes: linkIcon from '../dropdownShared.module.css';
 }
 
 .linkCopy {
@@ -115,8 +91,7 @@
 }
 
 .linkLabel {
-  font-weight: 600;
-  font-size: 0.95rem;
+  composes: linkLabel from '../dropdownShared.module.css';
 }
 
 .linkDescription {
@@ -143,5 +118,5 @@
 }
 
 .mobileLinkLabel {
-  font-weight: 600;
+  composes: mobileLinkLabel from '../dropdownShared.module.css';
 }
