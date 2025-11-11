@@ -213,6 +213,58 @@
   font-size: 1rem;
 }
 
+.tagSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tagSectionTitle {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tagChip {
+  --tag-color: var(--ifm-color-primary);
+  border: 1px solid color-mix(in srgb, var(--tag-color) 35%, transparent);
+  background: color-mix(in srgb, var(--tag-color) 15%, transparent);
+  color: var(--tag-color);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tagChip:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--tag-color) 25%, transparent);
+}
+
+.tagChipActive {
+  background: var(--tag-color, var(--ifm-color-primary));
+  color: #ffffff;
+  border-color: var(--tag-color, var(--ifm-color-primary));
+  box-shadow: 0 8px 18px var(--tag-shadow-active);
+}
+
+.tagChipIcon {
+  font-size: 0.95rem;
+}
+
 
 /* Error message styling */
 .errorMessage {

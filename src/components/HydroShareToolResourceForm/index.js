@@ -1,9 +1,19 @@
 /* HydroShareResourceCreator.jsx */
 import React, { useState, useCallback, useContext, useEffect } from 'react';
-import { FaSpinner } from 'react-icons/fa';
+import { FaSpinner, FaRProject } from 'react-icons/fa';
 import clsx from 'clsx';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { AuthContext } from 'react-oauth2-code-pkce';
+import {
+  SiPython,
+  SiRust,
+  SiDocker,
+  SiKubernetes,
+  SiNodered,
+  SiFramework,
+} from 'react-icons/si';
+import { MdAcUnit, MdApps, MdMonitor, MdSchema, MdShowChart, MdStackedLineChart } from 'react-icons/md';
+import { BsBucketFill } from 'react-icons/bs';
 
 import CoveragesInput       from './CoveragesInput';
 import FundingAgenciesInput from './FundingAgenciesInput';
@@ -11,6 +21,29 @@ import UploadDataS3         from './UploadDataS3';
 import HydroShareAuthButton from '@site/src/components/HydroShareAuth';
 import { uploadFileToS3Bucket } from './utils';
 import styles from './HydroShareResourceCreator.module.css';
+
+const CATEGORY_TAGS = [
+  { id: 'nextgen_noaa', label: 'NextGen Ecosystem', icon: MdMonitor },
+  { id: 'fim_ciroh_noaa', label: 'Flood Inundation Mapping', icon: MdShowChart},
+  { id: 'ml_ai_ciroh_noaa', label: 'Machine Learning & AI Tools', icon: MdStackedLineChart },
+  { id: 'snow_modeling_ciroh_noaa', label: 'Snow Sensing & Modeling', icon: MdAcUnit },
+  { id: 'data_management_ciroh_noaa', label: 'Data Management & Access Tools', icon: MdSchema },
+];
+
+const TYPE_TAGS = [
+  { id: 'python', label: 'Python', icon: SiPython },
+  { id: 'r', label: 'R', icon: FaRProject },
+  { id: 'rust', label: 'Rust', icon: SiRust },
+  { id: 'docker', label: 'Docker', icon: SiDocker },
+  { id: 'framework', label: 'Framework', icon: SiFramework },
+  { id: 'hpc', label: 'HPC', icon: SiNodered },
+  { id: 'kubernetes', label: 'Kubernetes', icon: SiKubernetes },
+  { id: 'dataset', label: 'Datasets', icon: BsBucketFill },
+  { id: 'app', label: 'App', icon: MdApps },
+  
+];
+
+const KEYWORD_SPLIT_REGEX = /[,;\s]+/;
 
 const getTypeString = (type) => {
   switch (type) {
@@ -51,6 +84,7 @@ export default function HydroShareResourceCreator({
   const [error,           setError]           = useState('');
   const [progressMessage, setProgressMessage] = useState('');
   const [resourceUrl,     setResourceUrl]     = useState('');
+  const [selectedTagIds,  setSelectedTagIds]  = useState([]);
 
   /* S3 credentials from docusaurus.config.js */
   const { siteConfig: { customFields } } = useDocusaurusContext();
@@ -81,7 +115,8 @@ export default function HydroShareResourceCreator({
       docsUrl,
       presPath,
       visibility,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      selectedTagIds,
     };
     localStorage.setItem(FORM_STATE_KEY, JSON.stringify(formState));
   };
@@ -112,6 +147,18 @@ export default function HydroShareResourceCreator({
     localStorage.removeItem(AUTH_PENDING_KEY);
   };
 
+  const handleKeywordTagToggle = useCallback((tagId) => {
+    setSelectedTagIds(current => {
+      const hasTag = current.includes(tagId);
+      return hasTag ? current.filter(id => id !== tagId) : [...current, tagId];
+    });
+  }, []);
+
+  const isKeywordSelected = useCallback(
+    tagId => selectedTagIds.includes(tagId),
+    [selectedTagIds],
+  );
+
   const loadFormState = () => {
     try {
       const saved = localStorage.getItem(FORM_STATE_KEY);
@@ -127,6 +174,7 @@ export default function HydroShareResourceCreator({
           setDocsUrl(formState.docsUrl || '');
           setPresPath(formState.presPath || '');
           setVisibility(formState.visibility || 'public');
+          setSelectedTagIds(formState.selectedTagIds || []);
           return true; // Indicates state was restored
         }
       }
@@ -278,14 +326,29 @@ export default function HydroShareResourceCreator({
 
     /* 1) keywords */
     let keywordArr = keywords
-      .split(/[,\s]+/)
+      .split(KEYWORD_SPLIT_REGEX)
       .map((k) => k.trim())
       .filter(Boolean);
-    if (!keywordArr.includes(keywordToAdd)) keywordArr.push(keywordToAdd);
 
-    // remove duplicates
-    keywordArr = new Set(keywordArr);
-    keywordArr = Array.from(keywordArr);
+    keywordArr = [
+      ...keywordArr,
+      ...selectedTagIds,
+    ];
+
+    if (!keywordArr.includes(keywordToAdd)) {
+      keywordArr.push(keywordToAdd);
+    }
+
+    const dedupedKeywords = [];
+    const seenKeywords = new Set();
+    keywordArr.forEach(keyword => {
+      const normalized = keyword.toLowerCase();
+      if (!seenKeywords.has(normalized)) {
+        seenKeywords.add(normalized);
+        dedupedKeywords.push(keyword);
+      }
+    });
+    keywordArr = dedupedKeywords;
 
     /* 2) coverages & extra_metadata */
     const metadataJson = JSON.stringify([...coverages]);
@@ -432,7 +495,7 @@ export default function HydroShareResourceCreator({
 
   /* ─────────── UI ─────────── */
   // User is authenticated with HydroShare
-  if (token)
+  if (!token)
   {
     return (
       <div className={styles.container}>
@@ -483,6 +546,54 @@ export default function HydroShareResourceCreator({
               placeholder="e.g. model HPC weather"
             />
           </label>
+
+          {typeContribution === 'app' && (
+            <>
+              <div className={styles.tagSection}>
+                <p className={styles.label}>Categories</p>
+                <div className={styles.tagList}>
+                  {CATEGORY_TAGS.map(tag => (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      className={clsx(
+                        styles.tagChip,
+                        isKeywordSelected(tag.id) && styles.tagChipActive,
+                      )}
+                      onClick={() => handleKeywordTagToggle(tag.id)}
+                    >
+                      {tag.icon ? (
+                        <tag.icon className={styles.tagChipIcon} aria-hidden="true" />
+                      ) : null}
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.tagSection}>
+                <p className={styles.label}>Types</p>
+                <div className={styles.tagList}>
+                  {TYPE_TAGS.map(tag => (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      className={clsx(
+                        styles.tagChip,
+                        isKeywordSelected(tag.id) && styles.tagChipActive,
+                      )}
+                      onClick={() => handleKeywordTagToggle(tag.id)}
+                    >
+                      {tag.icon ? (
+                        <tag.icon className={styles.tagChipIcon} aria-hidden="true" />
+                      ) : null}
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           {/* File upload (all but app) */}
           {typeContribution !== 'app' && (
