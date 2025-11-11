@@ -80,9 +80,9 @@ const searchRawResource = (resource, searchTerm) => {
 
 // Fetch the curated resources first (from the "parent" resource).
 const fetchRawCuratedResources =
-  async () => {
+  async (curatedParentId) => {
     try {
-      const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+      const curatedIds = await getCuratedIds(curatedParentId);
 
       const curatedList = await Promise.all(curatedIds.map(async (id) => {
         const resource = await fetchResource(id);
@@ -140,6 +140,24 @@ export default function Presentations({ community_id = 4 }) {
   // Helper function to determine if search is active
   const usingSearch = useCallback(() => filterSearch.trim() !== '', [filterSearch]);
 
+  // Helper function to add placeholder resources for loading state
+  const addPlaceholderResources = useCallback((page) => {
+    setResources(prev => [
+      ...prev,
+      ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        resource_id: `placeholder-page${page}-${i}`,
+        title: "",
+        authors: "",
+        resource_type: "",
+        resource_url: "",
+        description: "",
+        thumbnail_url: "",
+        page_url: "",
+        docs_url: "",
+      }))
+    ]);
+  }, []);
+
 
   const fetchAll = useCallback(
     async (page) => {
@@ -149,20 +167,7 @@ export default function Presentations({ community_id = 4 }) {
       try {
         // Add placeholders for loading state (only for pagination, not first page)
         if (page > 1) {
-          setResources(prev => [
-            ...prev,
-            ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
-              resource_id: `placeholder-page${page}-${i}`,
-              title: "",
-              authors: "",
-              resource_type: "",
-              resource_url: "",
-              description: "",
-              thumbnail_url: "",
-              page_url: "",
-              docs_url: "",
-            }))
-          ]);
+          addPlaceholderResources(page);
         }
 
         // Search parameters
@@ -254,20 +259,7 @@ export default function Presentations({ community_id = 4 }) {
       try {
         // Add placeholders for loading state (only for pagination, not first page)
         if (page > 1) {
-          setResources(prev => [
-            ...prev,
-            ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
-              resource_id: `placeholder-page${page}-${i}`,
-              title: "",
-              authors: "",
-              resource_type: "",
-              resource_url: "",
-              description: "",
-              thumbnail_url: "",
-              page_url: "",
-              docs_url: "",
-            }))
-          ]);
+          addPlaceholderResources(page);
         }
 
         // Search parameters
