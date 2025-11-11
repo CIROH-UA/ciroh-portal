@@ -55,8 +55,7 @@ async function fetchResourcesByGroup(groupid, fullTextSearch=undefined, pageNumb
   }
 
   // data.results is typically where the list of resources is stored.
-  // If your actual structure differs, adjust accordingly.
-  const data = await response.json();
+   const data = await response.json();
 
   // Get resources and pagination info
   const returnData = {

@@ -24,10 +24,55 @@ const SCROLL_THRESHOLD = 800;
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
+// Curated Parent Resource ID
+const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
+
+// Helper function to sort resources
+const sortResources = (resourceList, sortType, sortDirection) => {
+  return resourceList.sort((a, b) => {
+    // Keep placeholders at the beginning during loading
+    if (a.resource_id.startsWith('placeholder-')) return -1;
+    if (b.resource_id.startsWith('placeholder-')) return 1;
+    
+    let comparison = 0;
+    
+    switch (sortType)
+    {
+      case 'modified':
+        comparison = a.date_last_updated.localeCompare(b.date_last_updated);
+        break;
+      case 'created':
+        comparison = a.date_created.localeCompare(b.date_created);
+        break;
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'author':
+        comparison = a.authors.localeCompare(b.authors);
+        break;
+      default:
+        comparison = 0;
+        break;
+    }
+    // Apply sort direction
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+};
+
+// Fetch the curated IDs first (from the "parent" resource).
+const fetchCuratedIds = async () => {
+  try {
+    const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+    return curatedIds;
+  } catch (err) {
+    console.error("Error fetching curated IDs:", err);
+    return [];
+  }
+};
+
 export default function Datasets({ community_id = 4 }) {
   const { colorMode } = useColorMode(); // Get the current theme
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
-  const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
 
   const PLACEHOLDER_ITEMS = 10;
   const initialPlaceholders = Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => ({
@@ -62,51 +107,6 @@ export default function Datasets({ community_id = 4 }) {
   const [filterSearch,   setFilterSearch]   = useState('');
   const [sortType,       setSortType]       = useState('modified');
   const [sortDirection,  setSortDirection]  = useState('desc');
-
-  // Helper function to sort resources
-  const sortResources = useCallback((resourceList, sortType, sortDirection) => {
-    return resourceList.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'modified':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'author':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, []);
-
-  // Fetch the curated IDs first (from the "parent" resource).
-  const fetchCuratedIds = useCallback(async () => {
-    try {
-      const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-      return curatedIds;
-    } catch (err) {
-      console.error("Error fetching curated IDs:", err);
-      return [];
-    }
-  },
-  [CURATED_PARENT_ID]);
 
   // Fetch all resources by group, then filter them based on curated IDs
   const fetchAll = useCallback(
@@ -229,7 +229,6 @@ export default function Datasets({ community_id = 4 }) {
         // Fetch metadata
         for (let res of mappedList) {
           try {
-            // const metadata = await fetchResourceMetadata(res.resource_id);
             const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
             
             const updatedResource = {
@@ -256,7 +255,7 @@ export default function Datasets({ community_id = 4 }) {
         fetching.current = false;
       }
     },
-    [filterSearch, sortDirection, sortType, fetchCuratedIds, hs_icon, sortResources]
+    [filterSearch, sortDirection, sortType]
   );
 
   // Reset and load first page when filters change
@@ -298,7 +297,7 @@ export default function Datasets({ community_id = 4 }) {
   const commitSearch = q => {
     clearTimeout(debounceTimer);
     setFilterSearch(q.trim());
-  };
+  }; 
   const handleKeyUp   = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => commitSearch(searchInput), DEBOUNCE_MS);

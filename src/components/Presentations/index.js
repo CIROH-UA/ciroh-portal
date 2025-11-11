@@ -10,8 +10,7 @@ import {
   fetchKeywordPageData, 
   getCuratedIds,
   fetchResourceCustomMetadata, 
-  joinExtraResources, 
-  fetchRawCuratedResources 
+  joinExtraResources 
 } from "../HydroShareImporter";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
@@ -31,6 +30,71 @@ const SCROLL_THRESHOLD = 800;
 // Search input debounce
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
+
+// Maps a resource list to the internal format, including custom metadata
+const mapWithCustomMetadata = 
+  async (resourceList, hs_icon) => {
+    const mapping = await Promise.all(resourceList.map(async (res) => {
+      let customMetadata = null;
+      try {
+        customMetadata = await fetchResourceCustomMetadata(res.resource_id);
+      } catch (metadataErr) {
+        console.error(`Error fetching metadata: ${metadataErr.message}`);
+      }
+      let embedUrl = "";
+      if (customMetadata?.pres_path) embedUrl = `https://www.hydroshare.org/resource/${res.resource_id}/data/contents/${customMetadata.pres_path}`;
+      return {
+        resource_id: res.resource_id,
+        title: res.resource_title,
+        authors: res.authors.map(
+          (author) => author.split(',').reverse().join(' ')
+        ).join(' 🖊️ '),
+        resource_type: res.resource_type,
+        resource_url: res.resource_url,
+        description: res.abstract || "No description available.",
+        date_created: res.date_created || "",
+        date_last_updated: res.date_last_updated || "",
+        thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
+        page_url: customMetadata?.page_url || "",
+        docs_url: customMetadata?.docs_url || "",
+        embed_url: embedUrl,
+      }
+    }));
+    return mapping;
+  };
+
+// Helper function to search within a raw resource
+const searchRawResource = (resource, searchTerm) => {
+  const searchTermLower = searchTerm.toLowerCase();
+  const searchFields = [
+    resource.resource_title,
+    resource.abstract,
+    resource.authors.join(' '),
+    resource.date_created,
+    resource.date_last_updated,
+  ];
+  return searchFields.some(field => 
+    field?.toLowerCase().includes(searchTermLower)
+  );
+};
+
+// Fetch the curated resources first (from the "parent" resource).
+const fetchRawCuratedResources =
+  async () => {
+    try {
+      const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+
+      const curatedList = await Promise.all(curatedIds.map(async (id) => {
+        const resource = await fetchResource(id);
+        return resource;
+      }));
+
+      return curatedList;
+    } catch (err) {
+      console.error("Error fetching curated resources:", err);
+      return [];
+    }
+  };
 
 export default function Presentations({ community_id = 4 }) {
   const { colorMode } = useColorMode(); // Get the current theme
@@ -76,74 +140,6 @@ export default function Presentations({ community_id = 4 }) {
   // Helper function to determine if search is active
   const usingSearch = useCallback(() => filterSearch.trim() !== '', [filterSearch]);
 
-  // Helper function to search within a raw resource
-  const searchRawResource = useCallback((resource, searchTerm) => {
-    const searchTermLower = searchTerm.toLowerCase();
-    const searchFields = [
-      resource.resource_title,
-      resource.abstract,
-      resource.authors.join(' '),
-      resource.date_created,
-      resource.date_last_updated,
-    ];
-    return searchFields.some(field => 
-      field?.toLowerCase().includes(searchTermLower)
-    );
-  }, []);
-
-  // Maps a resource list to the internal format, including custom metadata
-  const mapWithCustomMetadata = useCallback(
-    async (resourceList) => {
-      const mapping = await Promise.all(resourceList.map(async (res) => {
-        let customMetadata = null;
-        try {
-          customMetadata = await fetchResourceCustomMetadata(res.resource_id);
-        } catch (metadataErr) {
-          console.error(`Error fetching metadata: ${metadataErr.message}`);
-        }
-        let embedUrl = "";
-        if (customMetadata?.pres_path) embedUrl = `https://www.hydroshare.org/resource/${res.resource_id}/data/contents/${customMetadata.pres_path}`;
-        return {
-          resource_id: res.resource_id,
-          title: res.resource_title,
-          authors: res.authors.map(
-            (author) => author.split(',').reverse().join(' ')
-          ).join(' 🖊️ '),
-          resource_type: res.resource_type,
-          resource_url: res.resource_url,
-          description: res.abstract || "No description available.",
-          date_created: res.date_created || "",
-          date_last_updated: res.date_last_updated || "",
-          thumbnail_url: customMetadata?.thumbnail_url || hs_icon,
-          page_url: customMetadata?.page_url || "",
-          docs_url: customMetadata?.docs_url || "",
-          embed_url: embedUrl,
-        }
-      }));
-      return mapping;
-    },
-    [hs_icon]
-  );
-
-  // Fetch the curated resources first (from the "parent" resource).
-  const fetchRawCuratedResources = useCallback(
-    async () => {
-      try {
-        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-
-        const curatedList = await Promise.all(curatedIds.map(async (id) => {
-          const resource = await fetchResource(id);
-          return resource;
-        }));
-
-        return curatedList;
-      } catch (err) {
-        console.error("Error fetching curated resources:", err);
-        return [];
-      }
-    },
-    [CURATED_PARENT_ID]
-  );
 
   const fetchAll = useCallback(
     async (page) => {
@@ -221,9 +217,8 @@ export default function Presentations({ community_id = 4 }) {
         });
 
         // Map the full resource lists to your internal format (with custom metadata)
-        const mappedResources = await mapWithCustomMetadata(rawResources);
-        const mappedCollections = await mapWithCustomMetadata(rawCollections);
-        //const mappedCurated = await mapWithCustomMetadata(rawCuratedResources); // If uncommenting, merge this and the above line into a Promise.all call
+        const mappedResources = await mapWithCustomMetadata(rawResources, hs_icon);
+        const mappedCollections = await mapWithCustomMetadata(rawCollections, hs_icon);
         
         // Handle first page vs pagination
         if (page === 1) {
@@ -248,7 +243,7 @@ export default function Presentations({ community_id = 4 }) {
         fetching.current = false;
       }
     },
-    [sortDirection, sortType, filterSearch, fetchRawCuratedResources, usingSearch, searchRawResource, mapWithCustomMetadata]
+    [sortDirection, sortType, filterSearch, usingSearch]
   );
 
   const fetchPage = useCallback(
@@ -290,8 +285,7 @@ export default function Presentations({ community_id = 4 }) {
         const rawKeywordResources = invKeywordResources.reverse(); // Reverse chronological order
 
         // Map the full resource lists to your internal format (with custom metadata)
-        const mappedResources = await mapWithCustomMetadata(rawKeywordResources);
-        //const mappedCurated = await mapWithCustomMetadata(rawCuratedResources); // If uncommenting, merge this and the above line into a Promise.all call
+        const mappedResources = await mapWithCustomMetadata(rawKeywordResources, hs_icon);
         
         // Handle first page vs pagination
         if (page === 1) {
@@ -315,7 +309,7 @@ export default function Presentations({ community_id = 4 }) {
         fetching.current = false;
       }
     },
-    [sortDirection, sortType, filterSearch, mapWithCustomMetadata]
+    [sortDirection, sortType, filterSearch]
   );
 
   // Reset and load first page when filters change
@@ -350,6 +344,7 @@ export default function Presentations({ community_id = 4 }) {
     clearTimeout(debounceTimer);
     setFilterSearch(q.trim());
   };
+
   const handleKeyUp   = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => commitSearch(searchInput), DEBOUNCE_MS);

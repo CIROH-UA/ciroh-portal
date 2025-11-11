@@ -4,7 +4,7 @@ import { FaThLarge, FaBars } from "react-icons/fa";
 import styles from "./styles.module.css";
 import HydroShareResourcesTiles from "@site/src/components/HydroShareResourcesTiles";
 import HydroShareResourcesRows from "@site/src/components/HydroShareResourcesRows";
-import { fetchResourcesByKeyword, fetchResourcesBySearch, fetchResourceMetadata, fetchResourceCustomMetadata } from "@site/src/components/HydroShareImporter";
+import { fetchResourcesBySearch, fetchResourceCustomMetadata } from "@site/src/components/HydroShareImporter";
 import { useColorMode } from "@docusaurus/theme-common"; // Hook to detect theme
 import DatasetLightIcon from '@site/static/img/datasets_logo_light.png';
 import DatasetDarkIcon from '@site/static/img/datasets_logo_dark.png';
@@ -118,7 +118,6 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         // Fetch metadata for each resource and update them individually
         for (let res of mappedList) {
           try {
-            // const metadata = await fetchResourceMetadata(res.resource_id);
             const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
             const updatedResource = {
               ...res,
