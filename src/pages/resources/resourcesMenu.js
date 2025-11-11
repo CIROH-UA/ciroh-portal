@@ -1,4 +1,3 @@
-// import productGroups from '../../components/ProductGroups/groups';
 import {
   MdStorage,
   MdSpeakerNotes,
@@ -69,36 +68,4 @@ const docsMenu = {
 };
 
 export default docsMenu;
-// const products = productGroups
-//   .filter(group => group.title)
-//   .map(group => ({
-//     id: group.id,
-//     title: group.title,
-//     description: group.blurb,
-//     icon: group.icon,
-//     slug: `${group.docsRoute}`,
-//   }));
 
-// const services = [
-//   {
-//     id: 'cloudservices',
-//     title: 'Public Cloud',
-//     description: 'Managed AWS resources, workflows, and security guidance.',
-//     slug: 'services/cloudservices',
-//     icon: MdCloudQueue,
-//   },
-//   {
-//     id: 'on-prem',
-//     title: 'On-Premises',
-//     description: 'Guidance for installing CIROH tooling on HPC or data centers.',
-//     slug: 'services/on-prem',
-//     icon: MdStorage,
-//   },
-//   {
-//     id: 'external-resources',
-//     title: 'External Resources',
-//     description: 'Partner docs, references, and related knowledge bases.',
-//     slug: 'services/external-resources',
-//     icon: MdShare,
-//   },
-// ];
