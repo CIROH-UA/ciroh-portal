@@ -6,7 +6,7 @@ import docsMenu from '@site/src/pages/docs/docsMenu';
 import styles from './styles.module.css';
 
 const columns = [
-  { title: 'Resources', items: docsMenu.resources },
+  { title: 'Docs', items: docsMenu.docs },
   // { title: 'Products', items: docsMenu.products },
   // { title: 'Services', items: docsMenu.services },
 ];

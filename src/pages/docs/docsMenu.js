@@ -1,8 +1,6 @@
-import productGroups from '../../components/ProductGroups/groups';
+// import productGroups from '../../components/ProductGroups/groups';
 import {
-  MdCloudQueue,
   MdStorage,
-  MdShare,
   MdSpeakerNotes,
   MdNotificationsActive,
   MdShield
@@ -11,11 +9,66 @@ import {
 const DOCS_SITE = 'https://docs.ciroh.org';
 const DOCS_BASE = `${DOCS_SITE}/docs`;
 
-const toHref = path =>
-  path.startsWith('/docs/')
-    ? `${DOCS_SITE}${path}`
-    : `${DOCS_BASE}/${path}`;
+const toHref = path => {
+  if (!path) {
+    return DOCS_SITE;
+  }
 
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  if (path.startsWith('/')) {
+    return `${DOCS_SITE}${path}`;
+  }
+
+  return `${DOCS_BASE}/${path}`;
+};
+
+const docuhub =[
+  {
+    id: 'docuhub-policies',
+    title: 'Policies',
+    description: 'Data, Code Sharing and Infrastructure Policies',
+    slug: 'policies/intro',
+    icon: MdShield,
+  },
+  {
+    id: 'docuhub-services',
+    title: 'IT Resources',
+    description: 'CIROH CyberInfrastructure: Unleashing Potential in Hydrological Research',
+    slug: 'services/intro',
+    icon: MdStorage,
+  },
+  {
+    id: 'docuhub-news',
+    title: 'News',
+    description: 'Stay connected with the latest developments in NextGen water modeling',
+    slug: '/news',
+    icon: MdSpeakerNotes ,
+  },
+  {
+    id: 'docuhub-blog',
+    title: 'Blog',
+    description: 'Comunity Blog',
+    slug: '/blog',
+    icon: MdNotificationsActive ,
+  },
+]
+
+
+const withLinks = section =>
+  section.map(item => ({
+    ...item,
+    href: item.href ?? toHref(item.slug),
+  }));
+
+const docsMenu = {
+  docs: withLinks(docuhub),
+
+};
+
+export default docsMenu;
 // const products = productGroups
 //   .filter(group => group.title)
 //   .map(group => ({
@@ -49,49 +102,3 @@ const toHref = path =>
 //     icon: MdShare,
 //   },
 // ];
-
-const docuhub =[
-  {
-    id: 'docuhub-policies',
-    title: 'Policies',
-    description: 'Data, Code Sharing and Infrastructure Policies',
-    slug: 'policies/intro',
-    icon: MdShield,
-  },
-  {
-    id: 'docuhub-services',
-    title: 'IT Resources',
-    description: 'CIROH CyberInfrastructure: Unleashing Potential in Hydrological Research',
-    slug: 'services/intro',
-    icon: MdStorage,
-  },
-  {
-    id: 'docuhub-news',
-    title: 'News',
-    description: 'Stay connected with the latest developments in NextGen water modeling',
-    slug: 'news',
-    icon: MdSpeakerNotes ,
-  },
-  {
-    id: 'docuhub-blog',
-    title: 'Blog',
-    description: 'Comunity Blog',
-    slug: 'blog',
-    icon: MdNotificationsActive ,
-  },
-]
-
-
-const withLinks = section =>
-  section.map(item => ({
-    ...item,
-    href: item.href ?? toHref(item.slug),
-  }));
-
-const docsMenu = {
-  resources: withLinks(docuhub),
-  // products: withLinks(products),
-  // services: withLinks(services),
-};
-
-export default docsMenu;
