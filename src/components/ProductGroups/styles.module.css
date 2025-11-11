@@ -104,14 +104,19 @@
 }
 
 .productSubjectChip {
+  --chip-color: var(--ifm-color-primary);
   font-size: 0.7rem;
   font-weight: 600;
   padding: 0.2rem 0.55rem;
   border-radius: 999px;
-  background: var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-emphasis-700);
-  border: 1px solid var(--ifm-color-emphasis-300);
+  background: color-mix(in srgb, var(--chip-color) 18%, transparent);
+  color: var(--chip-color);
+  border: 1px solid color-mix(in srgb, var(--chip-color) 35%, transparent);
   text-transform: capitalize;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .productTitle {

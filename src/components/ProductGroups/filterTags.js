@@ -44,7 +44,7 @@ export const TYPE_FILTERS = [
   },
   {
     label: 'Docker',
-    values: ['docker container', 'oci image', 'container image', 'container'],
+    values: ['docker', 'oci image', 'container image', 'container'],
     icon: SiDocker ,
     color: 'color-mix(in srgb, var(--ifm-color-primary) 60%, var(--ifm-color-secondary) 40%)',
   },
@@ -56,7 +56,7 @@ export const TYPE_FILTERS = [
   },
   {
    label: 'Frameworks',
-    values: ['framework', 'model framework', 'modeling framework'],
+    values: ['framework', 'Model_Framework', 'modeling framework'],
     icon: SiFramework,
     color: 'color-mix(in srgb, var(--ifm-color-primary) 90%, var(--ifm-color-secondary) 10%)', 
   },

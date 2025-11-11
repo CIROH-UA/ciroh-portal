@@ -266,41 +266,44 @@ export default function ProductGroupDetailPage({ group }) {
             </div>
             <div className={styles.filterTags}>
               {TYPE_FILTERS.map(filter => {
+                // console.log(isActive);
+                // const isActive = activeType.replace("_", " ") === filter.label;
+
                 const isActive = activeType === filter.label;
+
+                console.log(activeType);
                 const count = typeCounts[filter.label] || 0;
                 if (count === 0) {
                   return null;
                 }
                 const isAvailable = count > 0;
-                const themeVars = filter.color
-                  ? { '--tag-color': filter.color }
-                  : undefined;
+                const themeVars = { '--tag-color': 'var(--ifm-color-primary)' };
                 return (
                   <button
                     key={filter.label}
                     type="button"
                     className={clsx(
-                      styles.filterTag,
-                      isActive && styles.filterTagActive,
-                      !isAvailable && styles.filterTagDisabled,
-                    )}
-                    onClick={() => setActiveType(isActive ? null : filter.label)}
-                    disabled={!isAvailable && !isActive}
-                    style={themeVars}
-                  >
-                    {filter.icon ? (
-                      <filter.icon className={styles.filterIcon} aria-hidden="true" />
-                    ) : null}
-                    <span className={styles.filterEmoji} aria-hidden="true">
-                      {filter.emoji}
-                    </span>
-                    <span>{filter.label}</span>
-                    <span className={styles.filterCount}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
+                        styles.filterTag,
+                        isActive && styles.filterTagActive,
+                        !isAvailable && styles.filterTagDisabled,
+                      )}
+                      onClick={() => setActiveType(isActive ? null : filter.label)}
+                      disabled={!isAvailable && !isActive}
+                      style={themeVars}
+                    >
+                      {filter.icon ? (
+                        <filter.icon className={styles.filterIcon} aria-hidden="true" />
+                      ) : null}
+                      <span className={styles.filterEmoji} aria-hidden="true">
+                        {filter.emoji}
+                      </span>
+                      <span>{filter.label}</span>
+                      <span className={styles.filterCount}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
               {filtersActive ? (
                 <button
                   type="button"
