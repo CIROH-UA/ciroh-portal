@@ -13,7 +13,7 @@ export function HeaderGroup({
     return (
         <Fragment>
         <Link className={styles.backLink} to={`/${backLink}`}>
-          ← Groups
+          ← Categories
         </Link>
 
         <article className={styles.headerCard}>
