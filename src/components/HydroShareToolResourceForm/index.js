@@ -495,7 +495,7 @@ export default function HydroShareResourceCreator({
 
   /* ─────────── UI ─────────── */
   // User is authenticated with HydroShare
-  if (!token)
+  if (token)
   {
     return (
       <div className={styles.container}>
