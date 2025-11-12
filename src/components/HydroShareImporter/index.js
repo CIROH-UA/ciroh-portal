@@ -280,7 +280,7 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
   let resources = JSON.parse(data.resources);
   let resourcesCorrected = [];
 
-  for (let i = 0;i < resources.length;i++)
+  for (let i = 0; i < resources.length; i++)
   {
     let resource = resources[i];
     let resourceCorrected = {
@@ -288,7 +288,7 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
       resource_title: resource.title,
       authors: resource.authors,
       resource_type: resource.type,
-      resource_url: 'http://www.hydroshare.org' + resource.link,
+      resource_url: 'https://www.hydroshare.org' + resource.link,
       abstract: resource.abstract,
       date_created: resource.created,
       date_last_updated: resource.modified,
@@ -361,7 +361,7 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
     resources = [];
   }
 
-  for (let i = 0;i < resources.length;i++)
+  for (let i = 0; i < resources.length; i++)
   {
     let resource = resources[i];
     let resourceCorrected = {
@@ -369,7 +369,7 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
       resource_title: resource.title,
       authors: resource.authors,
       resource_type: resource.type,
-      resource_url: 'http://www.hydroshare.org' + resource.link,
+      resource_url: 'https://www.hydroshare.org' + resource.link,
       abstract: resource.abstract,
       date_created: resource.created,
       date_last_updated: resource.modified,
