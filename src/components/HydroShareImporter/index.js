@@ -8,6 +8,22 @@
  * Adjust or add query parameters (e.g., page, count) as needed.
  */
 
+/**
+ * Convert author name from "First Middle Last" to "Last, First Middle"
+ * @param {string} author - The author name in "First Middle Last" format
+ * @returns {string} The author name in "Last, First Middle" format
+ */
+function convertAuthorToLastFirst(author) {
+  if (!author || typeof author !== 'string') {
+    return author;
+  }
+  
+  const nameParts = author.split(' ');
+  const lastName = nameParts.pop();
+  const firstName = nameParts.join(' ');
+  return `${lastName}, ${firstName}`;
+}
+
 // Helper function to fetch detailed metadata for a specific resource
 async function fetchResourceMetadata(resourceId="302dcbef13614ac486fb260eaa1ca87c") {
   const url = `https://www.hydroshare.org/hsapi/resource/${resourceId}/scimeta/elements/`;
@@ -252,10 +268,7 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
 
   // Convert author name from "First Middle Last" to "Last, First Middle"
   if (author !== undefined) {
-    const nameParts = author.split(' ');
-    const lastName = nameParts.pop();
-    const firstName = nameParts.join(' ');
-    author = `${lastName}, ${firstName}`;
+    author = convertAuthorToLastFirst(author);
   }
 
   // Add page number parameter (1-based indexing)
@@ -329,10 +342,7 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
 
   // Convert author name from "First Middle Last" to "Last, First Middle"
   if (author !== undefined) {
-    const nameParts = author.split(' ');
-    const lastName = nameParts.pop();
-    const firstName = nameParts.join(' ');
-    author = `${lastName}, ${firstName}`;
+    author = convertAuthorToLastFirst(author);
   }
 
   // Add page number parameter (1-based indexing)
@@ -419,10 +429,7 @@ async function fetchKeywordPageData(keyword, searchText, ascending=false, sortBy
 
   // Convert author name from "First Middle Last" to "Last, First Middle"
   if (author !== undefined) {
-    const nameParts = author.split(' ');
-    const lastName = nameParts.pop();
-    const firstName = nameParts.join(' ');
-    author = `${lastName}, ${firstName}`;
+    author = convertAuthorToLastFirst(author);
   }
 
   // Add page number parameter (1-based indexing)
@@ -486,5 +493,6 @@ export {
   fetchResourcesBySearch, fetchResourcesWithPaginationData, fetchKeywordPageData, getCommunityResources, 
   fetchResourceCustomMetadata, 
   joinExtraResources, 
-  fetchRawCuratedResources
+  fetchRawCuratedResources,
+  convertAuthorToLastFirst
 };
