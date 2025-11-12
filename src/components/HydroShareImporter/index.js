@@ -403,7 +403,7 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
  */
 async function fetchKeywordPageData(keyword, searchText, ascending=false, sortBy=undefined, author=undefined) {
   // API Url with query parameters
-  let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent([keyword])}`;
+  let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent(keyword)}`;
 
   // Add sort order parameter
   if (ascending) {
