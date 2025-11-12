@@ -192,7 +192,13 @@ export default function Presentations({ community_id = 4 }) {
         const rawKeywordResources = invKeywordResources.reverse(); // Reverse chronological order
         const rawCollections = invCollections.reverse();
         let rawResources = joinExtraResources(rawKeywordResources, rawCuratedResources); // Merge ensures backwards compatibility for presentations predating the keyword
-        
+
+        if (sortType === 'author') {
+          for (let i = 0; i < rawResources.length; i++) {
+            rawResources[i].authorSort = rawResources[i].authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
+          }
+        }
+
         // Apply client-side sorting so curated resources are in the correct order
         rawResources = rawResources.sort((a, b) => {
           let comparison = 0;
@@ -208,8 +214,8 @@ export default function Presentations({ community_id = 4 }) {
               comparison = a.resource_title.localeCompare(b.resource_title);
               break;
             case 'author':
-              const aAuthors = a.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
-              const bAuthors = b.authors.map(author => author.split(',').reverse().join(' ')).join(' 🖊️ ');
+              const aAuthors = a.authorSort;
+              const bAuthors = b.authorSort;
               comparison = aAuthors.localeCompare(bAuthors);
               break;
             default:
