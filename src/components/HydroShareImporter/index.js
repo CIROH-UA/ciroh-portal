@@ -64,7 +64,7 @@ async function fetchResourcesByGroup(groupid, fullTextSearch=undefined, pageNumb
     resourceCountTotal: data.count,
     pageSize: pageSize,
     pageNumber: pageNumber,
-    pageLast: Math.ceil(data.count / pageSize),
+    pageLast: pageSize ? Math.ceil(data.count / pageSize) : 1,
     hasMorePages: data.next !== null,
     pageNextUrl: data.next,
     pagePreviousUrl: data.previous,
