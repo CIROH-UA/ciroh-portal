@@ -307,7 +307,7 @@ export default function Presentations({ community_id = 4 }) {
         fetching.current = false;
       }
     },
-    [sortDirection, sortType, filterSearch]
+    [addPlaceholderResources, hs_icon, sortDirection, sortType, filterSearch]
   );
 
   // Reset and load first page when filters change
