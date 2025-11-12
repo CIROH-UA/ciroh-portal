@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition, useMemo, useCallback, useRef } from "react";
+import React, { useEffect, useState, startTransition, useCallback, useRef } from "react";
 import clsx from "clsx";
 import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
@@ -158,12 +158,6 @@ export default function Datasets({ community_id = 4 }) {
         ]);
 
         const resourceList = communityResourcesResponse.resources;
-
-        if (fetchedPages.current.has(page)) {
-          console.log('Skipping page', page, '- already fetched previously');
-          return;
-        }
-
         fetchedPages.current.add(page);
 
         // Update pagination state
