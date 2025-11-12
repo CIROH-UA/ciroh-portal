@@ -248,7 +248,7 @@ export default function Presentations({ community_id = 4 }) {
         fetching.current = false;
       }
     },
-    [sortDirection, sortType, filterSearch, usingSearch]
+    [addPlaceholderResources, hs_icon, sortDirection, sortType, filterSearch, usingSearch]
   );
 
   const fetchPage = useCallback(
