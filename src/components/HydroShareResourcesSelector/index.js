@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition, useMemo, useRef, useCallback } from "react";
+import React, { useEffect, useState, startTransition, useRef, useCallback } from "react";
 import clsx from "clsx";
 import { FaThLarge, FaBars } from "react-icons/fa";
 import styles from "./styles.module.css";
