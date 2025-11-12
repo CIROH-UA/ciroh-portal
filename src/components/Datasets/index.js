@@ -116,12 +116,10 @@ export default function Datasets({ community_id = 4 }) {
       
       // Prevent refetching same or lower page numbers
       if (page <= lastFetchedPage.current) {
-        console.log('Skipping page', page, '- already fetched up to page', lastFetchedPage.current);
         return;
       }
 
       if (fetchedPages.current.has(page)) {
-        console.log('Skipping page', page, '- already fetched previously');
         return;
       }
       
