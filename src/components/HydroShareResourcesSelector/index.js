@@ -143,7 +143,7 @@ export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app"
         fetching.current = false;
       }
     },
-    [keyword, filterSearch, sortDirection, sortType]
+    [keyword, filterSearch, sortDirection, sortType, hs_icon]
   );
 
 
