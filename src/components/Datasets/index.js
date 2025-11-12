@@ -36,8 +36,7 @@ const sortResources = (resourceList, sortType, sortDirection) => {
     
     let comparison = 0;
     
-    switch (sortType)
-    {
+    switch (sortType) {
       case 'modified':
         comparison = a.date_last_updated.localeCompare(b.date_last_updated);
         break;
