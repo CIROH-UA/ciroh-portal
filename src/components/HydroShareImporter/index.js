@@ -236,7 +236,7 @@ async function fetchResourcesByKeyword(keyword, fullTextSearch=undefined) {
  */
 async function fetchResourcesBySearch(keyword, searchText, ascending=false, sortBy=undefined, author=undefined, pageNumber=1) {
   // API Url with query parameters
-  let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent([keyword])}`;
+  let url = `https://www.hydroshare.org/discoverapi/?q=${encodeURIComponent(searchText)}&subject=${encodeURIComponent(keyword)}`;
 
   // Add sort order parameter
   if (ascending) {
