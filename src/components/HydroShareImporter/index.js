@@ -290,11 +290,25 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
   const data = await response.json();
 
   // Put resources into a corrected format
-  let resources = JSON.parse(data.resources);
+  let resources;
+
+  if (typeof data.resources === "string") {
+    try {
+      resources = JSON.parse(data.resources);
+    } catch (e) {
+      console.error("Failed to parse data.resources as JSON string:", e);
+      resources = [];
+    }
+  } else if (Array.isArray(data.resources)) {
+    resources = data.resources;
+  } else {
+    console.warn("Unexpected format for data.resources:", data.resources);
+    resources = [];
+  }
+
   let resourcesCorrected = [];
 
-  for (let i = 0; i < resources.length; i++)
-  {
+  for (let i = 0; i < resources.length; i++) {
     let resource = resources[i];
     let resourceCorrected = {
       resource_id: resource.short_id,
@@ -364,15 +378,29 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
   const data = await response.json();
 
   // Put resources into a corrected format
-  let resources = JSON.parse(data.resources);
+  let resources;
+
+  if (typeof data.resources === "string") {
+    try {
+      resources = JSON.parse(data.resources);
+    } catch (e) {
+      console.error("Failed to parse data.resources as JSON string:", e);
+      resources = [];
+    }
+  } else if (Array.isArray(data.resources)) {
+    resources = data.resources;
+  } else {
+    console.warn("Unexpected format for data.resources:", data.resources);
+    resources = [];
+  }
+
   let resourcesCorrected = [];
 
   if (pageNumber > data.pagecount) {
     resources = [];
   }
 
-  for (let i = 0; i < resources.length; i++)
-  {
+  for (let i = 0; i < resources.length; i++) {
     let resource = resources[i];
     let resourceCorrected = {
       resource_id: resource.short_id,
