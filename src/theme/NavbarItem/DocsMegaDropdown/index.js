@@ -2,21 +2,14 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import { MdExpandMore } from 'react-icons/md';
-import docsMenu from '@site/src/data/docsMenu';
+import docsMenu from '@site/src/pages/resources/resourcesMenu';
 import styles from './styles.module.css';
 
-const DOCS_HOME = 'https://docs.ciroh.org';
-
 const columns = [
-  { title: 'Products', items: docsMenu.products ?? [] },
-  { title: 'Services', items: docsMenu.services ?? [] },
-].filter(column => Array.isArray(column.items) && column.items.length > 0);
+  { title: 'Docs', items: docsMenu.docs },
+];
 
-function MobileColumn({ title, items = [] }) {
-  if (!items.length) {
-    return null;
-  }
-
+function MobileColumn({ title, items }) {
   return (
     <>
       <li className="menu__list-item">
@@ -39,34 +32,14 @@ export default function DocsMegaDropdown({
   ...props
 }) {
   const [open, setOpen] = useState(false);
-  const hasColumns = columns.length > 0;
-  const labelText = label ?? 'Docs';
 
   if (mobile) {
-    if (!hasColumns) {
-      return (
-        <li className="menu__list-item">
-          <Link className="menu__link" to={DOCS_HOME}>
-            <span className={styles.mobileLinkLabel}>{labelText}</span>
-          </Link>
-        </li>
-      );
-    }
-
     return (
       <>
         {columns.map(column => (
           <MobileColumn key={column.title} {...column} />
         ))}
       </>
-    );
-  }
-
-  if (!hasColumns) {
-    return (
-      <Link className={clsx('navbar__item', 'navbar__link')} to={DOCS_HOME}>
-        {labelText}
-      </Link>
     );
   }
 
@@ -88,7 +61,7 @@ export default function DocsMegaDropdown({
         aria-haspopup="true"
         aria-expanded={open}
       >
-        <span>{labelText}</span>
+        <span>{label}</span>
         <MdExpandMore
           className={clsx(styles.chevron, open && styles.chevronOpen)}
           aria-hidden="true"
@@ -98,7 +71,7 @@ export default function DocsMegaDropdown({
       <div
         className={clsx(styles.dropdownPanel, open && styles.dropdownPanelOpen)}
         role="menu"
-        aria-label={`${labelText} menu`}
+        aria-label={`${label} menu`}
       >
         {columns.map(column => (
           <div key={column.title} className={styles.column}>

@@ -99,7 +99,7 @@ const config = {
           {to: '/develop', label: 'Develop', position: 'right'},
           {
             type: 'custom-docs-mega',
-            label: 'Docs',
+            label: 'Resources',
             position: 'left',
           },
           {
