@@ -249,7 +249,7 @@ export default function Datasets({ community_id = 4 }) {
         fetching.current = false;
       }
     },
-    [filterSearch, sortDirection, sortType]
+    [filterSearch, sortDirection, sortType, hs_icon]
   );
 
   // Reset and load first page when filters change
