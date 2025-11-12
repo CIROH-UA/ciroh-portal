@@ -388,25 +388,25 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
   // Put resources into a corrected format
   let resources;
 
-  if (typeof data.resources === "string") {
-    try {
-      resources = JSON.parse(data.resources);
-    } catch (e) {
-      console.error("Failed to parse data.resources as JSON string:", e);
+  if (pageNumber > data.pagecount) {
+    resources = [];
+  } else {
+    if (typeof data.resources === "string") {
+        try {
+          resources = JSON.parse(data.resources);
+        } catch (e) {
+          console.error("Failed to parse data.resources as JSON string:", e);
+        resources = [];
+      }
+    } else if (Array.isArray(data.resources)) {
+      resources = data.resources;
+    } else {
+      console.warn("Unexpected format for data.resources:", data.resources);
       resources = [];
     }
-  } else if (Array.isArray(data.resources)) {
-    resources = data.resources;
-  } else {
-    console.warn("Unexpected format for data.resources:", data.resources);
-    resources = [];
   }
 
   let resourcesCorrected = [];
-
-  if (pageNumber > data.pagecount) {
-    resources = [];
-  }
 
   for (let i = 0; i < resources.length; i++) {
     let resource = resources[i];
