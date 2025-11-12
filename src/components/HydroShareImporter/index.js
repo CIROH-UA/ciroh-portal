@@ -19,9 +19,17 @@ function convertAuthorToLastFirst(author) {
   }
   
   const nameParts = author.split(' ');
-  const lastName = nameParts.pop();
-  const firstName = nameParts.join(' ');
-  return `${lastName}, ${firstName}`;
+
+  if (nameParts.length === 1) {
+    // Single-word name, leave as-is
+    author = nameParts[0];
+  } else {
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    author = `${lastName}, ${firstName}`;
+  }
+
+  return author;
 }
 
 // Helper function to fetch detailed metadata for a specific resource
