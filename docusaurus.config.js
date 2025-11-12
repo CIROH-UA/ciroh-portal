@@ -1,27 +1,22 @@
 // @ts-check
-// `@type` JSDoc annotations allow editor autocompletion and type checking
-// (when paired with `@ts-check`).
-// There are various equivalent ways to declare your Docusaurus config.
-// See: https://docusaurus.io/docs/api/docusaurus-config
-
 import {themes as prismThemes} from 'prism-react-renderer';
 import path from 'path';
 import 'dotenv/config';
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
 const baseUrl = "/";
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'CIROH Re­search Portal',
-  tagline: 'CIROH en­hances U.S. hy­dro­lo­gic­al fore­cast­ing in col­lab­or­a­tion with NOAA, fo­cus­ing on wa­ter events and qual­ity through a con­sor­ti­um of di­verse in­sti­tu­tions. Ex­plore this portal for re­search pub­lic­a­tions, ap­plic­a­tions, and data­sets from the NOAA and CIROH com­munity of sci­ent­ists.',
+  tagline:
+    'CIROH en­hances U.S. hy­dro­lo­gic­al fore­cast­ing in col­lab­or­a­tion with NOAA, fo­cus­ing on wa­ter events and qual­ity through a con­sor­ti­um of di­verse in­sti­tu­tions. Ex­plore this portal for re­search pub­lic­a­tions, ap­plic­a­tions, and data­sets from the NOAA and CIROH com­munity of sci­ent­ists.',
   favicon: 'img/favicon.ico',
 
-  // Set the production url of your site here
-  // url: 'https://portal.ciroh.org',
+  // Production site URL
   url: 'http://portal.ciroh.org',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-  customFields:{ // Default "dummy" values improve stability when environment variables are missing
+
+  customFields: {
     zotero_api_key: process.env.ZOTERO_API_KEY || "dummy",
     zotero_group_id: process.env.ZOTERO_CIROH_GROUP_ID,
     captcha_key: process.env.CAPTCHA_KEY || "dummy",
@@ -37,46 +32,31 @@ const config = {
     hs_logout_endpoint: "https://www.hydroshare.org/accounts/logout/",
     hs_logout_redirect: "https://portal.ciroh.org/contribute"
   },
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: "CIROH-UA", // Usually your GitHub org/user name.
-  projectName: "ciroh-portal", // Usually your repo name.
+
+  organizationName: "CIROH-UA",
+  projectName: "ciroh-portal",
   trailingSlash: false,
   deploymentBranch: 'gh-pages',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
-  },
+  i18n: { defaultLocale: 'en', locales: ['en'] },
 
-  // Future flags. (In preparation for DocuHub v4.)
-  future: {
-    v4: true,
-    experimental_faster: true,
-  },
+  future: { v4: true, experimental_faster: true },
 
   presets: [
     [
       'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
-        gtag: {
-          trackingID: 'G-YNKKHRZP29',
-          anonymizeIP: true,
-        },
+      {
+        gtag: { trackingID: 'G-YNKKHRZP29', anonymizeIP: true },
         docs: false,
         blog: false,
-        theme: {
-          customCss: './src/css/custom.css',
-        },
-      }),
+        theme: { customCss: './src/css/custom.css' },
+      },
     ],
   ],
+
+
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -86,18 +66,16 @@ const config = {
         logo: {
           alt: 'CIROH Portal',
           src: 'img/ciroh_small.png',
-          srcDark: 'img/ciroh_small_dark.png',  // Dark mode logo
+          srcDark: 'img/ciroh_small_dark.png',
         },
-        items: [          
+        items: [
           {to: '/products', label: 'Products', position: 'left'},
           {to: '/datasets', label: 'Datasets', position: 'left'},
           {to: '/publications', label: 'Publications', position: 'left'},
           {to: '/presentations', label: 'Presentations', position: 'left'},
           {to: '/courses', label: 'Courses', position: 'left'},
           {to: '/contribute', label: 'Contribute', position: 'right'},
-          
           {to: '/develop', label: 'Develop', position: 'right'},
-          // {to: '/hydroshare', label: 'HydroShare', position: 'right'},
           {
             href: "https://docs.ciroh.org/",
             label: "Docs",
@@ -109,73 +87,35 @@ const config = {
             className: "header-github-link",
             "aria-label": "GitHub repositories",
             items: [
-              {
-                label: 'ciroh-portal',
-                href: 'https://github.com/CIROH-UA/ciroh-portal',
-              },
-              {
-                label: 'tethysportal-ciroh',
-                href: 'https://github.com/CIROH-UA/tethysportal-ciroh',
-              },
+              { label: 'ciroh-portal', href: 'https://github.com/CIROH-UA/ciroh-portal' },
+              { label: 'tethysportal-ciroh', href: 'https://github.com/CIROH-UA/tethysportal-ciroh' },
             ]
           },
         ],
       },
+
       footer: {
         style: 'dark',
         links: [
           {
             title: 'Quick Links',
             items: [
-              {
-                label: 'Products',
-                href: '/products'
-              },
-              {
-                label: 'Datasets',
-                href: '/datasets'
-              },
-              {
-                label: 'Publications',
-                href: '/publications'
-              },
-              {
-                label: 'Courses',
-                href: '/courses'
-              },
-              {
-                label: 'Contribute',
-                href: '/contribute'
-              },
-              {
-                label: 'Develop',
-                href: '/develop'
-              },
-              {
-                label: 'DocuHub',
-                href: 'http://docs.ciroh.org'
-              },
+              { label: 'Products', href: '/products' },
+              { label: 'Datasets', href: '/datasets' },
+              { label: 'Publications', href: '/publications' },
+              { label: 'Courses', href: '/courses' },
+              { label: 'Contribute', href: '/contribute' },
+              { label: 'Develop', href: '/develop' },
+              { label: 'DocuHub', href: 'http://docs.ciroh.org' },
             ]
           },
           {
             title: 'About CIROH',
             items: [
-              {
-                label: 'About Us',
-                href: 'https://ciroh.ua.edu/about/'
-              },
-              {
-                label: 'Members & Partners',
-                href: 'https://ciroh.ua.edu/about/ciroh-partners/'
-              },
-              {
-                label: 'Contact CIROH',
-                href: 'https://ciroh.ua.edu/contact-us/'
-              },
-              {
-                label: 'Portal Repository',
-                href: 'https://github.com/CIROH-UA/ciroh-portal'
-              }
+              { label: 'About Us', href: 'https://ciroh.ua.edu/about/' },
+              { label: 'Members & Partners', href: 'https://ciroh.ua.edu/about/ciroh-partners/' },
+              { label: 'Contact CIROH', href: 'https://ciroh.ua.edu/contact-us/' },
+              { label: 'Portal Repository', href: 'https://github.com/CIROH-UA/ciroh-portal' }
             ]
           },
           {
@@ -229,10 +169,27 @@ const config = {
           </div>
           `,
       },
-      prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
+
+      prism: { theme: prismThemes.github, darkTheme: prismThemes.dracula },
+
+      /** -------------- Algolia DocSearch config -------------- */
+      algolia: {
+        appId: process.env.DOCSEARCH_APP_ID || 'YOUR_APP_ID',
+        apiKey: process.env.DOCSEARCH_API_KEY || 'YOUR_SEARCH_ONLY_API_KEY',
+        indexName: process.env.DOCSEARCH_INDEX_NAME || 'YOUR_INDEX_NAME',
+
+        // Nice-to-haves:
+        contextualSearch: false,
+        insights: true,
+        searchPagePath: 'search',      // adds a full search page at /search
+        // If your index mixes domains, this keeps external domains as hard navigations:
+        externalUrlRegex: 'docs\\.ciroh\\.org|portal\\.ciroh\\.org',
+        // If only the path (not the host) differs across deployments:
+        replaceSearchResultPathname: { from: '/docs/', to: '/' },
+        // If you host multiple sites/domains, you can mark external links:
+        // externalUrlRegex: 'https://docs\\.ciroh\\.org/.*',
       },
+      /** ------------------------------------------------------ */
     }),
 };
 
