@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition, useMemo } from "react";
+import React, { useEffect, useState, startTransition, useCallback, useRef } from "react";
 import clsx from "clsx";
 import { FaThLarge, FaBars, FaListUl } from "react-icons/fa";
 import styles from "./styles.module.css";
@@ -16,20 +16,62 @@ import {
   HiOutlineSortAscending,
 } from 'react-icons/hi';
 
+// Pagination
+const PAGE_SIZE        = 40;
+const SCROLL_THRESHOLD = 800;
+
 // Search input debounce
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
-export default function Datasets({ community_id = 4 }) {
-  // Search State
-  const [searchInput,    setSearchInput]    = useState('');
-  const [filterSearch,   setFilterSearch]   = useState('');
-  const [sortType,       setSortType]       = useState('last-updated');
-  const [sortDirection,  setSortDirection]  = useState('desc');
+// Curated Parent Resource ID
+const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
 
+// Helper function to sort resources
+const sortResources = (resourceList, sortType, sortDirection) => {
+  return resourceList.sort((a, b) => {
+    // Keep placeholders at the beginning during loading
+    if (a.resource_id.startsWith('placeholder-')) return -1;
+    if (b.resource_id.startsWith('placeholder-')) return 1;
+    
+    let comparison = 0;
+    
+    switch (sortType) {
+      case 'modified':
+        comparison = a.date_last_updated.localeCompare(b.date_last_updated);
+        break;
+      case 'created':
+        comparison = a.date_created.localeCompare(b.date_created);
+        break;
+      case 'title':
+        comparison = a.title.localeCompare(b.title);
+        break;
+      case 'author':
+        comparison = a.authors.localeCompare(b.authors);
+        break;
+      default:
+        comparison = 0;
+        break;
+    }
+    // Apply sort direction
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+};
+
+// Fetch the curated IDs first (from the "parent" resource).
+const fetchCuratedIds = async () => {
+  try {
+    const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
+    return curatedIds;
+  } catch (err) {
+    console.error("Error fetching curated IDs:", err);
+    return [];
+  }
+};
+
+export default function Datasets({ community_id = 4 }) {
   const { colorMode } = useColorMode(); // Get the current theme
   const hs_icon = colorMode === 'dark' ? DatasetDarkIcon : DatasetLightIcon;
-  const CURATED_PARENT_ID = "302dcbef13614ac486fb260eaa1ca87c";
 
   const PLACEHOLDER_ITEMS = 10;
   const initialPlaceholders = Array.from({ length: PLACEHOLDER_ITEMS }).map((_, index) => ({
@@ -44,6 +86,7 @@ export default function Datasets({ community_id = 4 }) {
     docs_url: ""
   }));
 
+  // State
   const [resources, setResources] = useState(initialPlaceholders);   // all resources
   const [curatedResources, setCuratedResources] = useState([]);     // subset for the curated tab
   const [loading, setLoading] = useState(true);
@@ -51,28 +94,74 @@ export default function Datasets({ community_id = 4 }) {
   const [view, setView] = useState("row");
   const [activeTab, setActiveTab] = useState("all");
 
-  useEffect(() => {
-    // Fetch the curated IDs first (from the "parent" resource).
-    const fetchCuratedIds = async () => {
-      try {
-        const curatedIds = await getCuratedIds(CURATED_PARENT_ID);
-        return curatedIds;
-      } catch (err) {
-        console.error("Error fetching curated IDs:", err);
-        return [];
-      }
-    };
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const fetching = useRef(false);
+  const lastFetchedPage = useRef(0); // Track the highest page number fetched
+  const fetchedPages = useRef(new Set()); // Track fetched pages
 
-    // Fetch all resources by group, then filter them based on curated IDs
-    const fetchAll = async () => {
+  // Search State
+  const [searchInput,    setSearchInput]    = useState('');
+  const [filterSearch,   setFilterSearch]   = useState('');
+  const [sortType,       setSortType]       = useState('modified');
+  const [sortDirection,  setSortDirection]  = useState('desc');
+
+  // Fetch all resources by group, then filter them based on curated IDs
+  const fetchAll = useCallback(
+    async (page) => {
+      // Prevent concurrent fetches
+      if (fetching.current) return;
+      
+      // Prevent refetching same or lower page numbers
+      if (page <= lastFetchedPage.current) {
+        return;
+      }
+
+      if (fetchedPages.current.has(page)) {
+        return;
+      }
+      
+      fetching.current = true;
+
+      // Add placeholders for loading state (only for pagination, not first page)
+      if (page > 1) {
+        setResources(prev => [
+          ...prev,
+          ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+            resource_id: `placeholder-page${page}-${i}`,
+            title: "",
+            authors: "",
+            resource_type: "",
+            resource_url: "",
+            description: "",
+            thumbnail_url: "",
+            page_url: "",
+            docs_url: "",
+          }))
+        ]);
+      }
+
+      // Search Parameters
+      const fullTextSearch = filterSearch.length > 0 ? filterSearch : undefined;
+      const ascending = sortDirection === 'asc' ? true : false;
+      const sortBy = sortType;
+
+      // Fetch Resources
       try {
-        const [curatedIds, resourceList] = await Promise.all([
+        const [curatedIds, communityResourcesResponse] = await Promise.all([
           fetchCuratedIds(),                // get array of curated resource IDs
-          getCommunityResources("ciroh_portal_data") // get all resources for the group
+          getCommunityResources("ciroh_portal_data", "4", fullTextSearch, ascending, sortBy, undefined, page, PAGE_SIZE) // get all resources for the group
         ]);
 
+        const resourceList = communityResourcesResponse.resources;
+        fetchedPages.current.add(page);
+
+        // Update pagination state
+        setHasMore(communityResourcesResponse.groupResourcesPageData.hasMorePages || communityResourcesResponse.extraResourcesPageData.hasMorePages);
+
         // Map the full resource list to your internal format
-        const mappedList = resourceList.map((res) => ({
+        let mappedList = resourceList.map((res) => ({
           resource_id: res.resource_id,
           title: res.resource_title,
           authors: res.authors.map(
@@ -88,11 +177,49 @@ export default function Datasets({ community_id = 4 }) {
           docs_url: ""
         }));
         
-        setResources(mappedList);
+        // Sort locally to account for curated resources
+        mappedList = sortResources(mappedList, sortBy, sortDirection);
+
+        if (page === 1) {
+          setResources(mappedList);
+        } else {
+          // Replace placeholders from this page with actual data
+          setResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...mappedList
+          ]);
+        }
+
+        // Filter to get only curated subset from current page
+        let curatedSubset = mappedList.filter(item =>
+          curatedIds.includes(item.resource_id)
+        );
+
+        curatedSubset = sortResources(curatedSubset, sortBy, sortDirection);
         
+        // Accumulate curated resources across pages (like main resources)
+        if (page === 1) {
+          setCuratedResources(curatedSubset);
+        } else {
+          // Replace placeholders from this page with actual data
+          setCuratedResources(prev => [
+            ...prev.filter(r => !r.resource_id.startsWith('placeholder-')),
+            ...curatedSubset
+          ]);
+        }
+        setLoading(false);
+
+        // Update the last fetched page tracker (only if this page is higher)
+        if (page > lastFetchedPage.current) {
+          lastFetchedPage.current = page;
+        }
+
+        // Allow pagination to continue - core data is loaded
+        fetching.current = false;
+
+        // Fetch metadata
         for (let res of mappedList) {
           try {
-            // const metadata = await fetchResourceMetadata(res.resource_id);
             const customMetadata = await fetchResourceCustomMetadata(res.resource_id);
             
             const updatedResource = {
@@ -112,137 +239,56 @@ export default function Datasets({ community_id = 4 }) {
             console.error(`Error fetching metadata: ${metadataErr.message}`);
           }
         }
-
-        // Filter to get only curated subset
-        const curatedSubset = mappedList.filter(item =>
-          curatedIds.includes(item.resource_id)
-        );
-
-        // setResources(mappedList);
-        setCuratedResources(curatedSubset);
-        setLoading(false);
       } catch (err) {
         console.error(`Error fetching resources: ${err.message}`);
         setError(err.message);
         setLoading(false);
+        fetching.current = false;
+      }
+    },
+    [filterSearch, sortDirection, sortType, hs_icon]
+  );
+
+  // Reset and load first page when filters change
+  useEffect(() => {
+    setResources(initialPlaceholders);
+    setCuratedResources(initialPlaceholders);
+    setCurrentPage(1);
+    setHasMore(true);
+    
+    // Reset the fetching flag to allow new requests
+    fetching.current = false;
+    
+    // Reset the last fetched page tracker
+    lastFetchedPage.current = 0;
+    
+    // Reset the fetched pages set
+    fetchedPages.current.clear();
+    
+    // Fetch first page with new filters
+    fetchAll(1);
+  }, [filterSearch, sortDirection, sortType, fetchAll]);
+
+  /* infinite scroll */
+  useEffect(() => {
+    const onScroll = () => {
+      if (fetching.current || !hasMore) return;
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
+        const next = currentPage + 1;
+        setCurrentPage(next);
+        fetchAll(next);
       }
     };
-
-    // Kick off fetch
-    fetchAll();
-  }, [community_id]);
-
-  // Get filtered and sorted resources based on search and sort options
-  const filteredResources = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = resources.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
-
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [resources, filterSearch, sortType, sortDirection]);
-
-  // Get filtered and sorted curated resources based on search and sort options
-  const filteredCuratedResources = useMemo(() => {
-    // Filter the resources based on search input
-    const filtered = curatedResources.filter(resource => {
-      // Skip placeholder items
-      if (resource.resource_id.startsWith('placeholder-')) return true;
-      
-      // If no search, show all
-      if (!filterSearch) return true;
-      
-      // Search in title, authors, and description
-      const searchLower = filterSearch.toLowerCase();
-      return (
-        resource.title.toLowerCase().includes(searchLower) ||
-        resource.authors.toLowerCase().includes(searchLower) ||
-        resource.description.toLowerCase().includes(searchLower) ||
-        resource.date_created.toLowerCase().includes(searchLower) ||
-        resource.date_last_updated.toLowerCase().includes(searchLower)
-      );
-    });
-
-    // Sort the filtered results based on sortType and sortDirection
-    return filtered.sort((a, b) => {
-      // Keep placeholders at the beginning during loading
-      if (a.resource_id.startsWith('placeholder-')) return -1;
-      if (b.resource_id.startsWith('placeholder-')) return 1;
-      
-      let comparison = 0;
-      
-      switch (sortType)
-      {
-        case 'last-updated':
-          comparison = a.date_last_updated.localeCompare(b.date_last_updated);
-          break;
-        case 'date-created':
-          comparison = a.date_created.localeCompare(b.date_created);
-          break;
-        case 'title':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'authors':
-          comparison = a.authors.localeCompare(b.authors);
-          break;
-        default:
-          comparison = 0;
-          break;
-      }
-      
-      // Apply sort direction
-      return sortDirection === 'asc' ? comparison : -comparison;
-    });
-  }, [curatedResources, filterSearch, sortType, sortDirection]);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [currentPage, hasMore, fetchAll]);
 
   /* search helpers */
   const commitSearch = q => {
     clearTimeout(debounceTimer);
     setFilterSearch(q.trim());
-  };
+  }; 
   const handleKeyUp   = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => commitSearch(searchInput), DEBOUNCE_MS);
@@ -258,9 +304,9 @@ export default function Datasets({ community_id = 4 }) {
 
   const getFilteredResourceCount = () => {
     if (activeTab === "all") {
-      return filteredResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+      return resources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
     } else {
-      return filteredCuratedResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
+      return curatedResources.filter(r => !r.resource_id.startsWith('placeholder-')).length;
     }
   }
 
@@ -297,7 +343,7 @@ export default function Datasets({ community_id = 4 }) {
         >
           <input
             type="text"
-            placeholder="Search by Title, Author, Description, Last Updated, Year Created..."
+            placeholder="Search by Title, Author, Description..."
             className={styles.searchInput}
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
@@ -312,10 +358,10 @@ export default function Datasets({ community_id = 4 }) {
             onChange={e => setSortType(e.target.value)}
             className={styles.sortSelect}
           >
-            <option value="last-updated">Last Updated</option>
-            <option value="date-created">Date Created</option>
+            <option value="modified">Last Updated</option>
+            <option value="created">Date Created</option>
             <option value="title">Title</option>
-            <option value="authors">Authors</option>
+            <option value="author">Authors</option>
           </select>
 
           <button
@@ -370,9 +416,9 @@ export default function Datasets({ community_id = 4 }) {
             default
           >
             {view === "grid" ? (
-              <HydroShareResourcesTiles resources={filteredResources} loading={loading} />
+              <HydroShareResourcesTiles resources={resources} loading={loading} />
             ) : (
-              <HydroShareResourcesRows resources={filteredResources} loading={loading} />
+              <HydroShareResourcesRows resources={resources} loading={loading} />
             )}
           </TabItem>
 
@@ -385,9 +431,9 @@ export default function Datasets({ community_id = 4 }) {
             }
           >
             {view === "grid" ? (
-              <HydroShareResourcesTiles resources={filteredCuratedResources} loading={loading} />
+              <HydroShareResourcesTiles resources={curatedResources} loading={loading} />
             ) : (
-              <HydroShareResourcesRows resources={filteredCuratedResources} loading={loading} />
+              <HydroShareResourcesRows resources={curatedResources} loading={loading} />
             )}
           </TabItem>
         </Tabs>
