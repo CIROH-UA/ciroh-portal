@@ -47,8 +47,8 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
       }
       return;
     }
-    if (!validateDOI(query.trim())) {
-      setError('Please enter a valid DOI.');
+    if (!extractDOI(query.trim())) {
+      setError('Please enter a valid DOI (e.g., 10.1000/182, https://doi.org/10.1000/182).');
       handleRecaptcha('');
       if (recaptchaRef.current) {
         recaptchaRef.current.reset();
@@ -67,7 +67,8 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     setLoading(true);
     try {
       setProgressMessage('Fetching citation data...');
-      const encodedQuery = encodeURIComponent('https://doi.org/' + query.trim());
+      const doiIdentifier = extractDOI(query.trim());
+      const encodedQuery = encodeURIComponent('https://doi.org/' + doiIdentifier);
       const targetUrl = `${wikimediaBaseUrl}/data/citation/zotero/${encodedQuery}`;
       const resp = await fetch(targetUrl);
       if (!resp.ok) {
@@ -165,9 +166,14 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
     }
   }
 
+  function extractDOI(input) {
+    const doiRegex = /^(?:https?:\/\/(?:dx\.)?doi\.org\/)?(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)$/i;
+    const match = input.match(doiRegex);
+    return match ? match[1] : null; // Return just the DOI part (group 1)
+  }
+
   function validateDOI(doi) {
-    const doiRegex = /^(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)$/i;
-    return doiRegex.test(doi);
+    return extractDOI(doi) !== null;
   }
 
   return (
@@ -198,9 +204,11 @@ export default function PublicationsImporter({ groupId, zoteroApiKey  }) {
                 setError('');
               }
             }}
-            placeholder="Enter DOI following the format 10.1234/abcd.efgh"
+            placeholder="Enter DOI (e.g., 10.1234/abcd.efgh)"
           />
-          <p><strong>* Do not use</strong><span>{" "}a <strong>url</strong> but the format </span> <strong>10.1234/abcd.efgh </strong></p>
+          <small className={styles.doiFormats}>
+            Accepts: DOI identifiers or full https://doi.org/ URLs
+          </small>
         <label className={styles.label}>Select Collection</label>
         <SelectCollection
             zotero={zoteroClient}

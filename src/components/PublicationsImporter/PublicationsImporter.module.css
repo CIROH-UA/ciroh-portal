@@ -25,6 +25,14 @@
     width: 100%;
   }
   
+  .doiFormats {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: -0.8rem;
+    margin-bottom: 0;
+    display: block;
+    line-height: 1.2;
+  }
 
   .button {
     padding: 1rem 2rem;
