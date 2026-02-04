@@ -1,6 +1,4 @@
 .container {
-  border: 1px solid var(--ifm-color-emphasis-200);
-  padding: 1rem;
   border-radius: var(--ifm-global-radius);
   background-color: var(--ifm-background-surface-color);
   margin-bottom: 1rem;

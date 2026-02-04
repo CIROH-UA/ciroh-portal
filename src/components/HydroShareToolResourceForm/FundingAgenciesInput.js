@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import styles from './FundingAgenciesInput.module.css';
 
-
-
 export default function FundingAgenciesInput({ onChange }) {
-  /** The array below is ONLY the user-editable agencies */
-  const [agencies, setAgencies] = useState([]);
+  const [agencies, setAgencies] = useState([
+       { agency_name: '', award_title: '', award_number: '', agency_url: '' }   
+  ]);
 
   useEffect(() => {
     onChange([...agencies]);
@@ -31,7 +30,7 @@ export default function FundingAgenciesInput({ onChange }) {
   return (
     <div className={styles.container}>
       <div className={styles.headerContainer}>
-        <h3 className={styles.header}>Funding Agencies</h3>
+        <label className={styles.label}>Funding Agencies</label>
         <div className={styles.buttonGroup}>
           <button
             type="button"
