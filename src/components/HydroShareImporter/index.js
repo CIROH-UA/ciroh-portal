@@ -201,7 +201,7 @@ function joinExtraResources(groupResources, extraResources) {
 
 }
 
-async function getCommunityResources(keyword="ciroh_portal_data", communityId="4", fullTextSearch=undefined, ascending=false, sortBy=undefined, author=undefined, pageNumber=undefined, pageSize=undefined) {
+async function getCommunityResources(keyword="ciroh_portal_data,ciroh_hub_data", communityId="4", fullTextSearch=undefined, ascending=false, sortBy=undefined, author=undefined, pageNumber=undefined, pageSize=undefined) {
   try {
     // Fetch resources
     const groupIds = await getGroupIds(communityId);
@@ -285,7 +285,7 @@ async function fetchResourcesBySearch(keyword, searchText, ascending=false, sort
   // Add filter parameter
   const filter = {
     author: [author].filter(a => a !== undefined),
-    subject: [keyword],
+    subject: keyword.split(","),
   };
 
   url += `&filter=${encodeURIComponent(JSON.stringify(filter))}`;
@@ -373,7 +373,7 @@ async function fetchResourcesWithPaginationData(keyword, searchText, ascending=f
   // Add filter parameter
   const filter = {
     author: [author].filter(a => a !== undefined),
-    subject: [keyword],
+    subject: keyword.split(","),
   };
 
   url += `&filter=${encodeURIComponent(JSON.stringify(filter))}`;
@@ -474,7 +474,7 @@ async function fetchKeywordPageData(keyword, searchText, ascending=false, sortBy
   // Add filter parameter
   const filter = {
     author: [author].filter(a => a !== undefined),
-    subject: [keyword],
+    subject: keyword.split(","),
   };
 
   url += `&filter=${encodeURIComponent(JSON.stringify(filter))}`;

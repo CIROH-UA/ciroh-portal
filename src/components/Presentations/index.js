@@ -176,9 +176,9 @@ export default function Presentations({ community_id = 4 }) {
         // Retrieve resources
         let [rawCuratedResources, invKeywordResources, invCollections, pageData] = await Promise.all([
           fetchRawCuratedResources(CURATED_PARENT_ID), // get array of curated resource IDs
-          fetchResourcesBySearch('ciroh_portal_presentation', filterSearch, ascending, sortType, undefined, page),
+          fetchResourcesBySearch('ciroh_portal_presentation,ciroh_hub_presentation', filterSearch, ascending, sortType, undefined, page),
           fetchResourcesBySearch('ciroh_portal_pres_collections', filterSearch, ascending, sortType, undefined, page),
-          fetchKeywordPageData('ciroh_portal_presentation', filterSearch, ascending, sortType, undefined)
+          fetchKeywordPageData('ciroh_portal_presentation,ciroh_hub_presentation', filterSearch, ascending, sortType, undefined)
         ]);
 
         // Set last page

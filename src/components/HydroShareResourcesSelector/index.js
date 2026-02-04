@@ -18,7 +18,7 @@ const SCROLL_THRESHOLD = 800;
 let   debounceTimer    = null;
 const DEBOUNCE_MS      = 1_000;
 
-export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app", defaultImage }) {
+export default function HydroShareResourcesSelector({ keyword = "nwm_portal_app,ciroh_hub_app", defaultImage }) {
   const { colorMode } = useColorMode(); // Get the current theme
   const PLACEHOLDER_ITEMS = 10;
 

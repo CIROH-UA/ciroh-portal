@@ -36,7 +36,6 @@ export default function PresentationsPage() {
       <main>
         <Presentations/>
 
-        {/* <HydroShareResourcesSelector keyword="ciroh_portal_data" /> */}
         <TechBox items={items} type={"Presentations"}  />
       </main>
     
