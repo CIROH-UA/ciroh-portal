@@ -9,7 +9,7 @@ import CoveragesInput       from './CoveragesInput';
 import FundingAgenciesInput from './FundingAgenciesInput';
 import UploadDataS3         from './UploadDataS3';
 import HydroShareAuthButton from '@site/src/components/HydroShareAuth';
-import { uploadFileToS3Bucket } from './utils';
+import { uploadFileToS3Bucket, makeMarkdown } from './utils';
 import styles from './HydroShareResourceCreator.module.css';
 
 const getTypeString = (type) => {
@@ -340,14 +340,13 @@ export default function HydroShareResourceCreator({
       }
       setProgressMessage('Funding agencies updated');
 
+      // 1. Prepare the Markdown content as a string
+      const markdownFile = makeMarkdown(title, abstract, validAuthors, keywordArr);
+
       /* files */
-      const metadataBlob = new Blob(
-        [JSON.stringify({ name: title.trim() })],
-        { type: 'application/json' },
-      );
       const allFiles = [
         ...files,
-        new File([metadataBlob], 'metadata.json', { type: 'application/json' }),
+        markdownFile,
       ];
 
       for (const f of allFiles) {
@@ -549,7 +548,10 @@ export default function HydroShareResourceCreator({
           {/* hidden advanced editors */}
           <div style={{ display: 'none' }}>
             <CoveragesInput       onChange={handleCoveragesChange} />
-            <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
+          </div>
+
+          <div>
+             <FundingAgenciesInput onChange={handleFundingAgenciesChange} />
           </div>
 
           {/* Submit */}

@@ -1,25 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTrash, FaPlus } from 'react-icons/fa';
 import styles from './FundingAgenciesInput.module.css';
 
 
-const DEFAULT_AGENCY = Object.freeze({
-  agency_name:
-    'National Oceanic and Atmospheric Administration (NOAA), University of Alabama',
-  award_title:
-    'CIROH: Enabling collaboration through data and model sharing with CUAHSI HydroShare',
-  award_number:
-    'NA22NWS4320003 to University of Alabama, subaward A23-0266-S001 to Utah State University',
-  agency_url:
-    'https://ciroh.ua.edu/research-projects/enabling-collaboration-through-data-and-model-sharing-with-cuahsi-hydroshare/',
-});
 
 export default function FundingAgenciesInput({ onChange }) {
   /** The array below is ONLY the user-editable agencies */
   const [agencies, setAgencies] = useState([]);
 
   useEffect(() => {
-    onChange([DEFAULT_AGENCY, ...agencies]);
+    onChange([...agencies]);
   }, [agencies, onChange]);
 
   /* Helpers ────────────────────────────────────────────── */
