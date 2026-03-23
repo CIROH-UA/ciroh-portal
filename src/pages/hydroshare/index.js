@@ -1,28 +1,13 @@
-import React from "react";
-
-import Header from "@site/src/components/Header";
+import RedirectHero from '@site/src/components/RedirectHero';
 import Layout from '@theme/Layout';
-import HydroShareHelp from "@site/src/components/HydroShareHelp";
 
-export default function HydroSharePage() {
+// This page seems to be outdated, and it's outright orphaned on the last production version of Portal.
+// That said, the most appropriate target seems to be the documentation page on Hub.
+
+export default function RedirPage() {
   return (
-    <Layout title="Applications" description="CIROH Applications">
-    
-      <div className="margin-top--lg">
-        <Header 
-            title="HydroShare Support your Research" 
-            tagline="Discover content shared by your colleagues and other researchers. Access a broad range of data types used in hydrology." 
-        />
-      </div>
-
-      <main>
-        
-       <HydroShareHelp 
-          title="Sharing Research products with colleagues and others using FAIR Data Principles"
-       />
-      </main>
-    
+    <Layout title="CIROH Hub Redirect" description="Redirect from CIROH Portal to CIROH Hub.">
+      <RedirectHero href="https://hub.ciroh.org/docs/products/data-management/hydroshare/" />
     </Layout>
   );
 }
-
