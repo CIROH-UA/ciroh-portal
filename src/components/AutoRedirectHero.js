@@ -1,5 +1,6 @@
 import RedirectHero from "./RedirectHero";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import useIsBrowser from '@docusaurus/useIsBrowser';
 
 // Mostly identical to RedirectHero. Automatically handles redirects to pages that retain largely identical paths in CIROH Hub.
 
@@ -14,7 +15,7 @@ function stripBaseURL(path, baseURL) {
 }
 
 export default function AutoRedirectHero() {
-  const path = location.pathname; // This is implicitly a React hook; must be retrieved here
+  const path = useIsBrowser() ? location.pathname : ''; // This is implicitly a React hook; must be retrieved here
   const baseURL = useBaseUrl('/');
 
   return (
