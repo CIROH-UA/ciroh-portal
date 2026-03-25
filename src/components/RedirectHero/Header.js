@@ -58,7 +58,7 @@ export default function Header({ title,image,  tagline, buttons }) {
                 
         
         {buttons && buttons.length > 0 && (
-          <div className={styles.buttons} style={{paddingBottom:"200px"}}>
+          <div className={styles.buttons}>
             {buttons.map((button, index) => (
               <a
                 key={index}

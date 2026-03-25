@@ -1,6 +1,6 @@
 import RedirectHero from "./RedirectHero";
 import useBaseUrl from "@docusaurus/useBaseUrl";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from '@docusaurus/router';
 
 // Mostly identical to RedirectHero. Automatically handles redirects to pages that retain largely identical paths in CIROH Hub.
 
