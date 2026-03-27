@@ -1,42 +1,45 @@
-# CIROH Portal
+# CIROH Portal (Formerly)
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+CIROH Portal has been merged into CIROH Hub. This repository has been retained as a redirect source to ensure continuity of website links.
 
-### Installation
+- CIROH Hub link: https://hub.ciroh.org
+- CIROH Hub repository: https://github.com/CIROH-UA/ciroh_hub
+- This repository deploys to: gh-pages branch -> https://portal.ciroh.org
 
-```
-$ yarn
-```
+## Running this repository locally
 
-### Local Development
+To set up the project locally, follow these steps:
 
-```
-$ yarn start
-```
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/CIROH-UA/ciroh-portal.git
+   cd ciroh-portal
+   ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+2. **Install Node.js**: 
+   Download and install the LTS version from [nodejs.org](https://nodejs.org/en) if you don't have it already.
 
-### Build
+3. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-```
-$ yarn build
-```
+4. **Build for Production** (optional):
+   ```bash
+   npm run build
+   ```
+   This creates static files in the `build` directory that can be deployed to a web server.
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+5. **Run Development Server**:
+   ```bash
+   npm run start
+   ```
+   This will start a local development server at http://localhost:3000 
+   
+6. **View the Site**:
+   Open your browser and navigate to http://localhost:3000 to see the local version of DocuHub.
 
-### Deployment
+## How to validate PR locally
 
-
-Using SSH:
-
-```
-$ USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+Go to GitHub Actions and Download the build folder from PR validate Action. Unzip the folder and run below command.
+$ npx http-server
